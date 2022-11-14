@@ -46,10 +46,12 @@ describe("Ticket", async function () {
             })
             const response = await ticket.balanceOf(account.address)
             assert.equal(response, 1)
-            // const balance = await (
-            //     await ethers.getContractAt(ticket.address)
-            // ).balance
-            // assert.equal(balance, 0.01)  // TODO: проверить баланс аккаунта
+
+            const balance = await ticket.provider.getBalance(ticket.address)
+            assert.equal(
+                balance.toString(),
+                ethers.utils.parseEther("0.01").toString()
+            )
         })
     })
 })
