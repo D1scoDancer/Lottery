@@ -25,23 +25,22 @@ describe("Ticket", async function () {
         })
     })
 
-    describe("BuyTicket", async function () {
+    describe("buyTicketss", async function () {
+        let account
+        beforeEach(async function () {
+            const accounts = await ethers.getSigners()
+            account = accounts[1]
+        })
+
         it("require msg.value == 0.01 ether", async function () {
             await expect(
-                ticket.buyTicket({ value: ethers.utils.parseEther("0.02") })
-            ).to.be.revertedWith("1 ticket is 0.01 eth")
-
-            await expect(
-                ticket.buyTicket({ value: ethers.utils.parseEther("0.001") })
+                ticket.buyTickets({ value: ethers.utils.parseEther("0.001") })
             ).to.be.revertedWith("1 ticket is 0.01 eth")
         })
 
         it("user buys 1 ticket for 0.01 eth", async function () {
-            const accounts = await ethers.getSigners()
-            const account = accounts[1]
-
             const ticketConnectedContract = await ticket.connect(account)
-            await ticketConnectedContract.buyTicket({
+            await ticketConnectedContract.buyTickets({
                 value: ethers.utils.parseEther("0.01"),
             })
             const response = await ticket.balanceOf(account.address)
@@ -52,6 +51,32 @@ describe("Ticket", async function () {
                 balance.toString(),
                 ethers.utils.parseEther("0.01").toString()
             )
+        })
+
+        it("user gets a change after buying tickets", async function () {
+            const initial_balance = await ticket.provider.getBalance(
+                account.address
+            )
+
+            const ticketConnectedContract = await ticket.connect(account)
+
+            // User send 0.02 ether for 2 tickets
+            await expect(
+                ticketConnectedContract.buyTickets({
+                    value: ethers.utils.parseEther("0.02"),
+                })
+            )
+                .to.emit(ticketConnectedContract, "BuyTickets")
+                .withArgs(2)
+
+            // User sends 0.15 ether for 1 ticket
+            await expect(
+                ticketConnectedContract.buyTickets({
+                    value: ethers.utils.parseEther("0.015"),
+                })
+            )
+                .to.emit(ticketConnectedContract, "BuyTickets")
+                .withArgs(1)
         })
     })
 })

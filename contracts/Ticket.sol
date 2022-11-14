@@ -4,6 +4,8 @@ pragma solidity 0.8.17;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract Ticket is ERC20 {
+    event BuyTickets(uint256 num_tickets);
+
     constructor(uint256 initialSupply) ERC20("LTicket", "LTC") {
         _mint(msg.sender, initialSupply);
     }
@@ -12,8 +14,10 @@ contract Ticket is ERC20 {
 
     fallback() external {}
 
-    function buyTicket() external payable {
-        require(msg.value == 0.01 ether, "1 ticket is 0.01 eth");
-        _mint(msg.sender, 1);
+    function buyTickets() external payable {
+        require(msg.value >= 0.01 ether, "1 ticket is 0.01 eth");
+        uint256 num_tickets = msg.value / 0.01 ether;
+        _mint(msg.sender, num_tickets);
+        emit BuyTickets(num_tickets);
     }
 }
