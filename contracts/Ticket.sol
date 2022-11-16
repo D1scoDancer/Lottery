@@ -19,5 +19,8 @@ contract Ticket is ERC20 {
         uint256 num_tickets = msg.value / 0.01 ether;
         _mint(msg.sender, num_tickets);
         emit BuyTickets(num_tickets);
+
+        uint256 change = msg.value - num_tickets * 0.01 ether;
+        payable(msg.sender).transfer(change);
     }
 }
