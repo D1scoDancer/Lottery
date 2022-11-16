@@ -17,10 +17,24 @@ contract Ticket is ERC20 {
     function buyTickets() external payable {
         require(msg.value >= 0.01 ether, "1 ticket is 0.01 eth");
         uint256 num_tickets = msg.value / 0.01 ether;
+
         _mint(msg.sender, num_tickets);
         emit BuyTickets(num_tickets);
 
-        uint256 change = msg.value - num_tickets * 0.01 ether;
+        uint256 change = msg.value - num_tickets * 0.01 ether; // Лучше просить у юзера присылать нужное количество во фронте
+        payable(msg.sender).transfer(change);
+    }
+
+    function BuyNumberOfTickets(uint256 amount) external payable {
+        require(
+            msg.value >= amount * 0.01 ether,
+            "Not enough money for this amount of tickets"
+        );
+
+        _mint(msg.sender, amount);
+        emit BuyTickets(amount);
+
+        uint256 change = msg.value - amount * 0.01 ether; // Лучше просить у юзера присылать нужное количество во фронте
         payable(msg.sender).transfer(change);
     }
 }

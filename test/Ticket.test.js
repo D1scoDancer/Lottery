@@ -106,4 +106,72 @@ describe("Ticket", async function () {
             assert.equal(expected.toString(), balance.toString())
         })
     })
+
+    describe("BuyNumberOfTickets", async function () {
+        let account
+        beforeEach(async function () {
+            const accounts = await ethers.getSigners()
+            account = accounts[1]
+        })
+
+        it("user buys 11 tickets for 0.11 eth", async function () {
+            const initial_balance = await ticket.provider.getBalance(
+                account.address
+            )
+
+            const ticketConnectedContract = await ticket.connect(account)
+
+            await expect(
+                (txResponse = await ticketConnectedContract.BuyNumberOfTickets(
+                    11,
+                    {
+                        value: ethers.utils.parseEther("0.11"),
+                    }
+                ))
+            )
+                .to.emit(ticketConnectedContract, "BuyTickets")
+                .withArgs(11)
+
+            const txReceipt = await txResponse.wait()
+            const { gasUsed, effectiveGasPrice } = txReceipt
+            const gasCost = gasUsed.mul(effectiveGasPrice)
+            const balance = await ticket.provider.getBalance(account.address)
+
+            const expected = initial_balance
+                .sub(gasCost)
+                .sub(ethers.utils.parseEther("0.11"))
+
+            assert.equal(expected.toString(), balance.toString())
+        })
+
+        it("user gets a change after buying 10 ticket for 1 eth", async function () {
+            const initial_balance = await ticket.provider.getBalance(
+                account.address
+            )
+
+            const ticketConnectedContract = await ticket.connect(account)
+
+            await expect(
+                (txResponse = await ticketConnectedContract.BuyNumberOfTickets(
+                    10,
+                    {
+                        value: ethers.utils.parseEther("1"),
+                    }
+                ))
+            )
+                .to.emit(ticketConnectedContract, "BuyTickets")
+                .withArgs(10)
+
+            const txReceipt = await txResponse.wait()
+            const { gasUsed, effectiveGasPrice } = txReceipt
+            const gasCost = gasUsed.mul(effectiveGasPrice)
+            const balance = await ticket.provider.getBalance(account.address)
+
+            const expected = initial_balance
+                .sub(gasCost)
+                .sub(ethers.utils.parseEther("0.1"))
+
+            assert.equal(expected.toString(), balance.toString())
+        })
+    })
 })
