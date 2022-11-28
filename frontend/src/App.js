@@ -1,5 +1,5 @@
 import "./App.css"
-import TicketShopping from "./components/Ticket/Ticket"
+import TicketShopping from "./components/TicketShopping/TicketShopping"
 
 function App() {
     return (
