@@ -1,13 +1,17 @@
-import React from "react"
+import React, { useState } from "react"
 
 import { ethers } from "../../ethers-5.1.esm.min.js"
 import { abi, contractAddress } from "./constants.js"
 import listenForTxMine from "../../utils/ListenForTxMine"
 
 const BuyNumberOfTickets = () => {
+    const [numberOfTickets, changeNumberOfTickets] = useState(1)
+
+    const handleChange = (event) => {
+        changeNumberOfTickets(event.target.value)
+    }
+
     async function handleClick() {
-        // const numberOfTickets = document.getElementById("numberOfTickets").value
-        const numberOfTickets = 5
         console.log(`Buying ${numberOfTickets} tickets..`)
         if (typeof window.ethereum !== "undefined") {
             const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -16,10 +20,14 @@ const BuyNumberOfTickets = () => {
             const contract = new ethers.Contract(contractAddress, abi, signer)
 
             try {
-                const txResponse = await contract.BuyNumberOfTickets(5, {
-                    // hardcode
-                    value: ethers.utils.parseEther("0.5"), // hardcode
-                })
+                const txResponse = await contract.BuyNumberOfTickets(
+                    numberOfTickets,
+                    {
+                        value: ethers.utils.parseEther(
+                            (numberOfTickets * 0.01).toString()
+                        ),
+                    }
+                )
                 await listenForTxMine(txResponse, provider)
                 console.log("Done!")
             } catch (error) {
@@ -37,6 +45,8 @@ const BuyNumberOfTickets = () => {
                 type="number"
                 min="1"
                 step="1"
+                onChange={handleChange}
+                value={numberOfTickets}
             />
             <button id="buyNumberOfTicketsBtn" onClick={handleClick}>
                 Buy
