@@ -9,8 +9,10 @@ describe("Ticket", async function () {
     beforeEach(async function () {
         deployer = (await getNamedAccounts()).deployer
         user = (await getNamedAccounts()).user
-        const ticketFactory = await ethers.getContractFactory("Ticket")
-        ticket = await ticketFactory.deploy(initialSupply)
+        await deployments.fixture(["all"])
+        // const ticketFactory = await ethers.getContractFactory("Ticket")
+        // ticket = await ticketFactory.deploy(initialSupply)
+        ticket = await ethers.getContract("Ticket", deployer)
     })
 
     describe("Constructor", async function () {
@@ -172,6 +174,71 @@ describe("Ticket", async function () {
                 .sub(ethers.utils.parseEther("0.1"))
 
             assert.equal(expected.toString(), balance.toString())
+        })
+    })
+
+    describe("StableCoinMock", async () => {
+        let stable
+        beforeEach(async () => {
+            const stableFactory = await ethers.getContractFactory(
+                "StableCoinMock"
+            )
+            stable = await stableFactory.deploy(initialSupply)
+        })
+
+        it("deploys 100 stable tokens", async () => {
+            const balance = await stable.balanceOf(deployer)
+            assert.equal(balance.toString(), initialSupply.toString())
+        })
+
+        it("can transfer from deployer to user", async () => {
+            await stable.transfer(user, 10)
+            const userBalance = await stable.balanceOf(user)
+            const deployerBalance = await stable.balanceOf(deployer)
+            assert.equal(userBalance.toString(), "10")
+            assert.equal(deployerBalance.toString(), "90")
+        })
+    })
+    describe("buyTicketsForStable", () => {
+        //TODO: change 10 for const
+        let stable
+        beforeEach(async () => {
+            const stableFactory = await ethers.getContractFactory(
+                "StableCoinMock"
+            )
+            stable = await stableFactory.deploy(initialSupply)
+        })
+
+        it("can transfer stables", async () => {
+            const deployerBalanceBefore = await stable.balanceOf(deployer) // 100
+            const contractBalanceBefore = await stable.balanceOf(ticket.address) // 0
+
+            await stable.approve(ticket.address, 10)
+            await ticket.buyTicketsForStable(10)
+
+            const deployerBalanceAfter = await stable.balanceOf(deployer) // 90
+            const contractBalanceAfter = await stable.balanceOf(ticket.address) // 10
+
+            assert.equal(
+                deployerBalanceAfter.toString(),
+                deployerBalanceBefore.sub(10).toString()
+            )
+            assert.equal(
+                contractBalanceAfter.toString(),
+                contractBalanceBefore.add(10).toString()
+            )
+        })
+        it("mints new tickets", async () => {
+            const deployerBalanceBefore = await ticket.balanceOf(deployer) // 100
+
+            await stable.approve(ticket.address, 10)
+            await ticket.buyTicketsForStable(10)
+
+            const deployerBalanceAfter = await ticket.balanceOf(deployer) // 10
+            assert.equal(
+                deployerBalanceAfter.toString(),
+                deployerBalanceBefore.add(10).toString()
+            )
         })
     })
 })
