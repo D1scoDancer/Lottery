@@ -2,16 +2,16 @@ const { assert, expect } = require("chai")
 const { deployments, ethers, getNamedAccounts } = require("hardhat")
 
 describe("Ticket", async function () {
-    let ticket
     let deployer
     let user
+    let ticket
+    let stable
     const initialSupply = 100
     beforeEach(async function () {
         deployer = (await getNamedAccounts()).deployer
         user = (await getNamedAccounts()).user
-        await deployments.fixture(["all"])
-        // const ticketFactory = await ethers.getContractFactory("Ticket")
-        // ticket = await ticketFactory.deploy(initialSupply)
+        await deployments.fixture(["all"]) // TODO: как он понимает что задеплоить первым
+        stable = await ethers.getContract("StableCoinMock", deployer)
         ticket = await ethers.getContract("Ticket", deployer)
     })
 
@@ -178,14 +178,6 @@ describe("Ticket", async function () {
     })
 
     describe("StableCoinMock", async () => {
-        let stable
-        beforeEach(async () => {
-            const stableFactory = await ethers.getContractFactory(
-                "StableCoinMock"
-            )
-            stable = await stableFactory.deploy(initialSupply)
-        })
-
         it("deploys 100 stable tokens", async () => {
             const balance = await stable.balanceOf(deployer)
             assert.equal(balance.toString(), initialSupply.toString())
@@ -201,14 +193,6 @@ describe("Ticket", async function () {
     })
     describe("buyTicketsForStable", () => {
         //TODO: change 10 for const
-        let stable
-        beforeEach(async () => {
-            const stableFactory = await ethers.getContractFactory(
-                "StableCoinMock"
-            )
-            stable = await stableFactory.deploy(initialSupply)
-        })
-
         it("can transfer stables", async () => {
             const deployerBalanceBefore = await stable.balanceOf(deployer) // 100
             const contractBalanceBefore = await stable.balanceOf(ticket.address) // 0

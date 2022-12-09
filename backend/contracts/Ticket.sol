@@ -9,8 +9,8 @@ contract Ticket is ERC20 {
 
     event BuyTickets(uint256 num_tickets);
 
-    constructor(uint256 initialSupply) ERC20("LTicket", "LTC") {
-        token = IERC20(0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0); // TODO: hardcode
+    constructor(uint256 initialSupply, address _token) ERC20("LTicket", "LTC") {
+        token = IERC20(_token); // TODO: hardcode
         _mint(msg.sender, initialSupply);
     }
 
