@@ -1,13 +1,13 @@
 const { assert, expect } = require("chai")
 const { deployments, ethers, getNamedAccounts } = require("hardhat")
 
-describe("Ticket", async function () {
+describe("Ticket", () => {
     let deployer
     let user
     let ticket
     let stable
     const initialSupply = 100
-    beforeEach(async function () {
+    beforeEach(async () => {
         deployer = (await getNamedAccounts()).deployer
         user = (await getNamedAccounts()).user
         await deployments.fixture(["all"]) // TODO: как он понимает что задеплоить первым
@@ -15,32 +15,32 @@ describe("Ticket", async function () {
         ticket = await ethers.getContract("Ticket", deployer)
     })
 
-    describe("Constructor", async function () {
-        it("deployer has LTC tokens", async function () {
+    describe("Constructor", () => {
+        it("deployer has LTC tokens", async () => {
             const response = await ticket.balanceOf(deployer)
             assert.equal(response, initialSupply)
         })
 
-        it("user doesn't have LTC tokens", async function () {
+        it("user doesn't have LTC tokens", async () => {
             const response = await ticket.balanceOf(user)
             assert.equal(response, 0)
         })
     })
 
-    describe("buyTickets", async function () {
+    describe("buyTickets", () => {
         let account
-        beforeEach(async function () {
+        beforeEach(async () => {
             const accounts = await ethers.getSigners()
             account = accounts[1]
         })
 
-        it("require msg.value == 0.01 ether", async function () {
+        it("require msg.value == 0.01 ether", async () => {
             await expect(
                 ticket.buyTickets({ value: ethers.utils.parseEther("0.001") })
             ).to.be.revertedWith("1 ticket is 0.01 eth")
         })
 
-        it("user buys 1 ticket for 0.01 eth", async function () {
+        it("user buys 1 ticket for 0.01 eth", async () => {
             const ticketConnectedContract = await ticket.connect(account)
             await ticketConnectedContract.buyTickets({
                 value: ethers.utils.parseEther("0.01"),
@@ -55,7 +55,7 @@ describe("Ticket", async function () {
             )
         })
 
-        it("user buys 2 tickets for 0.02 eth", async function () {
+        it("user buys 2 tickets for 0.02 eth", async () => {
             const initial_balance = await ticket.provider.getBalance(
                 account.address
             )
@@ -82,7 +82,7 @@ describe("Ticket", async function () {
             assert.equal(expected.toString(), balance.toString())
         })
 
-        it("user gets a change after buying 1 ticket for 0.015 eth", async function () {
+        it("user gets a change after buying 1 ticket for 0.015 eth", async () => {
             const initial_balance = await ticket.provider.getBalance(
                 account.address
             )
@@ -109,14 +109,14 @@ describe("Ticket", async function () {
         })
     })
 
-    describe("BuyNumberOfTickets", async function () {
+    describe("BuyNumberOfTickets", () => {
         let account
-        beforeEach(async function () {
+        beforeEach(async () => {
             const accounts = await ethers.getSigners()
             account = accounts[1]
         })
 
-        it("user buys 11 tickets for 0.11 eth", async function () {
+        it("user buys 11 tickets for 0.11 eth", async () => {
             const initial_balance = await ticket.provider.getBalance(
                 account.address
             )
@@ -146,7 +146,7 @@ describe("Ticket", async function () {
             assert.equal(expected.toString(), balance.toString())
         })
 
-        it("user gets a change after buying 10 ticket for 1 eth", async function () {
+        it("user gets a change after buying 10 ticket for 1 eth", async () => {
             const initial_balance = await ticket.provider.getBalance(
                 account.address
             )
@@ -177,7 +177,7 @@ describe("Ticket", async function () {
         })
     })
 
-    describe("StableCoinMock", async () => {
+    describe("StableCoinMock", () => {
         it("deploys 100 stable tokens", async () => {
             const balance = await stable.balanceOf(deployer)
             assert.equal(balance.toString(), initialSupply.toString())

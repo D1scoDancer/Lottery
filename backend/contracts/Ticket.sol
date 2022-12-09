@@ -10,7 +10,8 @@ contract Ticket is ERC20 {
     event BuyTickets(uint256 num_tickets);
 
     constructor(uint256 initialSupply, address _token) ERC20("LTicket", "LTC") {
-        token = IERC20(_token); // TODO: hardcode
+        //TODO: taking stable address in constructor is not the best option, change later
+        token = IERC20(_token);
         _mint(msg.sender, initialSupply);
     }
 
