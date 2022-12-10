@@ -1,10 +1,15 @@
 import React, { useState } from "react"
 
 import { ethers } from "../../ethers-5.1.esm.min.js"
-import { contractTicketAddress, TicketAbi } from "../constants.js"
+import {
+    contractTicketAddress,
+    TicketAbi,
+    contractStableAddress,
+    StableAbi,
+} from "../constants.js"
 import listenForTxMine from "../../utils/ListenForTxMine"
 
-const BuyNumberOfTickets = () => {
+const BuyTicketsForStable = () => {
     const [numberOfTickets, changeNumberOfTickets] = useState(1)
 
     const handleChange = (event) => {
@@ -22,15 +27,16 @@ const BuyNumberOfTickets = () => {
                 TicketAbi,
                 signer
             )
-
+            const stable = new ethers.Contract(
+                contractStableAddress,
+                StableAbi,
+                signer
+            )
             try {
-                const txResponse = await contract.BuyNumberOfTickets(
-                    numberOfTickets,
-                    {
-                        value: ethers.utils.parseEther(
-                            (numberOfTickets * 0.01).toString()
-                        ),
-                    }
+                await stable.approve(contractTicketAddress, 10)
+                console.log("Approved!") // Нужна проверка чтобы я не approve больше чем есть на аккаунте
+                const txResponse = await contract.buyTicketsForStable(
+                    numberOfTickets
                 )
                 await listenForTxMine(txResponse, provider)
                 console.log("Done!")
@@ -42,6 +48,7 @@ const BuyNumberOfTickets = () => {
 
     return (
         <div>
+            <div> Buy Tickets For Stable </div>
             <label> Number of tickets </label>
             <input
                 id="numberOfTickets"
@@ -52,11 +59,11 @@ const BuyNumberOfTickets = () => {
                 onChange={handleChange}
                 value={numberOfTickets}
             />
-            <button id="buyNumberOfTicketsBtn" onClick={handleClick}>
+            <button id="buyTicketsForStableBtn" onClick={handleClick}>
                 Buy
             </button>
         </div>
     )
 }
 
-export default BuyNumberOfTickets
+export default BuyTicketsForStable
