@@ -66,5 +66,74 @@ describe("Lottery", () => {
         })
     })
 
-    describe("Finish Lottery", () => {})
+    describe("Finish Lottery", () => {
+        beforeEach(async () => {
+            for (let i = 0; i < 10; i++) {
+                const user = accounts[1 + i]
+                const userConnection = await lottery.connect(user)
+
+                await userConnection.enterLottery({ value: DOUBLE_FEE })
+            }
+        })
+
+        it("can call finishLottery() while being an owner", async () => {
+            await expect(lottery.finishLottery([])).not.to.be.revertedWith(
+                "Ownable: caller is not the owner"
+            )
+        })
+
+        it("cannot call finishLottery() without being an owner", async () => {
+            const user = accounts[1]
+            const userConnection = await lottery.connect(user)
+
+            await expect(userConnection.finishLottery([])).to.be.revertedWith(
+                "Ownable: caller is not the owner"
+            )
+        })
+
+        it("random is different depending on seed", async () => {
+            const tx1Response = await lottery.finishLottery([]) // Account #3
+            const tx1Receipt = await tx1Response.wait(1)
+            const winner1 = tx1Receipt.events[0].args.winner
+
+            for (let i = 0; i < 10; i++) {
+                const user = accounts[1 + i]
+                const userConnection = await lottery.connect(user)
+
+                await userConnection.enterLottery({ value: DOUBLE_FEE })
+            }
+
+            const tx2Response = await lottery.finishLottery([1]) // Account #7
+            const tx2Receipt = await tx2Response.wait(1)
+            const winner2 = tx2Receipt.events[0].args.winner
+            console.log(winner1)
+            console.log(winner2)
+            assert.notEqual(winner2, winner1)
+        })
+
+        it("LotteryFinished event gets emitted", async () => {
+            await expect(lottery.finishLottery([])).to.emit(
+                lottery,
+                "LotteryFinished"
+            )
+        })
+
+        it("money is sent to winner", async () => {
+            const winnerBalanceBefore = await lottery.provider.getBalance(
+                accounts[3].address
+            )
+            await lottery.finishLottery([]) // Account #3
+            const winnerBalanceAfter = await lottery.provider.getBalance(
+                accounts[3].address
+            )
+            assert(winnerBalanceAfter.gt(winnerBalanceBefore))
+        })
+
+        it("s_players list gets resetted", async () => {
+            await lottery.finishLottery([])
+
+            const numPlayersAfter = await lottery.getNumPayers()
+            assert.equal(numPlayersAfter.toString(), 0)
+        })
+    })
 })
