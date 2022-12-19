@@ -24,6 +24,7 @@ contract Lottery is Ownable {
 
     function enterLottery() external payable {
         if (msg.value < FEE) {
+            // <= ?
             revert Lottery__NotEnoughMoney();
         }
         s_players.push(payable(msg.sender)); // check if already exists
@@ -46,6 +47,10 @@ contract Lottery is Ownable {
     /* Getter Functions */
     function getPlayer(uint index) public view returns (address) {
         return s_players[index];
+    }
+
+    function getNumPayers() public view returns (uint) {
+        return s_players.length;
     }
 
     function getFEE() public pure returns (uint) {

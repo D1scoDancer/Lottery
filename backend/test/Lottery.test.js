@@ -6,6 +6,8 @@ describe("Lottery", () => {
     let accounts
     let lottery
     const FEE = ethers.utils.parseEther("0.001")
+    const DOUBLE_FEE = 2 * FEE
+
     beforeEach(async () => {
         deployer = (await getNamedAccounts()).deployer
         accounts = await ethers.getSigners()
@@ -18,24 +20,51 @@ describe("Lottery", () => {
             const owner = await lottery.owner()
             assert.equal(owner, deployer)
         })
+    })
 
-        it("can call finishLottery() while being an owner", async () => {
-            await expect(lottery.finishLottery([])).not.to.be.revertedWith(
-                "Ownable: caller is not the owner"
+    describe("Enter Lottery", () => {
+        it("can enter with msg.value >= FEE", async () => {
+            await expect(
+                lottery.enterLottery({ value: DOUBLE_FEE })
+            ).not.to.be.revertedWith("Lottery__NotEnoughMoney()")
+        })
+
+        it("reverted with custom error when msg.value < FEE", async () => {
+            await expect(lottery.enterLottery({ value: 0 })).to.be.revertedWith(
+                "Lottery__NotEnoughMoney()"
             )
         })
 
-        it("cannot call finishLottery() without being an owner", async () => {
-            const user = accounts[1]
-            const userConnection = await lottery.connect(user)
+        it("address gets pushed to s_players list", async () => {
+            const numPlayersBefore = await lottery.getNumPayers()
+            await lottery.enterLottery({ value: DOUBLE_FEE })
+            const numPlayersAfter = await lottery.getNumPayers()
+            assert.equal(
+                numPlayersAfter.toString(),
+                numPlayersBefore.add(1).toString()
+            )
+        })
 
-            await expect(userConnection.finishLottery([])).to.be.revertedWith(
-                "Ownable: caller is not the owner"
+        it("event gets emited with correct address", async () => {
+            await expect(lottery.enterLottery({ value: DOUBLE_FEE }))
+                .to.emit(lottery, "LotteryEntered")
+                .withArgs(deployer)
+        })
+
+        it("lottery balance increases by msg.value", async () => {
+            const lotteryBalanceBefore = await lottery.provider.getBalance(
+                lottery.address
+            )
+            await lottery.enterLottery({ value: DOUBLE_FEE })
+            const lotteryBalanceAfter = await lottery.provider.getBalance(
+                lottery.address
+            )
+            assert.equal(
+                lotteryBalanceAfter.toString(),
+                lotteryBalanceBefore.add(DOUBLE_FEE).toString()
             )
         })
     })
-
-    describe("Enter Lottery", () => {})
 
     describe("Finish Lottery", () => {})
 })
