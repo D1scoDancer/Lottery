@@ -9,6 +9,7 @@ import {
 } from "../constants.js"
 import listenForTxMine from "../../utils/ListenForTxMine"
 
+/** DEPRECATED */
 const BuyTicketsForStable = () => {
     const [numberOfTickets, changeNumberOfTickets] = useState(1)
 

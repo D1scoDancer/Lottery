@@ -4,6 +4,7 @@ import { ethers } from "../../ethers-5.1.esm.min.js"
 import { contractTicketAddress, TicketAbi } from "../constants.js"
 import listenForTxMine from "../../utils/ListenForTxMine"
 
+/** DEPRECATED */
 const BuyNumberOfTickets = () => {
     const [numberOfTickets, changeNumberOfTickets] = useState(1)
 
