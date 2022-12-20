@@ -1,8 +1,8 @@
 import React from "react"
 
 import ConnectBtn from "../ConnectBtn/ConnectBtn"
-import BuyNumberOfTickets from "../BuyNumberOfTickets/BuyNumberOfTickets"
-import BuyTicketsForStable from "../BuyTicketsForStable/BuyTicketsForStable"
+import AccountStats from "../AccountStats/AccountStats"
+import Lottery from "../Lottery/Lottery"
 
 const TicketShopping = () => {
     return (
@@ -10,10 +10,12 @@ const TicketShopping = () => {
             <h1>Web3 Lottery</h1>
             <script src="./index.js" type="module"></script>{" "}
             {/* Нужно ли это? */}
+            <hr />
             <ConnectBtn />
-            <BuyNumberOfTickets />
-            <br />
-            <BuyTicketsForStable />
+            <AccountStats />
+            <hr />
+            <Lottery />
+            <hr />
         </div>
     )
 }
