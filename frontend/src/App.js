@@ -1,10 +1,10 @@
 import "./App.css"
-import TicketShopping from "./components/TicketShopping/TicketShopping"
+import AccountStats from "./components/AccountStats/AccountStats"
 
 function App() {
     return (
         <div className="App">
-            <TicketShopping />
+            <AccountStats />
         </div>
     )
 }
