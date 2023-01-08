@@ -7,10 +7,11 @@ const ethers = require("ethers")
 
 const Lottery = () => {
     const [lotteryInput, setLotteryInput] = useState(0.001)
+    const [seedInput, setSeedInput] = useState("")
     const [numPlayers, setNumPlayers] = useState("?")
     const [fee, setFee] = useState(0)
 
-    const enterLotteryHandler = async (eth_value) => {
+    const enterLotteryHandler = async () => {
         if (window.ethereum) {
             const provider = new ethers.providers.Web3Provider(window.ethereum)
             const signer = provider.getSigner()
@@ -33,7 +34,28 @@ const Lottery = () => {
         }
     }
 
-    const finishLotteryHandler = () => {}
+    const finishLotteryHandler = async () => {
+        if (window.ethereum) {
+            const provider = new ethers.providers.Web3Provider(window.ethereum)
+            const signer = provider.getSigner()
+            const contract = new ethers.Contract(
+                contractLotteryAddress,
+                LotteryAbi,
+                signer
+            )
+            try {
+                const txResponse = await contract.finishLottery(
+                    ethers.utils.toUtf8Bytes(seedInput)
+                )
+                await listenForTxMine(txResponse, provider)
+                console.log("Finished lottery!")
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            console.log("Install MetaMask")
+        }
+    }
 
     const getPlayerHandler = () => {}
 
@@ -92,6 +114,12 @@ const Lottery = () => {
                 </button>
             </div>
             <div className="finishLottery">
+                <input
+                    value={seedInput}
+                    onInput={(e) => {
+                        setSeedInput(e.target.value)
+                    }}
+                />
                 <button onClick={finishLotteryHandler} className="storage">
                     Finish Lottery (only deployer)
                 </button>
