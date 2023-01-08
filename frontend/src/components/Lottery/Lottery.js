@@ -70,7 +70,7 @@ const Lottery = () => {
             )
             try {
                 const address = await contract.getPlayer(playerIndexInput)
-                setPlayer(address).toString()
+                setPlayer(address)
             } catch (error) {
                 console.log(error)
             }
