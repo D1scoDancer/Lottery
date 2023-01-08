@@ -36,9 +36,9 @@ describe("Lottery", () => {
         })
 
         it("address gets pushed to s_players list", async () => {
-            const numPlayersBefore = await lottery.getNumPayers()
+            const numPlayersBefore = await lottery.getNumPlayers()
             await lottery.enterLottery({ value: DOUBLE_FEE })
-            const numPlayersAfter = await lottery.getNumPayers()
+            const numPlayersAfter = await lottery.getNumPlayers()
             assert.equal(
                 numPlayersAfter.toString(),
                 numPlayersBefore.add(1).toString()
@@ -132,7 +132,7 @@ describe("Lottery", () => {
         it("s_players list gets resetted", async () => {
             await lottery.finishLottery([])
 
-            const numPlayersAfter = await lottery.getNumPayers()
+            const numPlayersAfter = await lottery.getNumPlayers()
             assert.equal(numPlayersAfter.toString(), 0)
         })
     })
