@@ -49,7 +49,7 @@ contract Lottery is Ownable {
         return s_players[index];
     }
 
-    function getNumPayers() public view returns (uint) {
+    function getNumPlayers() public view returns (uint) {
         return s_players.length;
     }
 
