@@ -6,6 +6,7 @@ import listenForTxMine from "../../utils/ListenForTxMine"
 const ethers = require("ethers")
 
 const Lottery = () => {
+    const [numPlayers, setNumPlayers] = useState("?")
     const [fee, setFee] = useState(0)
 
     const enterLotteryHandler = () => {}
@@ -14,7 +15,25 @@ const Lottery = () => {
 
     const getPlayerHandler = () => {}
 
-    const getNumPlayersHandler = () => {}
+    const getNumPlayersHandler = async () => {
+        if (window.ethereum) {
+            const provider = new ethers.providers.Web3Provider(window.ethereum)
+            const signer = provider.getSigner()
+            const contract = new ethers.Contract(
+                contractLotteryAddress,
+                LotteryAbi,
+                signer
+            )
+            try {
+                const number = await contract.getNumPlayers()
+                setNumPlayers(number.toString())
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            console.log("Install MetaMask")
+        }
+    }
 
     const getFEEHandler = async () => {
         if (window.ethereum) {
@@ -61,7 +80,7 @@ const Lottery = () => {
                 <button onClick={getNumPlayersHandler} className="nostorage">
                     Get NumPlayers
                 </button>
-                <label>0</label>
+                <label>{numPlayers}</label>
             </div>
             <div className="getter">
                 <button onClick={getFEEHandler} className="nostorage">

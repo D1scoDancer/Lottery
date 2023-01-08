@@ -97,7 +97,7 @@ export const LotteryAbi = [
     },
     {
         inputs: [],
-        name: "getNumPayers",
+        name: "getNumPlayers",
         outputs: [
             {
                 internalType: "uint256",
