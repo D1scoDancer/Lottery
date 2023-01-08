@@ -19,3 +19,11 @@
 .nostorage {
     background-color: rgb(85, 147, 240);
 }
+
+input + button {
+    margin-left: 10px;
+}
+
+button + label {
+    margin-left: 10px;
+}
