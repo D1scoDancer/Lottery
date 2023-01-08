@@ -8,6 +8,8 @@ const ethers = require("ethers")
 const Lottery = () => {
     const [lotteryInput, setLotteryInput] = useState(0.001)
     const [seedInput, setSeedInput] = useState("")
+    const [playerIndexInput, setPlayerIndexInput] = useState(0)
+    const [player, setPlayer] = useState("0x...")
     const [numPlayers, setNumPlayers] = useState("?")
     const [fee, setFee] = useState(0)
 
@@ -57,7 +59,25 @@ const Lottery = () => {
         }
     }
 
-    const getPlayerHandler = () => {}
+    const getPlayerHandler = async () => {
+        if (window.ethereum) {
+            const provider = new ethers.providers.Web3Provider(window.ethereum)
+            const signer = provider.getSigner()
+            const contract = new ethers.Contract(
+                contractLotteryAddress,
+                LotteryAbi,
+                signer
+            )
+            try {
+                const address = await contract.getPlayer(playerIndexInput)
+                setPlayer(address).toString()
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            console.log("Install MetaMask")
+        }
+    }
 
     const getNumPlayersHandler = async () => {
         if (window.ethereum) {
@@ -126,11 +146,17 @@ const Lottery = () => {
             </div>
             <hr />
             <div className="getter">
-                <input type="number" />
+                <input
+                    type="number"
+                    value={playerIndexInput}
+                    onInput={(e) => {
+                        setPlayerIndexInput(e.target.value)
+                    }}
+                />
                 <button onClick={getPlayerHandler} className="nostorage">
                     Get Player
                 </button>
-                <label>0x0000</label>
+                <label>{player}</label>
             </div>
             <div className="getter">
                 <button onClick={getNumPlayersHandler} className="nostorage">
