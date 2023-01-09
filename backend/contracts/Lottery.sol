@@ -7,6 +7,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 
 /* Errors */
 error Lottery__NotEnoughMoney();
+error Lottery__TransferFailed();
 
 /**@title Web3 Lottery with Aave
  * @author Aleksey Shulikov
@@ -14,9 +15,6 @@ error Lottery__NotEnoughMoney();
 contract Lottery is Ownable, VRFConsumerBaseV2 {
     /* Type declarations */
     /* State variables */
-    address payable[] private s_players;
-    uint private constant FEE = 0.001 ether;
-
     VRFCoordinatorV2Interface private immutable i_vrfCoordinator;
     bytes32 private immutable i_gasLane;
     uint64 private immutable i_subscriptionId;
@@ -24,10 +22,16 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
     uint16 private constant REQUEST_CONFIRMATIONS = 3;
     uint32 private constant NUM_WORDS = 1;
 
+    /* Lottery variables */
+    address payable[] private s_players;
+    uint private constant FEE = 0.001 ether;
+    address private s_recentWinner;
+
     /* Events */ // which params should be indexed?
     event LotteryEntered(address player);
     event LotteryFinished(address winner, uint prize);
     event RequestedRandomWinner(uint256 requestId);
+    event WinnerPicked(address winner);
 
     /* Functions */
     constructor(
@@ -63,9 +67,17 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
     }
 
     function fulfillRandomWords(
-        uint256 requestId,
+        uint256 /*requestId*/,
         uint256[] memory randomWords
-    ) internal override {}
+    ) internal override {
+        uint256 indexOfWinner = randomWords[0] % s_players.length;
+        s_recentWinner = s_players[indexOfWinner];
+        (bool success, ) = s_recentWinner.call{value: address(this).balance}("");
+        if (!success) {
+            revert Lottery__TransferFailed();
+        }
+        emit WinnerPicked(s_recentWinner);
+    }
 
     /**
      * @dev for testing purposes, should be changed for automatic function that ends lottery on time
@@ -91,5 +103,9 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
 
     function getFEE() public pure returns (uint) {
         return FEE;
+    }
+
+    function getRecentWinner() public view returns (address) {
+        return s_recentWinner;
     }
 }
