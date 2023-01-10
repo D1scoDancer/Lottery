@@ -93,7 +93,7 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
 
         emit LotteryFinished(s_players[winnerIndex], address(this).balance);
 
-        s_players[winnerIndex].transfer(address(this).balance);
+        s_players[winnerIndex].transfer(address(this).balance); // change for call
         s_players = new address payable[](0);
     }
 
