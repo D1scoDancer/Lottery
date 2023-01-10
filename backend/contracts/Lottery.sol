@@ -14,6 +14,11 @@ error Lottery__TransferFailed();
  */
 contract Lottery is Ownable, VRFConsumerBaseV2 {
     /* Type declarations */
+    enum LotteryState {
+        OPEN,
+        CALCULATING
+    }
+
     /* State variables */
     VRFCoordinatorV2Interface private immutable i_vrfCoordinator;
     bytes32 private immutable i_gasLane;
