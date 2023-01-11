@@ -1,5 +1,6 @@
-export const contractLotteryAddress = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9" // localhost
-// "0xA41cD71b91F3689F5d7a77F36d5DBAf3F2cF008C" // Goerli
+export const contractLotteryAddress =
+    // "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9" // localhost
+    "0x7DE9C8B81780E28f6FdEC8285515d702CE712bda" // Goerli
 export const LotteryAbi = [
     {
         inputs: [
