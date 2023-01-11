@@ -1,15 +1,56 @@
-export const contractLotteryAddress =
-    "0x5FbDB2315678afecb367f032d93F642f64180aa3" // localhost
+export const contractLotteryAddress = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9" // localhost
 // "0xA41cD71b91F3689F5d7a77F36d5DBAf3F2cF008C" // Goerli
 export const LotteryAbi = [
     {
-        inputs: [],
+        inputs: [
+            {
+                internalType: "address",
+                name: "vrfCoordinatorV2",
+                type: "address",
+            },
+            {
+                internalType: "bytes32",
+                name: "gasLane",
+                type: "bytes32",
+            },
+            {
+                internalType: "uint64",
+                name: "subscriptionId",
+                type: "uint64",
+            },
+            {
+                internalType: "uint32",
+                name: "callbackGasLimit",
+                type: "uint32",
+            },
+        ],
         stateMutability: "nonpayable",
         type: "constructor",
     },
     {
         inputs: [],
         name: "Lottery__NotEnoughMoney",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "Lottery__TransferFailed",
+        type: "error",
+    },
+    {
+        inputs: [
+            {
+                internalType: "address",
+                name: "have",
+                type: "address",
+            },
+            {
+                internalType: "address",
+                name: "want",
+                type: "address",
+            },
+        ],
+        name: "OnlyCoordinatorCanFulfill",
         type: "error",
     },
     {
@@ -61,6 +102,32 @@ export const LotteryAbi = [
             },
         ],
         name: "OwnershipTransferred",
+        type: "event",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: "uint256",
+                name: "requestId",
+                type: "uint256",
+            },
+        ],
+        name: "RequestedRandomWinner",
+        type: "event",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: "address",
+                name: "winner",
+                type: "address",
+            },
+        ],
+        name: "WinnerPicked",
         type: "event",
     },
     {
@@ -130,7 +197,7 @@ export const LotteryAbi = [
     },
     {
         inputs: [],
-        name: "owner",
+        name: "getRecentWinner",
         outputs: [
             {
                 internalType: "address",
@@ -143,7 +210,45 @@ export const LotteryAbi = [
     },
     {
         inputs: [],
+        name: "owner",
+        outputs: [
+            {
+                internalType: "address",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "requestId",
+                type: "uint256",
+            },
+            {
+                internalType: "uint256[]",
+                name: "randomWords",
+                type: "uint256[]",
+            },
+        ],
+        name: "rawFulfillRandomWords",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [],
         name: "renounceOwnership",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "requestRandomWinner",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
