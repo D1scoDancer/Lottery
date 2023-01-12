@@ -30,7 +30,6 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
     /* Lottery variables */
     address payable[] private s_players;
     uint private constant FEE = 0.001 ether;
-    address private s_recentWinner;
 
     /* Events */
     event LotteryEntered(address indexed player);
@@ -75,12 +74,12 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
         uint256[] memory randomWords
     ) internal override {
         uint256 indexOfWinner = randomWords[0] % s_players.length;
-        s_recentWinner = s_players[indexOfWinner];
-        (bool success, ) = s_recentWinner.call{value: address(this).balance}("");
+        address winner = s_players[indexOfWinner];
+        (bool success, ) = winner.call{value: address(this).balance}("");
         if (!success) {
             revert Lottery__TransferFailed();
         }
-        emit WinnerPicked(s_recentWinner);
+        emit WinnerPicked(winner);
     }
 
     /**
@@ -107,9 +106,5 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
 
     function getFEE() public pure returns (uint) {
         return FEE;
-    }
-
-    function getRecentWinner() public view returns (address) {
-        return s_recentWinner;
     }
 }
