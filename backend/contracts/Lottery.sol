@@ -32,11 +32,11 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
     uint private constant FEE = 0.001 ether;
     address private s_recentWinner;
 
-    /* Events */ // which params should be indexed?
-    event LotteryEntered(address player);
-    event LotteryFinished(address winner, uint prize);
-    event RequestedRandomWinner(uint256 requestId);
-    event WinnerPicked(address winner);
+    /* Events */
+    event LotteryEntered(address indexed player);
+    event LotteryFinished(address indexed winner, uint prize);
+    event RequestedRandomWinner(uint256 indexed requestId);
+    event WinnerPicked(address indexed winner);
 
     /* Functions */
     constructor(
