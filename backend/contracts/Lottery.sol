@@ -15,6 +15,7 @@ error Lottery__TransferFailed();
 contract Lottery is Ownable, VRFConsumerBaseV2 {
     /* Type declarations */
     enum LotteryState {
+        // make use of enum or delete
         OPEN,
         CALCULATING
     }
@@ -29,13 +30,14 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
 
     /* Lottery variables */
     address payable[] private s_players;
+    mapping(address => uint256) private s_playerToStake;
+    uint256 public s_totalStake;
     uint private constant FEE = 0.001 ether;
 
     /* Events */
     event LotteryEntered(address indexed player);
     event LotteryFinished(address indexed winner, uint prize);
     event RequestedRandomWinner(uint256 indexed requestId);
-    event WinnerPicked(address indexed winner);
 
     /* Functions */
     constructor(
@@ -54,7 +56,11 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
         if (msg.value <= FEE) {
             revert Lottery__NotEnoughMoney();
         }
-        s_players.push(payable(msg.sender)); // check if already exists
+        if (s_playerToStake[msg.sender] == 0) {
+            s_players.push(payable(msg.sender));
+        }
+        s_playerToStake[msg.sender] += msg.value - FEE;
+        s_totalStake += msg.value - FEE;
         emit LotteryEntered(msg.sender);
     }
 
@@ -73,13 +79,21 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
         uint256 /*requestId*/,
         uint256[] memory randomWords
     ) internal override {
-        uint256 indexOfWinner = randomWords[0] % s_players.length;
-        address winner = s_players[indexOfWinner];
-        (bool success, ) = winner.call{value: address(this).balance}("");
+        uint256 winnerIndex = randomWords[0] % s_players.length;
+        address winner = s_players[winnerIndex];
+        uint prize = s_totalStake;
+
+        for (uint index = 0; index < s_players.length; index++) {
+            s_playerToStake[s_players[index]] = 0;
+        }
+        s_players = new address payable[](0);
+        s_totalStake = 0;
+
+        (bool success, ) = winner.call{value: prize}("");
         if (!success) {
             revert Lottery__TransferFailed();
         }
-        emit WinnerPicked(winner);
+        emit LotteryFinished(winner, prize);
     }
 
     /**
@@ -89,12 +103,19 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
         uint rnd = uint(keccak256((seed)));
         uint winnerIndex = rnd % s_players.length;
         address winner = s_players[winnerIndex];
+        uint prize = s_totalStake;
+
+        for (uint index = 0; index < s_players.length; index++) {
+            s_playerToStake[s_players[index]] = 0;
+        }
         s_players = new address payable[](0);
-        (bool success, ) = winner.call{value: address(this).balance}("");
+        s_totalStake = 0;
+
+        (bool success, ) = winner.call{value: prize}("");
         if (!success) {
             revert Lottery__TransferFailed();
         }
-        emit LotteryFinished(winner, address(this).balance);
+        emit LotteryFinished(winner, prize);
     }
 
     /* Getter Functions */
@@ -108,5 +129,9 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
 
     function getFEE() public pure returns (uint) {
         return FEE;
+    }
+
+    function getBalance() public view returns (uint) {
+        return address(this).balance;
     }
 }
