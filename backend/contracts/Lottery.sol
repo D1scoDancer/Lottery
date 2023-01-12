@@ -79,8 +79,7 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
         uint256 /*requestId*/,
         uint256[] memory randomWords
     ) internal override {
-        uint256 winnerIndex = randomWords[0] % s_players.length;
-        address winner = s_players[winnerIndex];
+        address winner = getWinner(randomWords[0]);
         uint prize = s_totalStake;
 
         for (uint index = 0; index < s_players.length; index++) {
@@ -101,8 +100,7 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
      */
     function finishLottery(bytes memory seed) public onlyOwner {
         uint rnd = uint(keccak256((seed)));
-        uint winnerIndex = rnd % s_players.length;
-        address winner = s_players[winnerIndex];
+        address winner = getWinner(rnd);
         uint prize = s_totalStake;
 
         for (uint index = 0; index < s_players.length; index++) {
@@ -116,6 +114,17 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
             revert Lottery__TransferFailed();
         }
         emit LotteryFinished(winner, prize);
+    }
+
+    function getWinner(uint randomNumber) internal view returns (address winner) {
+        uint random = randomNumber % s_totalStake;
+        uint sum = 0;
+        for (uint i = 0; i < s_players.length; i++) {
+            sum += s_playerToStake[s_players[i]];
+            if (sum > random) {
+                return s_players[i];
+            }
+        }
     }
 
     /* Getter Functions */
