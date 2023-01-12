@@ -28,8 +28,14 @@ const { developmentChains } = require("../../helper-hardhat-config")
           })
 
           describe("Enter Lottery", () => {
-              it("can enter with msg.value >= FEE", async () => {
+              it("can enter with msg.value > FEE", async () => {
                   await expect(lottery.enterLottery({ value: DOUBLE_FEE })).not.to.be.revertedWith(
+                      "Lottery__NotEnoughMoney()"
+                  )
+              })
+
+              it("reverted with custom error when msg.value = FEE", async () => {
+                  await expect(lottery.enterLottery({ value: FEE })).to.be.revertedWith(
                       "Lottery__NotEnoughMoney()"
                   )
               })

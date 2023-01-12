@@ -52,8 +52,7 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
     }
 
     function enterLottery() external payable {
-        if (msg.value < FEE) {
-            // <= ?
+        if (msg.value <= FEE) {
             revert Lottery__NotEnoughMoney();
         }
         s_players.push(payable(msg.sender)); // check if already exists
