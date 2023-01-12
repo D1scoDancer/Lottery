@@ -88,11 +88,13 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
     function finishLottery(bytes memory seed) public onlyOwner {
         uint rnd = uint(keccak256((seed)));
         uint winnerIndex = rnd % s_players.length;
-
-        emit LotteryFinished(s_players[winnerIndex], address(this).balance);
-
-        s_players[winnerIndex].transfer(address(this).balance); // change for call
+        address winner = s_players[winnerIndex];
         s_players = new address payable[](0);
+        (bool success, ) = winner.call{value: address(this).balance}("");
+        if (!success) {
+            revert Lottery__TransferFailed();
+        }
+        emit LotteryFinished(winner, address(this).balance);
     }
 
     /* Getter Functions */
