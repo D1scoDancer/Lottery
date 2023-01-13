@@ -72,11 +72,25 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
                   assert.equal(numPlayersAfter.toString(), numPlayersBefore.add(1).toString())
               })
 
-              it("address doesn't get pushed to s_players list on second entry", async () => {}) // TODO:
+              it("address doesn't get pushed to s_players list on second entry", async () => {
+                  const numPlayersBefore = await lottery.getNumPlayers()
+                  await lottery.enterLottery({ value: DOUBLE_FEE })
+                  await lottery.enterLottery({ value: DOUBLE_FEE })
+                  const numPlayersAfter = await lottery.getNumPlayers()
+                  assert.equal(numPlayersAfter.toString(), numPlayersBefore.add(1).toString())
+              })
 
-              it("s_playerToStake[address] increases by msg.value - FEE", async () => {}) // TODO:
+              it("s_playerToStake[address] increases by msg.value - FEE", async () => {
+                  await lottery.enterLottery({ value: DOUBLE_FEE })
+                  const stake = await lottery.getStake()
+                  assert.equal(stake.toString(), FEE.toString())
+              })
 
-              it("s_totalStake increases by msg.value - FEE", async () => {}) // TODO:
+              it("s_totalStake increases by msg.value - FEE", async () => {
+                  await lottery.enterLottery({ value: DOUBLE_FEE })
+                  const totalStake = await lottery.getTotalStake()
+                  assert.equal(totalStake.toString(), FEE.toString())
+              })
 
               it("event gets emited with correct address", async () => {
                   await expect(lottery.enterLottery({ value: DOUBLE_FEE }))
