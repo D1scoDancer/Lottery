@@ -136,4 +136,16 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
     function getBalance() public view returns (uint) {
         return address(this).balance;
     }
+
+    function getGasLane() public view returns (bytes32) {
+        return i_gasLane;
+    }
+
+    function getSubscriptionId() public view returns (uint64) {
+        return i_subscriptionId;
+    }
+
+    function getCallbackGasLimit() public view returns (uint32) {
+        return i_callbackGasLimit;
+    }
 }
