@@ -1,6 +1,6 @@
 const { assert, expect } = require("chai")
 const { deployments, ethers, getNamedAccounts, network } = require("hardhat")
-const { developmentChains } = require("../../helper-hardhat-config")
+const { developmentChains, networkConfig } = require("../../helper-hardhat-config")
 
 !developmentChains.includes(network.name)
     ? describe.skip()
@@ -25,10 +25,25 @@ const { developmentChains } = require("../../helper-hardhat-config")
                   const owner = await lottery.owner()
                   assert.equal(owner, deployer)
               })
+
               it("i_vrfCoordinator is set", async () => {}) // TODO:
-              it("i_gasLane is set", async () => {}) // TODO:
-              it("i_subscriptionId is set", async () => {}) // TODO:
-              it("i_callbackGasLimit is set", async () => {}) // TODO:
+
+              it("i_gasLane is set", async () => {
+                  const gasLane = networkConfig[31337].gasLane
+                  const i_gasLane = await lottery.getGasLane()
+                  assert.equal(i_gasLane, gasLane)
+              })
+
+              it("i_subscriptionId is set", async () => {
+                  const i_subscriptionId = await lottery.getSubscriptionId()
+                  assert.equal(i_subscriptionId.toString(), "1")
+              })
+
+              it("i_callbackGasLimit is set", async () => {
+                  const callbackGasLimit = networkConfig[31337].callbackGasLimit
+                  const i_callbackGasLimit = await lottery.getCallbackGasLimit()
+                  assert.equal(i_callbackGasLimit, callbackGasLimit)
+              })
           })
 
           describe("Enter Lottery", () => {
