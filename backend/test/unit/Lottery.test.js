@@ -25,6 +25,10 @@ const { developmentChains } = require("../../helper-hardhat-config")
                   const owner = await lottery.owner()
                   assert.equal(owner, deployer)
               })
+              it("i_vrfCoordinator is set", async () => {}) // TODO:
+              it("i_gasLane is set", async () => {}) // TODO:
+              it("i_subscriptionId is set", async () => {}) // TODO:
+              it("i_callbackGasLimit is set", async () => {}) // TODO:
           })
 
           describe("Enter Lottery", () => {
@@ -46,12 +50,18 @@ const { developmentChains } = require("../../helper-hardhat-config")
                   )
               })
 
-              it("address gets pushed to s_players list", async () => {
+              it("new address gets pushed to s_players list", async () => {
                   const numPlayersBefore = await lottery.getNumPlayers()
                   await lottery.enterLottery({ value: DOUBLE_FEE })
                   const numPlayersAfter = await lottery.getNumPlayers()
                   assert.equal(numPlayersAfter.toString(), numPlayersBefore.add(1).toString())
               })
+
+              it("address doesn't get pushed to s_players list on second entry", async () => {}) // TODO:
+
+              it("s_playerToStake[address] increases by msg.value - FEE", async () => {}) // TODO:
+
+              it("s_totalStake increases by msg.value - FEE", async () => {}) // TODO:
 
               it("event gets emited with correct address", async () => {
                   await expect(lottery.enterLottery({ value: DOUBLE_FEE }))
@@ -96,6 +106,7 @@ const { developmentChains } = require("../../helper-hardhat-config")
               })
 
               it("random is different depending on seed", async () => {
+                  // TODO: dont' need anymore?
                   const tx1Response = await lottery.finishLottery([]) // Account #3
                   const tx1Receipt = await tx1Response.wait(1)
                   const winner1 = tx1Receipt.events[0].args.winner
@@ -117,7 +128,7 @@ const { developmentChains } = require("../../helper-hardhat-config")
                   await expect(lottery.finishLottery([])).to.emit(lottery, "LotteryFinished")
               })
 
-              //   it("money is sent to winner", async () => { // change because picking winner changed here
+              //   it("money is sent to winner", async () => { // change because picking winner changed here // TODO:
               //       const winnerBalanceBefore = await lottery.provider.getBalance(accounts[3].address)
               //       await lottery.finishLottery([]) // Account #3
               //       const winnerBalanceAfter = await lottery.provider.getBalance(accounts[3].address)
@@ -131,18 +142,13 @@ const { developmentChains } = require("../../helper-hardhat-config")
                   assert.equal(numPlayersAfter.toString(), 0)
               })
 
-              //   it("s_playerToStake mapping gets resetted", async () => {
-              //       await lottery.finishLottery([])
+              it("s_playerToStake mapping gets resetted", async () => {}) // TODO:
 
-              //       const numPlayersAfter = await lottery.getNumPlayers()
-              //       assert.equal(numPlayersAfter.toString(), 0)
-              //   })
+              it("s_totalStake variable gets resetted", async () => {}) // TODO:
+          })
 
-              //   it("s_totalStake variable gets resetted", async () => {
-              //       await lottery.finishLottery([])
-
-              //       const numPlayersAfter = await lottery.getNumPlayers()
-              //       assert.equal(numPlayersAfter.toString(), 0)
-              //   })
+          describe("Get Winner", () => {
+              beforeEach(async () => {}) // TODO: initialize lottery state with several players
+              it("", async () => {}) //  TODO: prove that random works
           })
       })
