@@ -148,4 +148,12 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
     function getCallbackGasLimit() public view returns (uint32) {
         return i_callbackGasLimit;
     }
+
+    function getStake() public view returns (uint) {
+        return s_playerToStake[msg.sender];
+    }
+
+    function getTotalStake() public view returns (uint) {
+        return s_totalStake;
+    }
 }
