@@ -1,6 +1,5 @@
-export const contractLotteryAddress =
-    // "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9" // localhost
-    "0x7DE9C8B81780E28f6FdEC8285515d702CE712bda" // Goerli
+export const contractLotteryAddress = "0x657e563f6bEeF8bc65A53559F37Bd551E736906F" // Goeli
+// "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9" // localhost
 export const LotteryAbi = [
     {
         inputs: [
@@ -58,7 +57,7 @@ export const LotteryAbi = [
         anonymous: false,
         inputs: [
             {
-                indexed: false,
+                indexed: true,
                 internalType: "address",
                 name: "player",
                 type: "address",
@@ -71,7 +70,7 @@ export const LotteryAbi = [
         anonymous: false,
         inputs: [
             {
-                indexed: false,
+                indexed: true,
                 internalType: "address",
                 name: "winner",
                 type: "address",
@@ -109,26 +108,13 @@ export const LotteryAbi = [
         anonymous: false,
         inputs: [
             {
-                indexed: false,
+                indexed: true,
                 internalType: "uint256",
                 name: "requestId",
                 type: "uint256",
             },
         ],
         name: "RequestedRandomWinner",
-        type: "event",
-    },
-    {
-        anonymous: false,
-        inputs: [
-            {
-                indexed: false,
-                internalType: "address",
-                name: "winner",
-                type: "address",
-            },
-        ],
-        name: "WinnerPicked",
         type: "event",
     },
     {
@@ -149,6 +135,19 @@ export const LotteryAbi = [
         name: "finishLottery",
         outputs: [],
         stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "getBalance",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
         type: "function",
     },
     {
@@ -186,19 +185,6 @@ export const LotteryAbi = [
             },
         ],
         name: "getPlayer",
-        outputs: [
-            {
-                internalType: "address",
-                name: "",
-                type: "address",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "getRecentWinner",
         outputs: [
             {
                 internalType: "address",
@@ -252,6 +238,19 @@ export const LotteryAbi = [
         name: "requestRandomWinner",
         outputs: [],
         stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "s_totalStake",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
         type: "function",
     },
     {
