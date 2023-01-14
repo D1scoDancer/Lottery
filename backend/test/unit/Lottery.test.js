@@ -167,12 +167,27 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
                   await lottery.finishLottery([])
 
                   const numPlayersAfter = await lottery.getNumPlayers()
-                  assert.equal(numPlayersAfter.toString(), 0)
+                  assert.equal(numPlayersAfter.toString(), "0")
               })
 
-              it("s_playerToStake mapping gets resetted", async () => {}) // TODO:
+              it("s_playerToStake mapping gets resetted", async () => {
+                  await lottery.finishLottery([])
 
-              it("s_totalStake variable gets resetted", async () => {}) // TODO:
+                  for (let i = 0; i < 10; i++) {
+                      const user = accounts[1 + i]
+                      const userConnection = await lottery.connect(user)
+
+                      const stake = await userConnection.getStake()
+                      assert.equal(stake.toString(), "0")
+                  }
+              })
+
+              it("s_totalStake variable gets resetted", async () => {
+                  await lottery.finishLottery([])
+
+                  const s_totalStake = await lottery.getTotalStake()
+                  assert.equal(s_totalStake.toString(), "0")
+              })
           })
 
           describe("Get Winner", () => {
