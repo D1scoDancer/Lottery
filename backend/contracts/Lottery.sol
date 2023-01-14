@@ -92,7 +92,7 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
      * @dev for testing purposes, should be changed for automatic function that ends lottery on time
      */
     function finishLottery(bytes memory seed) public onlyOwner {
-        uint rnd = uint(keccak256((seed))); // TODO: add adi.encode
+        uint rnd = uint(keccak256(abi.encodePacked(seed))); // it is said to be good practice but it seems to be useless step (encoding)
         address winner = getWinner(rnd);
         uint prize = s_totalStake;
 

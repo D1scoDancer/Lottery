@@ -135,8 +135,7 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
               })
 
               it("random is different depending on seed", async () => {
-                  // TODO: dont' need anymore?
-                  const tx1Response = await lottery.finishLottery([]) // Account #3
+                  const tx1Response = await lottery.finishLottery([]) // Account #9
                   const tx1Receipt = await tx1Response.wait(1)
                   const winner1 = tx1Receipt.events[0].args.winner
 
@@ -147,7 +146,7 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
                       await userConnection.enterLottery({ value: DOUBLE_FEE })
                   }
 
-                  const tx2Response = await lottery.finishLottery([1]) // Account #7
+                  const tx2Response = await lottery.finishLottery([1]) // Account #10
                   const tx2Receipt = await tx2Response.wait(1)
                   const winner2 = tx2Receipt.events[0].args.winner
                   assert.notEqual(winner2, winner1)
