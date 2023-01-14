@@ -135,6 +135,7 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
               })
 
               it("random is different depending on seed", async () => {
+                  // still questionable if this test belongs here
                   const tx1Response = await lottery.finishLottery([]) // Account #9
                   const tx1Receipt = await tx1Response.wait(1)
                   const winner1 = tx1Receipt.events[0].args.winner
@@ -188,10 +189,5 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
                   const s_totalStake = await lottery.getTotalStake()
                   assert.equal(s_totalStake.toString(), "0")
               })
-          })
-
-          describe("Get Winner", () => {
-              beforeEach(async () => {}) // TODO: initialize lottery state with several players
-              it("", async () => {}) //  TODO: prove that random works
           })
       })
