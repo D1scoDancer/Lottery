@@ -156,12 +156,12 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
                   await expect(lottery.finishLottery([])).to.emit(lottery, "LotteryFinished")
               })
 
-              //   it("money is sent to winner", async () => { // change because picking winner changed here // TODO:
-              //       const winnerBalanceBefore = await lottery.provider.getBalance(accounts[3].address)
-              //       await lottery.finishLottery([]) // Account #3
-              //       const winnerBalanceAfter = await lottery.provider.getBalance(accounts[3].address)
-              //       assert(winnerBalanceAfter.gt(winnerBalanceBefore))
-              //   })
+              it("money is sent to winner", async () => {
+                  const winnerBalanceBefore = await lottery.provider.getBalance(accounts[9].address)
+                  await lottery.finishLottery([]) // Account #9
+                  const winnerBalanceAfter = await lottery.provider.getBalance(accounts[9].address)
+                  assert(winnerBalanceAfter.gt(winnerBalanceBefore))
+              })
 
               it("s_players list gets resetted", async () => {
                   await lottery.finishLottery([])
