@@ -6,6 +6,7 @@
   "author": "D1scoDancer <apshulikov@edu.hse.ru>",
   "license": "MIT",
   "devDependencies": {
+    "@aave/core-v3": "^1.17.1",
     "@chainlink/contracts": "^0.5.1",
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
