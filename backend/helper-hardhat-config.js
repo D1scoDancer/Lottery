@@ -17,6 +17,14 @@ const networkConfig = {
         callbackGasLimit: "500000",
         // interval: 60,
     },
+    4002: {
+        name: "fantomtest",
+        vrfCoordinatorV2: "0xbd13f08b8352A3635218ab9418E340c60d6Eb418",
+        // entranceFee: ethers.utils.parseEther("0.001"),
+        gasLane: "0x121a143066e0f2f08b620784af77cccb35c6242460b4a8ee251b4b416abaebd4",
+        subscriptionId: "8426", // probably should change
+        callbackGasLimit: "500000", // its random !CHANGE!
+    },
 }
 
 const developmentChains = ["hardhat", "localhost"]

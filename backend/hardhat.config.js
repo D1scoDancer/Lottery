@@ -31,6 +31,16 @@ module.exports = {
             chainId: 5,
             blockConfirmations: 6,
         },
+        fantomtest: {
+            // url: "https://rpc.testnet.fantom.network",
+            url: "https://fantom-testnet.public.blastapi.io	",
+            chainId: 4002,
+            accounts: [`0x${PRIVATE_KEY}`],
+            blockConfirmations: 1,
+            live: false,
+            saveDeployments: true,
+            gasMultiplier: 2,
+        },
     },
     localhost: {
         url: "http://127.0.0.1:8545/",
