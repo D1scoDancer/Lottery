@@ -32,7 +32,6 @@ module.exports = {
             blockConfirmations: 6,
         },
         fantomtest: {
-            // url: "https://rpc.testnet.fantom.network",
             url: "https://fantom-testnet.public.blastapi.io	",
             chainId: 4002,
             accounts: [`0x${PRIVATE_KEY}`],
@@ -40,6 +39,11 @@ module.exports = {
             live: false,
             saveDeployments: true,
             gasMultiplier: 2,
+        },
+        fuji: {
+            url: "https://api.avax-test.network/ext/bc/C/rpc",
+            chainId: 43113,
+            accounts: [`0x${PRIVATE_KEY}`],
         },
     },
     localhost: {
