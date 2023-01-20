@@ -1,27 +1,19 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.17;
+pragma solidity ^0.8.7;
 
-import {IPool} from "@aave/core-v3/contracts/interfaces/IPool.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
+import "@aave/core-v3/contracts/interfaces/IPool.sol";
+import "@aave/core-v3/contracts/interfaces/IPoolAddressesProvider.sol";
 
-contract AaveDeposite {
-    // erc20 deposit
-    // erc20 return
-    IPool public pool;
+contract Deposit {
     IERC20 public asset;
+    IPool public lendingPool;
 
-    constructor(address aaveV3PoolAddress, address _asset) {
-        pool = IPool(aaveV3PoolAddress);
-        asset = IERC20(_asset);
-    }
-
-    // should have modifier of who can call it
-    function deposit(uint256 amount, address onBehalfOf) public {
-        asset.approve(pool.address, amount);
-        pool.supply(asset, amount, onBehalfOf, 0);
-    }
-
-    function withdraw(uint256 amount, address to) {
-        pool.withdraw(asset.address, amount, to);
+    constructor(address _assetAddr, address poolAddressProviderAddr) {
+        asset = IERC20(_assetAddr);
+        IPoolAddressesProvider poolAddressProvider = IPoolAddressesProvider(
+            poolAddressProviderAddr
+        );
+        lendingPool = IPool(poolAddressProvider.getPool());
     }
 }
