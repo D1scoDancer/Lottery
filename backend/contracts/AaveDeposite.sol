@@ -4,8 +4,9 @@ pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@aave/core-v3/contracts/interfaces/IPool.sol";
 import "@aave/core-v3/contracts/interfaces/IPoolAddressesProvider.sol";
+import "./interfaces/IDeposit.sol";
 
-contract Deposit {
+contract Deposit is IDeposit {
     IERC20 public asset;
     IPool public lendingPool;
 
@@ -17,9 +18,10 @@ contract Deposit {
         lendingPool = IPool(poolAddressProvider.getPool());
     }
 
-    function deposit(uint amount) public {
+    function deposit(uint amount) external override {
         approveTokens(amount);
         depositTokens(amount);
+        emit Deposited(amount, address(lendingPool));
     }
 
     function approveTokens(uint amount) internal {
@@ -30,7 +32,8 @@ contract Deposit {
         lendingPool.supply(address(asset), amount, address(this), 0);
     }
 
-    function withdraw(uint amount) public {
+    function withdraw(uint amount) external override {
         lendingPool.withdraw(address(asset), amount, address(this));
+        emit Withdrawed(amount, address(this));
     }
 }

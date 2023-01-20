@@ -12,10 +12,9 @@ const ETHERSCAN_API = process.env.ETHERSCAN_API || "key"
 const COINTMARKETCAP_API = process.env.COINTMARKETCAP_API || "key"
 const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL || "key"
 
-/** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
     solidity: "0.8.17",
-    defaultNetwork: "hardhat",
+    defaultNetwork: "fuji",
     networks: {
         hardhat: {
             chainId: 31337,
@@ -62,7 +61,6 @@ module.exports = {
     namedAccounts: {
         deployer: {
             default: 0,
-            // 4: 1,
         },
         user: {
             default: 1,
