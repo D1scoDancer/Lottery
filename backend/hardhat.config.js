@@ -21,8 +21,9 @@ module.exports = {
             chainId: 31337,
             blockConfirmations: 1,
             forking: {
-                url: MAINNET_RPC_URL,
-                blockNumber: 16425232, // 17.01.23
+                // url: MAINNET_RPC_URL,
+                url: "https://api.avax.network/ext/bc/C/rpc",
+                blockNumber: 25180027,
             },
         },
         goerli: {
@@ -43,6 +44,11 @@ module.exports = {
         fuji: {
             url: "https://api.avax-test.network/ext/bc/C/rpc",
             chainId: 43113,
+            accounts: [`0x${PRIVATE_KEY}`],
+        },
+        avalanche: {
+            url: "https://api.avax.network/ext/bc/C/rpc",
+            chainId: 43114,
             accounts: [`0x${PRIVATE_KEY}`],
         },
     },
