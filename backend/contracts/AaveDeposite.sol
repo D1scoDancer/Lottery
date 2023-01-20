@@ -30,5 +30,7 @@ contract Deposit {
         lendingPool.supply(address(asset), amount, address(this), 0);
     }
 
-    function withdraw() public {}
+    function withdraw(uint amount) public {
+        lendingPool.withdraw(address(asset), amount, address(this));
+    }
 }
