@@ -16,4 +16,19 @@ contract Deposit {
         );
         lendingPool = IPool(poolAddressProvider.getPool());
     }
+
+    function deposit(uint amount) public {
+        approveTokens(amount);
+        depositTokens(amount);
+    }
+
+    function approveTokens(uint amount) internal {
+        asset.approve(address(lendingPool), amount); // should wait after that?
+    }
+
+    function depositTokens(uint amount) internal {
+        lendingPool.supply(address(asset), amount, address(this), 0);
+    }
+
+    function withdraw() public {}
 }
