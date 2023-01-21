@@ -17,11 +17,7 @@ const Lottery = () => {
         if (window.ethereum) {
             const provider = new ethers.providers.Web3Provider(window.ethereum)
             const signer = provider.getSigner()
-            const contract = new ethers.Contract(
-                contractLotteryAddress,
-                LotteryAbi,
-                signer
-            )
+            const contract = new ethers.Contract(contractLotteryAddress, LotteryAbi, signer)
             try {
                 const txResponse = await contract.enterLottery({
                     value: ethers.utils.parseEther(lotteryInput.toString()),
@@ -40,15 +36,9 @@ const Lottery = () => {
         if (window.ethereum) {
             const provider = new ethers.providers.Web3Provider(window.ethereum)
             const signer = provider.getSigner()
-            const contract = new ethers.Contract(
-                contractLotteryAddress,
-                LotteryAbi,
-                signer
-            )
+            const contract = new ethers.Contract(contractLotteryAddress, LotteryAbi, signer)
             try {
-                const txResponse = await contract.finishLottery(
-                    ethers.utils.toUtf8Bytes(seedInput)
-                )
+                const txResponse = await contract.finishLottery(ethers.utils.toUtf8Bytes(seedInput))
                 await listenForTxMine(txResponse, provider)
                 console.log("Finished lottery!")
             } catch (error) {
@@ -63,11 +53,7 @@ const Lottery = () => {
         if (window.ethereum) {
             const provider = new ethers.providers.Web3Provider(window.ethereum)
             const signer = provider.getSigner()
-            const contract = new ethers.Contract(
-                contractLotteryAddress,
-                LotteryAbi,
-                signer
-            )
+            const contract = new ethers.Contract(contractLotteryAddress, LotteryAbi, signer)
             try {
                 const address = await contract.getPlayer(playerIndexInput)
                 setPlayer(address)
@@ -83,11 +69,7 @@ const Lottery = () => {
         if (window.ethereum) {
             const provider = new ethers.providers.Web3Provider(window.ethereum)
             const signer = provider.getSigner()
-            const contract = new ethers.Contract(
-                contractLotteryAddress,
-                LotteryAbi,
-                signer
-            )
+            const contract = new ethers.Contract(contractLotteryAddress, LotteryAbi, signer)
             try {
                 const number = await contract.getNumPlayers()
                 setNumPlayers(number.toString())
@@ -103,14 +85,27 @@ const Lottery = () => {
         if (window.ethereum) {
             const provider = new ethers.providers.Web3Provider(window.ethereum)
             const signer = provider.getSigner()
-            const contract = new ethers.Contract(
-                contractLotteryAddress,
-                LotteryAbi,
-                signer
-            )
+            const contract = new ethers.Contract(contractLotteryAddress, LotteryAbi, signer)
             try {
                 const FEE = await contract.getFEE()
                 setFee(ethers.utils.formatEther(FEE))
+            } catch (error) {
+                console.log(error)
+            }
+        } else {
+            console.log("Install MetaMask")
+        }
+    }
+
+    const sendToAaveDepositHandler = async () => {
+        if (window.ethereum) {
+            const provider = new ethers.providers.Web3Provider(window.ethereum)
+            const signer = provider.getSigner()
+            const contract = new ethers.Contract(contractLotteryAddress, LotteryAbi, signer)
+            try {
+                const txResponse = await contract.sendToAaveDeposit()
+                await listenForTxMine(txResponse, provider)
+                console.log("Total Stake was sent to AaveDeposit!")
             } catch (error) {
                 console.log(error)
             }
@@ -169,6 +164,12 @@ const Lottery = () => {
                     Get FEE
                 </button>
                 <label>{fee}</label>
+            </div>
+            <hr />
+            <div className="sendToAaveDeposit">
+                <button onClick={sendToAaveDepositHandler} className="storage">
+                    Send to AaveDeposit
+                </button>
             </div>
         </div>
     )
