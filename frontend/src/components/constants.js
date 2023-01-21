@@ -1,4 +1,5 @@
-export const contractLotteryAddress = "0x657e563f6bEeF8bc65A53559F37Bd551E736906F" // Goeli
+export const contractLotteryAddress = "0xDfa68e72B75d9D903A915C6c8D528241c86ABd74" // fuji
+// "0x657e563f6bEeF8bc65A53559F37Bd551E736906F" // Goeli
 // "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9" // localhost
 export const LotteryAbi = [
     {
