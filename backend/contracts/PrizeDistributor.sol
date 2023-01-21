@@ -3,4 +3,6 @@ pragma solidity 0.8.17;
 
 import "./interfaces/IPrizeDistributor.sol";
 
-contract PrizeDistributor is IPrizeDistributor {}
+contract PrizeDistributor is IPrizeDistributor {
+    function withdraw() external override {}
+}
