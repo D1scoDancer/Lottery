@@ -6,6 +6,11 @@ export const LotteryAbi = [
         inputs: [
             {
                 internalType: "address",
+                name: "_aaveDeposite",
+                type: "address",
+            },
+            {
+                internalType: "address",
                 name: "vrfCoordinatorV2",
                 type: "address",
             },
@@ -27,6 +32,11 @@ export const LotteryAbi = [
         ],
         stateMutability: "nonpayable",
         type: "constructor",
+    },
+    {
+        inputs: [],
+        name: "Lottery__AaveDepositSendingFailed",
+        type: "error",
     },
     {
         inputs: [],
@@ -120,6 +130,19 @@ export const LotteryAbi = [
     },
     {
         inputs: [],
+        name: "CAP",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
         name: "enterLottery",
         outputs: [],
         stateMutability: "payable",
@@ -153,6 +176,19 @@ export const LotteryAbi = [
     },
     {
         inputs: [],
+        name: "getCallbackGasLimit",
+        outputs: [
+            {
+                internalType: "uint32",
+                name: "",
+                type: "uint32",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
         name: "getFEE",
         outputs: [
             {
@@ -162,6 +198,19 @@ export const LotteryAbi = [
             },
         ],
         stateMutability: "pure",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "getGasLane",
+        outputs: [
+            {
+                internalType: "bytes32",
+                name: "",
+                type: "bytes32",
+            },
+        ],
+        stateMutability: "view",
         type: "function",
     },
     {
@@ -191,6 +240,45 @@ export const LotteryAbi = [
                 internalType: "address",
                 name: "",
                 type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "getStake",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "getSubscriptionId",
+        outputs: [
+            {
+                internalType: "uint64",
+                name: "",
+                type: "uint64",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "getTotalStake",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
             },
         ],
         stateMutability: "view",
@@ -252,6 +340,13 @@ export const LotteryAbi = [
             },
         ],
         stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "sendToAaveDeposit",
+        outputs: [],
+        stateMutability: "nonpayable",
         type: "function",
     },
     {

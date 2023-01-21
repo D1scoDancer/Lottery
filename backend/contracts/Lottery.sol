@@ -8,6 +8,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 /* Errors */
 error Lottery__NotEnoughMoney();
 error Lottery__TransferFailed();
+error Lottery__AaveDepositSendingFailed();
 
 /**@title Web3 Lottery with Aave
  * @author Aleksey Shulikov
@@ -20,12 +21,14 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
     uint32 private immutable i_callbackGasLimit;
     uint16 private constant REQUEST_CONFIRMATIONS = 3;
     uint32 private constant NUM_WORDS = 1;
+    address private aaveDeposite;
 
     /* Lottery variables */
     address payable[] private s_players;
     mapping(address => uint256) private s_playerToStake;
-    uint256 public s_totalStake;
+    uint public s_totalStake;
     uint private constant FEE = 0.001 ether;
+    uint public constant CAP = 0.1 ether;
 
     /* Events */
     event LotteryEntered(address indexed player);
@@ -34,11 +37,13 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
 
     /* Functions */
     constructor(
+        address _aaveDeposite,
         address vrfCoordinatorV2,
         bytes32 gasLane,
         uint64 subscriptionId,
         uint32 callbackGasLimit
     ) Ownable() VRFConsumerBaseV2(vrfCoordinatorV2) {
+        aaveDeposite = _aaveDeposite;
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
         i_gasLane = gasLane;
         i_subscriptionId = subscriptionId;
@@ -117,6 +122,13 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
             if (sum > random) {
                 return s_players[i];
             }
+        }
+    }
+
+    function sendToAaveDeposit() public {
+        (bool success, ) = aaveDeposite.call{value: s_totalStake}(""); // maybe a weakness here
+        if (!success) {
+            revert Lottery__AaveDepositSendingFailed();
         }
     }
 
