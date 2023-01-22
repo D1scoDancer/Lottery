@@ -14,6 +14,7 @@ const networkConfig = {
         gasLane: "0x79d3d8832d904592c0bf9818b621522c988bb8b0c05cdc3b15aea1b6e8db0c15", // doesn't matter in localhost
         callbackGasLimit: "200000",
         poolAddressProvider: "0xa41E284482F9923E265832bE59627d91432da76C", // doesn't matter in localhost???
+        depositAssetAddress: "0x5425890298aed601595a70AB815c96711a31Bc65", // fuji address
     },
     4002: {
         name: "fantomtest",
@@ -30,6 +31,7 @@ const networkConfig = {
         subscriptionId: "551",
         callbackGasLimit: "200000",
         poolAddressProvider: "0xa41E284482F9923E265832bE59627d91432da76C",
+        depositAssetAddress: "0x5425890298aed601595a70AB815c96711a31Bc65",
     },
     43114: {
         name: "avalanche",

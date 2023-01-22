@@ -19,11 +19,11 @@ module.exports = {
         hardhat: {
             chainId: 31337,
             blockConfirmations: 1,
-            forking: {
-                // url: MAINNET_RPC_URL,
-                url: "https://api.avax.network/ext/bc/C/rpc",
-                blockNumber: 25180027,
-            },
+            // forking: {
+            //     // url: MAINNET_RPC_URL,
+            //     url: "https://api.avax.network/ext/bc/C/rpc",
+            //     blockNumber: 25180027,
+            // },
         },
         goerli: {
             url: `${GOERLI_RPC_URL}`,
