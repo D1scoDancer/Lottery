@@ -1,10 +1,10 @@
 require("@nomiclabs/hardhat-waffle")
-require("ethereum-waffle")
-require("hardhat-gas-reporter")
 require("@nomiclabs/hardhat-etherscan")
-require("dotenv").config()
-require("solidity-coverage")
+require("ethereum-waffle")
 require("hardhat-deploy")
+require("solidity-coverage")
+require("hardhat-gas-reporter")
+require("dotenv").config()
 
 const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL || "https://eth-goerli"
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "0xkey"
@@ -14,7 +14,7 @@ const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL || "key"
 
 module.exports = {
     solidity: "0.8.17",
-    defaultNetwork: "fuji",
+    defaultNetwork: "hardhat",
     networks: {
         hardhat: {
             chainId: 31337,
@@ -24,6 +24,7 @@ module.exports = {
             //     url: "https://api.avax.network/ext/bc/C/rpc",
             //     blockNumber: 25180027,
             // },
+            allowUnlimitedContractSize: true,
         },
         goerli: {
             url: `${GOERLI_RPC_URL}`,

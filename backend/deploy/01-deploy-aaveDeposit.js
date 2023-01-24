@@ -10,12 +10,11 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const poolAddressProvider = networkConfig[chainId]["poolAddressProvider"]
 
     const args = [depositAssetAddress, poolAddressProvider]
-    const aaveDeposite = await deploy("AaveDeposite", {
+    await deploy("AaveDeposite", {
         from: deployer,
         args: args,
         log: true,
         waitConfirmations: network.config.blockConfirmations || 1,
-        gasLimit: 8000000,
     })
 }
 

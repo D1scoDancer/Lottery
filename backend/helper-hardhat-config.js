@@ -8,6 +8,7 @@ const networkConfig = {
         subscriptionId: "8426",
         callbackGasLimit: "200000",
         poolAddressProvider: "0xC911B590248d127aD18546B186cC6B324e99F02c",
+        depositAssetAddress: "0xC911B590248d127aD18546B186cC6B324e99F02c",
     },
     31337: {
         name: "hardhat",
@@ -23,6 +24,7 @@ const networkConfig = {
         subscriptionId: "404", // fake
         callbackGasLimit: "200000",
         poolAddressProvider: "0xC809bea009Ca8DAA680f6A1c4Ca020D550210736",
+        depositAssetAddress: "0x84a38cc4B26238EAeDaCfE6AbB66d61631692Bad",
     },
     43113: {
         name: "fuji",
@@ -30,7 +32,7 @@ const networkConfig = {
         gasLane: "0x354d2f95da55398f44b7cff77da56283d9c6c829a4bdf1bbcaf2ad6a4d081f61",
         subscriptionId: "551",
         callbackGasLimit: "200000",
-        poolAddressProvider: "0xa41E284482F9923E265832bE59627d91432da76C",
+        poolAddressProvider: "0xC911B590248d127aD18546B186cC6B324e99F02c",
         depositAssetAddress: "0x5425890298aed601595a70AB815c96711a31Bc65",
     },
     43114: {
