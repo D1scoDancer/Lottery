@@ -8,6 +8,10 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deployer } = await getNamedAccounts()
     const chainId = network.config.chainId
 
+    const aaveDeposite = await ethers.getContract("AaveDeposite", deployer)
+    const aaveDepositeAddress = aaveDeposite.address
+    console.log(`_aaveDeposite param: ${aaveDepositeAddress}`)
+
     let vrfCoordinatorV2Address, subscriptionId
     if (developmentChains.includes(network.name)) {
         const VRFCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock")
@@ -24,7 +28,13 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const gasLane = networkConfig[chainId]["gasLane"]
     const callbackGasLimit = networkConfig[chainId]["callbackGasLimit"]
 
-    const args = [vrfCoordinatorV2Address, gasLane, subscriptionId, callbackGasLimit]
+    const args = [
+        aaveDepositeAddress,
+        vrfCoordinatorV2Address,
+        gasLane,
+        subscriptionId,
+        callbackGasLimit,
+    ]
     const lottery = await deploy("Lottery", {
         from: deployer,
         args: args,
