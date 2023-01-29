@@ -8,9 +8,9 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deployer } = await getNamedAccounts()
     const chainId = network.config.chainId
 
-    const aaveDeposit = await ethers.getContract("AaveDeposite", deployer)
-    const aaveDepositeAddress = aaveDeposit.address
-    console.log(`_aaveDeposite param: ${aaveDepositAddress}`)
+    const aaveDeposit = await ethers.getContract("AaveDeposit", deployer)
+    const aaveDepositAddress = aaveDeposit.address
+    console.log(`_aaveDeposit param: ${aaveDepositAddress}`)
 
     let vrfCoordinatorV2Address, subscriptionId
     if (developmentChains.includes(network.name)) {

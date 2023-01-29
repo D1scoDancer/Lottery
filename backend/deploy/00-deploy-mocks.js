@@ -16,6 +16,11 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
             log: true,
             args: args,
         })
+        await deploy("PoolAddressesProviderMock", {
+            from: deployer,
+            log: true,
+            args: ["0", deployer],
+        })
         log("Mocks Deployed!")
         log("-------------------------------------------")
     }

@@ -30,10 +30,10 @@ contract AaveDeposit is IDeposit {
      */
     constructor(address assetAddr, address poolAddressProviderAddr) {
         asset = IERC20(assetAddr);
-        IPoolAddressesProvider poolAddressProvider = IPoolAddressesProvider(
-            poolAddressProviderAddr
-        );
-        lendingPool = IPool(poolAddressProvider.getPool());
+        // IPoolAddressesProvider poolAddressProvider = IPoolAddressesProvider(
+        //     poolAddressProviderAddr
+        // );
+        // lendingPool = IPool(poolAddressProvider.getPool());
     }
 
     /* ============ External Functions ============ */

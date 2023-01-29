@@ -7,7 +7,7 @@ const networkConfig = {
         gasLane: "0x79d3d8832d904592c0bf9818b621522c988bb8b0c05cdc3b15aea1b6e8db0c15",
         subscriptionId: "8426",
         callbackGasLimit: "200000",
-        poolAddressProvider: "0xC911B590248d127aD18546B186cC6B324e99F02c",
+        poolAddressProvider: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
         depositAssetAddress: "0xC911B590248d127aD18546B186cC6B324e99F02c",
     },
     31337: {

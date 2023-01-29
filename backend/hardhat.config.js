@@ -14,7 +14,16 @@ const COINTMARKETCAP_API = process.env.COINTMARKETCAP_API || "key"
 const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL || "key"
 
 module.exports = {
-    solidity: "0.8.17",
+    solidity: {
+        compilers: [
+            {
+                version: "0.8.17",
+            },
+            {
+                version: "0.8.10",
+            },
+        ],
+    },
     defaultNetwork: "hardhat",
     networks: {
         hardhat: {
