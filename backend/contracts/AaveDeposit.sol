@@ -7,7 +7,7 @@ import "@aave/core-v3/contracts/interfaces/IPoolAddressesProvider.sol";
 import "./interfaces/IDeposit.sol";
 
 /**
- * @title  AaveDeposit
+ * @title  Aave Deposit
  * @author Aleksey Shulikov
  * @notice The AaveDeposit contract holds info about lending pool and assets used and is responsible
  *         for depositing and withdrawing money

@@ -14,7 +14,7 @@ const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL || "key"
 
 module.exports = {
     solidity: "0.8.17",
-    defaultNetwork: "goerli",
+    defaultNetwork: "hardhat",
     networks: {
         hardhat: {
             chainId: 31337,

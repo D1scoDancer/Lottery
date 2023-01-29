@@ -10,7 +10,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const poolAddressProvider = networkConfig[chainId]["poolAddressProvider"]
 
     const args = [depositAssetAddress, poolAddressProvider]
-    await deploy("AaveDeposite", {
+    await deploy("AaveDeposit", {
         from: deployer,
         args: args,
         log: true,
