@@ -10,32 +10,83 @@ error Lottery__NotEnoughMoney();
 error Lottery__TransferFailed();
 error Lottery__AaveDepositSendingFailed();
 
-/**@title Web3 Lottery with Aave
- * @author Aleksey Shulikov
+/** @title  Web3 Lottery with Aave
+ *  @author Aleksey Shulikov
+ *  @notice The Lottert contract has the following responsibilities:
+ *          -take money from user and remember that
+ *          -send that money to AaveDeposit Contract
+ *          -choose winner by random from ChainLink VRF (chainlink VRF should be in another lib/contract)
+ *          -pick a winner (maybe this will be tranfered to another contract)
  */
 contract Lottery is Ownable, VRFConsumerBaseV2 {
-    /* State variables */
+    /* ============ State Variables ============ */
+
+    /// @notice VRF (Verifiable Random Function) address
     VRFCoordinatorV2Interface private immutable i_vrfCoordinator;
+
+    /// @notice The maximum gas price we are willing to pay for a request in wei
     bytes32 private immutable i_gasLane;
+
+    /// @notice The unique identifier of the subscription
     uint64 private immutable i_subscriptionId;
+
+    /// @notice The maximum amount of gas we are willing to spend on the callback request
     uint32 private immutable i_callbackGasLimit;
+
+    /// @notice The number of block confirmations the VRF service will wait to respond
     uint16 private constant REQUEST_CONFIRMATIONS = 3;
+
+    /// @notice The number of random numbers to request
     uint32 private constant NUM_WORDS = 1;
+
+    /// @notice AaveDeposit contract address
     address private aaveDeposite;
 
-    /* Lottery variables */
-    address payable[] private s_players;
-    mapping(address => uint256) private s_playerToStake;
-    uint public s_totalStake;
-    uint private constant FEE = 0.001 ether;
-    uint public constant CAP = 0.1 ether;
+    /* ============ Lottery variables ============ */
 
-    /* Events */
+    /// @notice List of all players
+    address payable[] private s_players;
+
+    /// @notice Maps players => their total stake
+    mapping(address => uint256) private s_playerToStake;
+
+    /// @notice The total amount of all money staked (excluding fees)
+    uint public s_totalStake;
+
+    /// @notice Fee amount
+    uint private constant FEE = 0.001 ether;
+
+    /* ============ Events ============ */
+
+    /**
+     * @notice Emits when player enters lottery with deposit
+     * @param player Address of player
+     */
     event LotteryEntered(address indexed player);
+
+    /**
+     * @notice Emits when lottery is finished and winner is decided
+     * @param winner Address of winner
+     * @param prize  Prize amount
+     */
     event LotteryFinished(address indexed winner, uint prize);
+
+    /**
+     * @notice Emits when Chainlink VRF is requested
+     * @param requestId ID of request to Chainlink VRF
+     */
     event RequestedRandomWinner(uint256 indexed requestId);
 
-    /* Functions */
+    /* ============ Initialize  ============ */
+
+    /**
+     * @notice Initializes Lottery smart contract
+     * @param _aaveDeposite    AaveDeposit contract address
+     * @param vrfCoordinatorV2 VRFCoordinatorV2 contract address
+     * @param gasLane          The maximum gas price we are willing to pay for a request
+     * @param subscriptionId   The unique identifier of the subscription
+     * @param callbackGasLimit The maximum amount of gas we are willing to spend on the callback request
+     */
     constructor(
         address _aaveDeposite,
         address vrfCoordinatorV2,
@@ -50,6 +101,11 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
         i_callbackGasLimit = callbackGasLimit;
     }
 
+    /* ============ Functions  ============ */
+
+    /**
+     * @notice Participate in the lottery with a deposit that exceeds the fee
+     */
     function enterLottery() external payable {
         if (msg.value <= FEE) {
             revert Lottery__NotEnoughMoney();
@@ -62,6 +118,10 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
         emit LotteryEntered(msg.sender);
     }
 
+    /**
+     * @notice Create request to Chainlink VRF
+     * @dev Should check is it is possible to call the function from any address or only from owner of subscription
+     */
     function requestRandomWinner() external {
         uint256 requestId = i_vrfCoordinator.requestRandomWords(
             i_gasLane,
@@ -73,10 +133,13 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
         emit RequestedRandomWinner(requestId);
     }
 
-    function fulfillRandomWords(
-        uint256 /*requestId*/,
-        uint256[] memory randomWords
-    ) internal override {
+    /**
+     * @notice Finish lottery and decide a winner.
+     * @dev This funciton is the callback VRF function
+     * @param requestId ID of request to Chainlink VRF
+     * @param randomWords Random words
+     */
+    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
         address winner = getWinner(randomWords[0]);
         uint prize = s_totalStake;
 
@@ -94,7 +157,8 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
     }
 
     /**
-     * @dev for testing purposes, should be changed for automatic function that ends lottery on time
+     * @dev Exists for testing purposes, should be replaced with automatic function that ends lottery on time
+     * @param seed Seed for a custom randomness
      */
     function finishLottery(bytes memory seed) public onlyOwner {
         uint rnd = uint(keccak256(abi.encodePacked(seed))); // it is said to be good practice but it seems to be useless step (encoding)
@@ -114,6 +178,10 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
         emit LotteryFinished(winner, prize);
     }
 
+    /**
+     * @notice Decide a winner
+     * @param randomNumber Random number
+     */
     function getWinner(uint randomNumber) internal view returns (address winner) {
         uint random = randomNumber % s_totalStake;
         uint sum = 0;
@@ -125,14 +193,19 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
         }
     }
 
+    /**
+     * @notice Send money to AaveDeposit contract
+     * @dev Reentrancy possible!!!
+     */
     function sendToAaveDeposit() public {
-        (bool success, ) = aaveDeposite.call{value: s_totalStake}(""); // maybe a weakness here
+        (bool success, ) = aaveDeposite.call{value: s_totalStake}("");
         if (!success) {
             revert Lottery__AaveDepositSendingFailed();
         }
     }
 
-    /* Getter Functions */
+    /* ============ Getters  ============ */
+
     function getPlayer(uint index) public view returns (address) {
         return s_players[index];
     }
