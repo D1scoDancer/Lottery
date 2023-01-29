@@ -5,6 +5,7 @@ cache/
 deployments/
 gas-report.txt
 coverage.json
+docs/
 
 # Allow a dummy project in this directory for testing purposes
 myproject

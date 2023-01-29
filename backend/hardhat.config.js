@@ -4,6 +4,7 @@ require("ethereum-waffle")
 require("hardhat-deploy")
 require("solidity-coverage")
 require("hardhat-gas-reporter")
+require("hardhat-docgen")
 require("dotenv").config()
 
 const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL || "https://eth-goerli"
@@ -74,5 +75,10 @@ module.exports = {
         currency: "USD",
         coinmarketcap: COINTMARKETCAP_API,
         // token: "MATIC",
+    },
+    docgen: {
+        path: "./docs",
+        clear: false,
+        runOnCompile: false,
     },
 }
