@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.17;
+pragma solidity 0.8.10;
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@aave/core-v3/contracts/interfaces/IPool.sol";
 import "@aave/core-v3/contracts/interfaces/IPoolAddressesProvider.sol";
 import "./interfaces/IDeposit.sol";
+import "@aave/core-v3/contracts/mocks/tokens/MintableERC20.sol"; // delete on dev
 
 /**
  * @title  Aave Deposit
@@ -54,6 +55,15 @@ contract AaveDeposit is IDeposit {
     function withdraw(uint amount) external override {
         lendingPool.withdraw(address(asset), amount, address(this));
         emit Withdrawn(amount, address(this));
+    }
+
+    /**
+     * @notice Mint ERC-20
+     * @dev For testing purposes. Shouldn't exist in final version
+     * @param amount Amount of ERC-20 to be minted
+     */
+    function mintTokens(uint amount) public {
+        MintableERC20(address(asset)).mint(amount);
     }
 
     /* ============ Internal Functions ============ */

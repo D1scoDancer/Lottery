@@ -21,10 +21,10 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
             log: true,
             args: ["0", deployer],
         })
-        await deploy("WETH9Mocked", {
+        await deploy("MintableERC20", {
             from: deployer,
             log: true,
-            args: [],
+            args: ["MintableERC20", "MERC", 18],
         })
         log("Mocks Deployed!")
         log("-------------------------------------------")
