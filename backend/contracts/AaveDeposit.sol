@@ -30,13 +30,18 @@ contract AaveDeposit is IDeposit {
      */
     constructor(address assetAddr, address poolAddressProviderAddr) {
         asset = IERC20(assetAddr);
-        // IPoolAddressesProvider poolAddressProvider = IPoolAddressesProvider(
-        //     poolAddressProviderAddr
-        // );
-        // lendingPool = IPool(poolAddressProvider.getPool());
+        IPoolAddressesProvider poolAddressProvider = IPoolAddressesProvider(
+            poolAddressProviderAddr
+        );
+        lendingPool = IPool(poolAddressProvider.getPool());
     }
 
     /* ============ External Functions ============ */
+
+    /**
+     * @notice Receive money from an external call
+     */
+    receive() external payable {}
 
     /// @inheritdoc IDeposit
     function deposit(uint amount) external override {
