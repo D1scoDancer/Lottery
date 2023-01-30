@@ -8,6 +8,7 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
           let deployer
           let accounts
           let lottery
+          let aaveDeposit
           let vrfCoordinatorV2Mock
           const FEE = ethers.utils.parseEther("0.001")
           const DOUBLE_FEE = 2 * FEE
@@ -17,6 +18,7 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
               accounts = await ethers.getSigners()
               await deployments.fixture(["all"])
               lottery = await ethers.getContract("Lottery", deployer)
+              aaveDeposit = await ethers.getContract("AaveDeposit", deployer)
               vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock", deployer)
           })
 
@@ -188,6 +190,35 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
 
                   const s_totalStake = await lottery.getTotalStake()
                   assert.equal(s_totalStake.toString(), "0")
+              })
+          })
+
+          describe("Get Winner", () => {})
+
+          describe("Send Money To AaveDeposit", () => {
+              beforeEach(async () => {
+                  for (let i = 0; i < 10; i++) {
+                      const user = accounts[1 + i]
+                      const userConnection = await lottery.connect(user)
+
+                      await userConnection.enterLottery({ value: DOUBLE_FEE })
+                  }
+              })
+
+              it("balance of Lottery decreases", async () => {
+                  const balanceBefore = await lottery.provider.getBalance(lottery.address)
+                  await lottery.sendToAaveDeposit()
+                  const balanceAfter = await lottery.provider.getBalance(lottery.address)
+
+                  assert.equal(balanceAfter.toString(), balanceBefore.sub(FEE.mul(10)).toString())
+              })
+
+              it("balance of AaveDeposit increases", async () => {
+                  const balanceBefore = await lottery.provider.getBalance(aaveDeposit.address)
+                  await lottery.sendToAaveDeposit()
+                  const balanceAfter = await lottery.provider.getBalance(aaveDeposit.address)
+
+                  assert.equal(balanceAfter.toString(), balanceBefore.add(FEE.mul(10)).toString())
               })
           })
       })

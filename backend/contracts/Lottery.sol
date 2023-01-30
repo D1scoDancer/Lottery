@@ -195,7 +195,7 @@ contract Lottery is Ownable, VRFConsumerBaseV2 {
 
     /**
      * @notice Send money to AaveDeposit contract
-     * @dev Reentrancy possible!!!
+     * @dev Reentrancy possible!!!???
      */
     function sendToAaveDeposit() public {
         (bool success, ) = aaveDeposite.call{value: s_totalStake}("");
