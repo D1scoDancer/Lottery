@@ -57,15 +57,6 @@ contract AaveDeposit is IDeposit {
         emit Withdrawn(amount, address(this));
     }
 
-    /**
-     * @notice Mint ERC-20
-     * @dev For testing purposes. Shouldn't exist in final version
-     * @param amount Amount of ERC-20 to be minted
-     */
-    function mintTokens(uint amount) public {
-        MintableERC20(address(asset)).mint(amount);
-    }
-
     /* ============ Internal Functions ============ */
 
     /**
@@ -82,5 +73,14 @@ contract AaveDeposit is IDeposit {
      */
     function _depositTokens(uint amount) internal {
         lendingPool.supply(address(asset), amount, address(this), 0);
+    }
+
+    /* ============ Getters ============ */
+    function getLendingPoolAddress() public view returns (address) {
+        return address(lendingPool);
+    }
+
+    function getERC20Balance() public view returns (uint) {
+        return asset.balanceOf(address(this));
     }
 }
