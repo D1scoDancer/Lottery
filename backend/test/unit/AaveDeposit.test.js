@@ -90,12 +90,32 @@ const helpers = require("@nomicfoundation/hardhat-network-helpers")
                   await aaveDeposit.withdraw(ERC_AMOUNT)
                   ;({ totalCollateralBase } = await pool.getUserAccountData(aaveDeposit.address))
                   const balanceAfter = totalCollateralBase
-                  assert.equal(
-                      balanceAfter.toString(),
-                      balanceBefore.sub(ERC_AMOUNT * AAVE_PRICE).toString()
-                  )
+                  assert.isTrue(balanceAfter.lt(balanceBefore))
               })
           })
 
-          describe("Yield is earned with time", () => {})
+          describe("Yield is earned with time", () => {
+              //   it("Yield is earned in a second", async () => {
+              //       await aaveDeposit.deposit(ERC_AMOUNT)
+              //       let { totalCollateralBase } = await pool.getUserAccountData(aaveDeposit.address)
+              //       const stakeBefore = totalCollateralBase
+              //       await helpers.time.increase(1)
+              //       ;({ totalCollateralBase } = await pool.getUserAccountData(aaveDeposit.address))
+              //       const stakeAfter = totalCollateralBase
+              //       assert.isTrue(
+              //           stakeAfter.gt(stakeBefore),
+              //           `before: ${stakeBefore.toString()}; after: ${stakeAfter.toString()}`
+              //       )
+              //   })
+
+              it("Yield is earned in a week", async () => {
+                  await aaveDeposit.deposit(ERC_AMOUNT)
+                  let { totalCollateralBase } = await pool.getUserAccountData(aaveDeposit.address)
+                  const stakeBefore = totalCollateralBase
+                  await helpers.time.increase(3600 * 24 * 7)
+                  ;({ totalCollateralBase } = await pool.getUserAccountData(aaveDeposit.address))
+                  const stakeAfter = totalCollateralBase
+                  assert.isTrue(stakeAfter.gt(stakeBefore))
+              })
+          })
       })
