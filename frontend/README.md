@@ -1,3 +1,3 @@
 # Lottery
 
-Используется React для фронтовой части сервиса.
+Using React for frontend

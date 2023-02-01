@@ -13,7 +13,7 @@ The service allows users to make short-term deposits, for which users can receiv
 - To launch Dapp on Fantom
 
 ## To be done
-- [ ] Move user interface from [another project](https://github.com/D1scoDancer/lottery-ui)
+- [x] Move user interface from [another project](https://github.com/D1scoDancer/lottery-ui)
 - [ ] Create PrizeDistributor contract
 - [ ] Remove the RNG logic from the Lottery contract
 - [ ] Unit tests for everything

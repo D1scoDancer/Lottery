@@ -1,0 +1,39 @@
+main {
+    margin-top: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: space-between; */
+    align-items: center;
+}
+
+.twoblocks {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    height: 200px;
+}
+
+.leftblock {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+}
+
+.rightblock {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+}
+
+.actionblock {
+    margin-top: 20px;
+    width: 60%;
+    margin-bottom: 100px;
+}
+
+label {
+    align-items: flex-start;
+    text-align: left;
+}

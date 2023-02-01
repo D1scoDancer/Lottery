@@ -3,11 +3,32 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { WagmiConfig, createClient } from "wagmi"
+import { ConnectKitProvider, getDefaultClient } from "connectkit"
+import { goerli, fantomTestnet, avalancheFuji } from "wagmi/chains"
+
+const alchemyId = process.env.ALCHEMY_ID
+const chains = [goerli]
+
+const client = createClient(
+    getDefaultClient({
+        appName: "Lottery",
+        alchemyId,
+        chains,
+    })
+)
+
+const options = { initialChainId: 0 }
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+     <WagmiConfig client={client}>
+            <ConnectKitProvider options={options}>
     <App />
+    </ConnectKitProvider>
+        </WagmiConfig>
   </React.StrictMode>
 );
 

@@ -1,0 +1,12 @@
+.depositwindow {
+    margin-top: 10px;
+}
+
+.description {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.amount {
+    margin-left: 50px;
+}

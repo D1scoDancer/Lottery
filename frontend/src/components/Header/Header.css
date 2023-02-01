@@ -1,0 +1,29 @@
+header {
+    min-height: 50px;
+    max-height: 150px;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    /* width: 90%; */
+}
+
+.leftpart {
+    display: flex;
+    flex-direction: row;
+    width: 35%;
+}
+
+.logo {
+}
+
+.logoimg {
+    width: 4em;
+    height: 100%;
+}
+
+.rightpart {
+    display: flex;
+    flex-direction: row;
+    width: 25%;
+    justify-content: flex-end;
+}

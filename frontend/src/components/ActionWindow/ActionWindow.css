@@ -1,0 +1,10 @@
+.actionwindow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.subbtns {
+    display: flex;
+    justify-content: space-between;
+}

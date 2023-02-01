@@ -1,0 +1,10 @@
+.connection {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.name {
+    margin-right: 10px;
+    margin-left: 5px;
+}
