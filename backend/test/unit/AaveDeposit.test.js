@@ -8,6 +8,8 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
           let deployer
           let accounts
           let aaveDeposit
+          let asset
+          const chainId = network.config.chainId
           const ERC_AMOUNT = 100
 
           beforeEach(async () => {
@@ -15,14 +17,22 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
               // then after each reset network
               //    const helpers = require("@nomicfoundation/hardhat-network-helpers");
               //    await helpers.reset(url, blockNumber)
-
               deployer = (await getNamedAccounts()).deployer
               accounts = await ethers.getSigners()
               await deployments.fixture(["all"])
               aaveDeposit = await ethers.getContract("AaveDeposit", deployer)
+              asset = await ethers.getContractAt(
+                  "TestnetERC20",
+                  networkConfig[chainId]["depositAssetAddress"]
+              )
           })
 
-          describe("Constructor", () => {})
+          describe("Constructor", () => {
+              it("has 100 tokens", async () => {
+                  const balance = await asset.balanceOf(deployer)
+                  console.log(balance.toString())
+              })
+          })
 
           describe("Deposit", () => {
               it("AaveDeposit ERC-20 balance decreases", async () => {})

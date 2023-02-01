@@ -33,7 +33,7 @@ module.exports = {
                 // url: MAINNET_RPC_URL,
                 // url: "https://api.avax.network/ext/bc/C/rpc",
                 url: GOERLI_RPC_URL,
-                blockNumber: 8409024,
+                blockNumber: 8414121, // block where deployer #0 acc has usdc
             },
             allowUnlimitedContractSize: true,
         },
