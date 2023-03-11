@@ -24,6 +24,9 @@ contract Lottery {
 
     /* ============ STATE VARIABLES ============ */
 
+    /// @notice Current Round
+    uint public round;
+
     /// @notice Round to Player to Stake
     mapping(uint => mapping(address => uint)) public balances;
 
@@ -37,6 +40,7 @@ contract Lottery {
     uint public fee;
 
     /* ============ EVENTS ============ */
+    event LotteryEntered(address player);
 
     /* ============ INITIALIZATION ============ */
 
@@ -45,6 +49,18 @@ contract Lottery {
     }
 
     /* ============ EXTERNAL FUNCTIONS ============ */
+    function enterLottery() external payable {
+        if (balances[round][msg.sender] > 0) {
+            balances[round][msg.sender] += msg.value;
+            totalStake[round] += msg.value;
+        } else {
+            require(msg.value > fee);
+            players[round].push(msg.sender);
+            balances[round][msg.sender] = msg.value - fee;
+            totalStake[round] += msg.value - fee;
+        }
+        emit LotteryEntered(msg.sender);
+    }
 
     /* ============ INTERNAL FUNCTIONS ============ */
 
