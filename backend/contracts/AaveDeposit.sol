@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.10;
+pragma solidity ^0.8.10;
 
 import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@aave/core-v3/contracts/interfaces/IPool.sol";
@@ -45,14 +45,14 @@ contract AaveDeposit is IDeposit {
     receive() external payable {}
 
     /// @inheritdoc IDeposit
-    function deposit(uint amount) external override {
+    function deposit(uint256 amount) external override {
         _approveTokens(amount);
         _depositTokens(amount);
         emit Deposited(amount, address(lendingPool));
     }
 
     /// @inheritdoc IDeposit
-    function withdraw(uint amount) external override {
+    function withdraw(uint256 amount) external override {
         lendingPool.withdraw(address(asset), amount, address(this));
         emit Withdrawn(amount, address(this));
     }
@@ -63,7 +63,7 @@ contract AaveDeposit is IDeposit {
      * @notice Approves ERC-20. Part of deposit(uint amount) function
      * @param amount Amount of money being approved
      */
-    function _approveTokens(uint amount) internal {
+    function _approveTokens(uint256 amount) internal {
         asset.approve(address(lendingPool), amount); // should wait after that?
     }
 
@@ -71,7 +71,7 @@ contract AaveDeposit is IDeposit {
      * @notice Deposits approved tokens. Part of deposit(uint amount) function
      * @param amount Amount of money being deposited
      */
-    function _depositTokens(uint amount) internal {
+    function _depositTokens(uint256 amount) internal {
         lendingPool.supply(address(asset), amount, address(this), 0);
     }
 
@@ -80,7 +80,7 @@ contract AaveDeposit is IDeposit {
         return address(lendingPool);
     }
 
-    function getERC20Balance() public view returns (uint) {
+    function getERC20Balance() public view returns (uint256) {
         return asset.balanceOf(address(this));
     }
 }
