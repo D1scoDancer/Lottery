@@ -1,10 +1,10 @@
 # Lottery
 
-Commands made:
-
-- yarn init
-- yarn add hardhat --dev
-- yarn hardhat
-- yarn add --dev @nomicfoundation/hardhat-toolbox @nomicfoundation/hardhat-network-helpers @nomicfoundation/hardhat-chai-matchers @nomiclabs/hardhat-ethers @nomiclabs/hardhat-etherscan chai ethers hardhat-gas-reporter solidity-coverage @typechain/hardhat typechain @typechain/ethers-v5 @ethersproject/abi @ethersproject/providers
-- yarn add --dev dotenv
-- yarn add --dev --exact prettier
+-   Контракт должен принимать взнос юзера в нативной валюте.
+-   Контракт должен начислять на баланс юзера (mapping) его взнос в полном размере за вычетом комиссии.
+-   Контракт должен иметь состояния: Open, Working(не принимает оплату, ожидает неделю), Paused.
+-   Контракт может быть приостановлен владельцем вручную, при этом он становится withdraw only. Остальные 3 состояние переключаются автоматически.
+-   Контракт разово отправляет деньги в “Контракт 2” и меняет состояние на Working..
+-   Через неделю состояние автоматически меняется на Open. Баланс победителя увеличивается на выигрыш. Пользователи могут выводить свои деньги. Пользователи могут присоединяться к лотерее.
+-   Победитель определяется с учетом размера его взноса. Используется “Контракт 3” для получения случайного числа от Chainlink.
+-   Для автоматической смены состояний контракта используется Chainlink Keeper.
