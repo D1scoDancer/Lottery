@@ -67,6 +67,14 @@ contract Lottery is Ownable, Pausable {
         emit LotteryEntered(msg.sender);
     }
 
+    function togglePause() external onlyOwner {
+        if (paused()) {
+            _unpause();
+        } else {
+            _pause();
+        }
+    }
+
     /* ============ INTERNAL FUNCTIONS ============ */
 
     /* ============ GETTERS ============ */

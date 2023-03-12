@@ -5,11 +5,14 @@ const fee = ethers.utils.parseEther("0.0001")
 const enterValue = ethers.utils.parseEther("0.1")
 
 describe("Lottery Unit Testing", () => {
-    var lottery, deployer
+    var lottery, deployer, user, userConnection
     beforeEach(async () => {
-        deployer = (await ethers.getSigners())[0]
+        signers = await ethers.getSigners()
+        deployer = signers[0]
+        user = signers[1]
         const Factory = await ethers.getContractFactory("Lottery")
         lottery = await Factory.deploy(fee)
+        userConnection = lottery.connect(user)
     })
 
     describe("Initialization", () => {
@@ -67,6 +70,37 @@ describe("Lottery Unit Testing", () => {
 
             const totalStakeAfter = await lottery.totalStake(0)
             expect(totalStakeAfter.toString()).to.equal(totalStakeBefore.add(enterValue).toString())
+        })
+    })
+
+    describe("Ownable", () => {
+        it("Owner is set", async () => {
+            const owner = await lottery.owner()
+            expect(owner).to.be.equal(deployer.address)
+        })
+
+        it("Only owner can togglePause()", async () => {
+            expect(userConnection.togglePause()).to.be.revertedWith(
+                "Ownable: caller is not the owner"
+            )
+            expect(lottery.togglePause()).not.to.be.revertedWith("Ownable: caller is not the owner")
+        })
+    })
+
+    describe("Pausable", () => {
+        it("Pause is set", async () => {
+            const paused = await lottery.paused()
+            expect(paused).to.be.false
+        })
+
+        it("EnterLottery is not accessible when contract is paused", async () => {
+            expect(lottery.enterLottery({ value: enterValue })).not.to.be.revertedWith(
+                "Pausable: paused"
+            )
+            await lottery.togglePause()
+            expect(lottery.enterLottery({ value: enterValue })).to.be.revertedWith(
+                "Pausable: paused"
+            )
         })
     })
 })
