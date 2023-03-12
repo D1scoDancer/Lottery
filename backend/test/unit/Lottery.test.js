@@ -1,7 +1,8 @@
 const { ethers } = require("hardhat")
-const { assert, expect } = require("chai")
+const { expect } = require("chai")
 
 const fee = ethers.utils.parseEther("0.0001")
+const enterValue = ethers.utils.parseEther("0.1")
 
 describe("Lottery Unit Testing", () => {
     var lottery, deployer
@@ -19,8 +20,53 @@ describe("Lottery Unit Testing", () => {
     })
 
     describe("Enter Lottery", () => {
-        it("mapping(uint => mapping(address => uint)) balances", async () => {})
-        it("mapping(uint => address[]) players", async () => {})
-        it("mapping(uint => uint) totalStake", async () => {})
+        it("mapping balances changes", async () => {
+            const balance = await lottery.balances(0, deployer.address)
+            expect(balance.toString()).to.equal("0")
+
+            await lottery.enterLottery({ value: enterValue })
+
+            const balanceAfter = await lottery.balances(0, deployer.address)
+            expect(balanceAfter.toString()).to.equal(enterValue.sub(fee).toString())
+        })
+
+        it("mapping players changes", async () => {
+            await lottery.enterLottery({ value: enterValue })
+            const address = await lottery.players(0, 0)
+            expect(address).to.equal(deployer.address)
+        })
+
+        it("mapping totalStake changes", async () => {
+            const totalStakeBefore = await lottery.totalStake(0)
+            expect(totalStakeBefore.toString()).to.equal("0")
+
+            await lottery.enterLottery({ value: enterValue })
+
+            const totalStakeAfter = await lottery.totalStake(0)
+            expect(totalStakeAfter.toString()).to.equal(
+                totalStakeBefore.add(enterValue).sub(fee).toString()
+            )
+        })
+
+        it("contract balance changes", async () => {
+            const balanceBefore = await lottery.provider.getBalance(lottery.address)
+            expect(balanceBefore.toString()).to.equal("0")
+
+            await lottery.enterLottery({ value: enterValue })
+
+            const balanceAfter = await lottery.provider.getBalance(lottery.address)
+            expect(balanceAfter.toString()).to.equal(balanceBefore.add(enterValue).toString())
+        })
+
+        it("fee is not paid if player exists", async () => {
+            await lottery.enterLottery({ value: enterValue })
+            const totalStakeBefore = await lottery.totalStake(0)
+            expect(totalStakeBefore.toString()).to.equal(enterValue.sub(fee).toString())
+
+            await lottery.enterLottery({ value: enterValue })
+
+            const totalStakeAfter = await lottery.totalStake(0)
+            expect(totalStakeAfter.toString()).to.equal(totalStakeBefore.add(enterValue).toString())
+        })
     })
 })
