@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-/* ============ ERRORS ============  */
-error Lottery_NotEnoughMoney();
-error Lottery_TransferFailed();
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 
 /** @title  Web3 Lottery with Aave
  *  @author Aleksey Shulikov
@@ -14,7 +13,7 @@ error Lottery_TransferFailed();
  *          -pick a winner
  *  @dev should be Ownable, Pausable, VRF2ConsumerBaseV2
  */
-contract Lottery {
+contract Lottery is Ownable, Pausable {
     /* ============ TYPE DECLARATIONS ============ */
     enum LotteryState {
         OPEN,
@@ -42,6 +41,12 @@ contract Lottery {
     /* ============ EVENTS ============ */
     event LotteryEntered(address player);
 
+    /* ============ ERRORS ============  */
+    error Lottery__NotEnoughMoney();
+    error Lottery__TransferFailed();
+
+    /* ============ MODIFIERS ============  */
+
     /* ============ INITIALIZATION ============ */
 
     constructor(uint _fee) {
@@ -49,7 +54,7 @@ contract Lottery {
     }
 
     /* ============ EXTERNAL FUNCTIONS ============ */
-    function enterLottery() external payable {
+    function enterLottery() external payable whenNotPaused {
         if (balances[round][msg.sender] > 0) {
             balances[round][msg.sender] += msg.value;
             totalStake[round] += msg.value;
