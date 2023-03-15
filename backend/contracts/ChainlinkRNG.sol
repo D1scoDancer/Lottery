@@ -76,6 +76,8 @@ contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
         s_requests[requestId].fulfilled = true;
         s_requests[requestId].randomWord = randomWords[0];
         emit RequestFulfilled(requestId, randomWords);
+
+        /// @dev make callback to Lottery
     }
 
     function getRequestStatus(
