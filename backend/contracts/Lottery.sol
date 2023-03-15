@@ -23,6 +23,12 @@ contract Lottery is Ownable, Pausable {
 
     /* ============ STATE VARIABLES ============ */
 
+    /// @notice Current state of contract [OPEN | WORKING | PAUSED]
+    LotteryState public currentState;
+
+    /// @notice Previous state of contract [OPEN | WORKING | PAUSED]
+    LotteryState public previousState;
+
     /// @notice Current Round
     uint public round;
 
@@ -44,8 +50,15 @@ contract Lottery is Ownable, Pausable {
     /* ============ ERRORS ============  */
     error Lottery__NotEnoughMoney();
     error Lottery__TransferFailed();
+    error Lottery__Unauthorized();
 
     /* ============ MODIFIERS ============  */
+
+    /// @dev Для того, чтобы определенные функции могли вызывать исключительно другие контракты проекта
+    modifier onlyBy(address account) {
+        if (msg.sender != account) revert Lottery__Unauthorized();
+        _;
+    }
 
     /* ============ INITIALIZATION ============ */
 
@@ -70,12 +83,23 @@ contract Lottery is Ownable, Pausable {
     function togglePause() external onlyOwner {
         if (paused()) {
             _unpause();
+            setState(previousState);
         } else {
             _pause();
+            setState(LotteryState.PAUSED);
         }
     }
 
     /* ============ INTERNAL FUNCTIONS ============ */
+
+    /**
+     * @dev не уверен, что тут нужен модификатор onlyOwner. Возможно нужен другой
+     */
+    function setState(LotteryState newState) internal onlyOwner {
+        require(newState >= LotteryState.OPEN && newState <= LotteryState.PAUSED, "Invalid state");
+        previousState = currentState;
+        currentState = newState;
+    }
 
     /* ============ GETTERS ============ */
 }
