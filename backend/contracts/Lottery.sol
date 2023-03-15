@@ -90,6 +90,29 @@ contract Lottery is Ownable, Pausable {
         }
     }
 
+    /** @notice Changes state from OPEN to WORKING
+     *  @dev Запрещать вывод средств текущего раунда
+     *  @dev Отправлять деньги в Контракт 2
+     */
+    function closeDepositing() public onlyOwner {
+        require(currentState == LotteryState.OPEN, "Can only close depositing when state is OPEN");
+        setState(LotteryState.WORKING);
+    }
+
+    /** @notice Changes state from WORKING TO OPEN
+     *  @dev определять победителя
+     *  @dev увеличивать его баланс
+     *  @dev инкрементировать раунд
+     *  @dev работа с Контрактом 3
+     */
+    function finishLottery() public onlyOwner {
+        require(
+            currentState == LotteryState.WORKING,
+            "Can only finish lottery when state is WORKING"
+        );
+        setState(LotteryState.OPEN);
+    }
+
     /* ============ INTERNAL FUNCTIONS ============ */
 
     /**
