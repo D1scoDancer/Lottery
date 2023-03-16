@@ -105,24 +105,25 @@ describe("Lottery Unit Testing", () => {
     })
 
     describe("Changing States", () => {
-        it("togglePause() changes currentState", async () => {
-            const currentStateBefore = await lottery.currentState()
+        it("startLottery() changes state to WORKING", async () => {
+            const stateBefore = await lottery.states(0)
+            expect(stateBefore.toString()).to.equal("0")
 
-            await lottery.togglePause()
+            await lottery.startLottery()
 
-            const currentStateAfter = await lottery.currentState()
-            expect(currentStateAfter.toString()).to.not.equal(currentStateBefore.toString())
+            const stateAfter = await lottery.states(0)
+            expect(stateAfter.toString()).to.equal("1")
         })
 
-        it("togglePause() changes previousState", async () => {
-            await lottery.togglePause()
+        it("finishLottery() changes state to OPEN_FOR_WITHDRAW", async () => {
+            const stateBefore = await lottery.states(0)
+            expect(stateBefore.toString()).to.equal("0")
 
-            const previousStateBefore = await lottery.previousState()
+            await lottery.startLottery()
+            await lottery.finishLottery()
 
-            await lottery.togglePause()
-
-            const previousStateAfter = await lottery.previousState()
-            expect(previousStateAfter.toString()).to.not.equal(previousStateBefore.toString())
+            const stateAfter = await lottery.states(0)
+            expect(stateAfter.toString()).to.equal("2")
         })
     })
 })

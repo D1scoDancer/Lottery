@@ -11,26 +11,24 @@ import "@openzeppelin/contracts/security/Pausable.sol";
  *          -send that money to AaveDeposit Contract
  *          -choose winner by random from ChainLink VRF (chainlink VRF should be in another lib/contract)
  *          -pick a winner
- *  @dev should be Ownable, Pausable, VRF2ConsumerBaseV2
+ *  @dev should be Ownable, Pausable
+ *  @dev should implement Keeper
  */
 contract Lottery is Ownable, Pausable {
     /* ============ TYPE DECLARATIONS ============ */
     enum LotteryState {
-        OPEN,
+        OPEN_FOR_DEPOSIT,
         WORKING,
-        PAUSED
+        OPEN_FOR_WITHDRAW
     }
 
     /* ============ STATE VARIABLES ============ */
 
-    /// @notice Current state of contract [OPEN | WORKING | PAUSED]
-    LotteryState public currentState;
-
-    /// @notice Previous state of contract [OPEN | WORKING | PAUSED]
-    LotteryState public previousState;
-
     /// @notice Current Round
     uint public round;
+
+    /// @notice Round to State
+    mapping(uint => LotteryState) public states;
 
     /// @notice Round to Player to Stake
     mapping(uint => mapping(address => uint)) public balances;
@@ -51,12 +49,18 @@ contract Lottery is Ownable, Pausable {
     error Lottery__NotEnoughMoney();
     error Lottery__TransferFailed();
     error Lottery__Unauthorized();
+    error Lottery__StateError();
 
     /* ============ MODIFIERS ============  */
 
     /// @dev Для того, чтобы определенные функции могли вызывать исключительно другие контракты проекта
     modifier onlyBy(address account) {
         if (msg.sender != account) revert Lottery__Unauthorized();
+        _;
+    }
+
+    modifier requireState(LotteryState state) {
+        if (state != states[round]) revert Lottery__StateError();
         _;
     }
 
@@ -67,6 +71,7 @@ contract Lottery is Ownable, Pausable {
     }
 
     /* ============ EXTERNAL FUNCTIONS ============ */
+
     function enterLottery() external payable whenNotPaused {
         if (balances[round][msg.sender] > 0) {
             balances[round][msg.sender] += msg.value;
@@ -83,34 +88,25 @@ contract Lottery is Ownable, Pausable {
     function togglePause() external onlyOwner {
         if (paused()) {
             _unpause();
-            setState(previousState);
         } else {
             _pause();
-            setState(LotteryState.PAUSED);
         }
     }
 
-    /** @notice Changes state from OPEN to WORKING
-     *  @dev Запрещать вывод средств текущего раунда
-     *  @dev Отправлять деньги в Контракт 2
+    /**
+     *  @notice Changes Lottery State from OPEN_FOR_DEPOSIT to WORKING
+     *  @dev не факт что нужен onlyOwner, скорее всего нужен другой модификатор
      */
-    function closeDepositing() public onlyOwner {
-        require(currentState == LotteryState.OPEN, "Can only close depositing when state is OPEN");
+    function startLottery() public onlyOwner requireState(LotteryState.OPEN_FOR_DEPOSIT) {
         setState(LotteryState.WORKING);
     }
 
-    /** @notice Changes state from WORKING TO OPEN
-     *  @dev определять победителя
-     *  @dev увеличивать его баланс
-     *  @dev инкрементировать раунд
-     *  @dev работа с Контрактом 3
+    /**
+     *  @notice Changes Lottery State from WORKING to OPEN_FOR_WITHDRAW
+     *  @dev не факт что нужен onlyOwner, скорее всего нужен другой модификатор
      */
-    function finishLottery() public onlyOwner {
-        require(
-            currentState == LotteryState.WORKING,
-            "Can only finish lottery when state is WORKING"
-        );
-        setState(LotteryState.OPEN);
+    function finishLottery() public onlyOwner requireState(LotteryState.WORKING) {
+        setState(LotteryState.OPEN_FOR_WITHDRAW);
     }
 
     /* ============ INTERNAL FUNCTIONS ============ */
@@ -119,9 +115,11 @@ contract Lottery is Ownable, Pausable {
      * @dev не уверен, что тут нужен модификатор onlyOwner. Возможно нужен другой
      */
     function setState(LotteryState newState) internal onlyOwner {
-        require(newState >= LotteryState.OPEN && newState <= LotteryState.PAUSED, "Invalid state");
-        previousState = currentState;
-        currentState = newState;
+        require(
+            newState >= LotteryState.OPEN_FOR_DEPOSIT && newState <= LotteryState.OPEN_FOR_WITHDRAW,
+            "Invalid state"
+        );
+        states[round] = newState;
     }
 
     /* ============ GETTERS ============ */
