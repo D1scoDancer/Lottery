@@ -126,4 +126,14 @@ describe("Lottery Unit Testing", () => {
             expect(stateAfter.toString()).to.equal("2")
         })
     })
+
+    describe("Withdraw", () => {
+        it("User's contract round balance decreases", async () => {})
+
+        it("User's ETH account balance increases", async () => {})
+
+        it("Cannot withdraw if balance is 0", async () => {})
+
+        it("Cannot withdraw in wrong lottery state", async () => {})
+    })
 })

@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
  *          -choose winner by random from ChainLink VRF (chainlink VRF should be in another lib/contract)
  *          -pick a winner
  *  @dev should be Ownable, Pausable
- *  @dev should implement Keeper
+ *  @dev should implement Keeper or should not? (State Machine)
  */
 contract Lottery is Ownable, Pausable {
     /* ============ TYPE DECLARATIONS ============ */
@@ -59,8 +59,8 @@ contract Lottery is Ownable, Pausable {
         _;
     }
 
-    modifier requireState(LotteryState state) {
-        if (state != states[round]) revert Lottery__StateError();
+    modifier atState(uint inRound, LotteryState state) {
+        if (inRound > round || state != states[inRound]) revert Lottery__StateError();
         _;
     }
 
@@ -72,7 +72,13 @@ contract Lottery is Ownable, Pausable {
 
     /* ============ EXTERNAL FUNCTIONS ============ */
 
-    function enterLottery() external payable whenNotPaused {
+    // @dev проверить gas-consumption если сделать переменную round memory здесь
+    function enterLottery()
+        external
+        payable
+        whenNotPaused
+        atState(round, LotteryState.OPEN_FOR_DEPOSIT)
+    {
         if (balances[round][msg.sender] > 0) {
             balances[round][msg.sender] += msg.value;
             totalStake[round] += msg.value;
@@ -97,22 +103,49 @@ contract Lottery is Ownable, Pausable {
      *  @notice Changes Lottery State from OPEN_FOR_DEPOSIT to WORKING
      *  @dev не факт что нужен onlyOwner, скорее всего нужен другой модификатор
      */
-    function startLottery() public onlyOwner requireState(LotteryState.OPEN_FOR_DEPOSIT) {
+    function startLottery() public onlyOwner atState(round, LotteryState.OPEN_FOR_DEPOSIT) {
         setState(LotteryState.WORKING);
+
+        // send money to AaveDeposit
     }
 
     /**
      *  @notice Changes Lottery State from WORKING to OPEN_FOR_WITHDRAW
      *  @dev не факт что нужен onlyOwner, скорее всего нужен другой модификатор
      */
-    function finishLottery() public onlyOwner requireState(LotteryState.WORKING) {
+    function finishLottery() public onlyOwner atState(round, LotteryState.WORKING) {
         setState(LotteryState.OPEN_FOR_WITHDRAW);
+
+        // send request to ChainlinkRNG, get a random number
+
+        // determine a winner
+
+        // determine a prize size
+
+        // change his balance
+
+        // increment round
+
+        // P.S. money is still in the Aave
+    }
+
+    /// @notice Withdraw user's money from a specific round
+    function withdrawFromRound(
+        uint fromRound
+    ) external atState(fromRound, LotteryState.OPEN_FOR_WITHDRAW) {
+        require(balances[fromRound][msg.sender] > 0, "Nothing to withdraw");
+
+        uint amount = balances[fromRound][msg.sender];
+        delete balances[fromRound][msg.sender];
+
+        payable(msg.sender).transfer(amount);
     }
 
     /* ============ INTERNAL FUNCTIONS ============ */
 
     /**
      * @dev не уверен, что тут нужен модификатор onlyOwner. Возможно нужен другой
+     * @dev возоможно следует заменить на nextState() { inc() }. Так контракт вызовет больше доверия, т.к у owner меньше власти
      */
     function setState(LotteryState newState) internal onlyOwner {
         require(
