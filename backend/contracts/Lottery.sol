@@ -129,7 +129,10 @@ contract Lottery is Ownable, Pausable {
         // P.S. money is still in the Aave
     }
 
-    /// @notice Withdraw user's money from a specific round
+    /**
+     *  @notice Withdraw user's money from a specific round
+     *  @dev деньги на самом деле должны браться из AaveDeposit.sol
+     */
     function withdrawFromRound(
         uint fromRound
     ) external atState(fromRound, LotteryState.OPEN_FOR_WITHDRAW) {

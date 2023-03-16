@@ -128,12 +128,44 @@ describe("Lottery Unit Testing", () => {
     })
 
     describe("Withdraw", () => {
-        it("User's contract round balance decreases", async () => {})
+        it("User's contract round balance decreases", async () => {
+            await lottery.enterLottery({ value: enterValue })
 
-        it("User's ETH account balance increases", async () => {})
+            const balanceBefore = await lottery.balances(0, deployer.address)
+            expect(balanceBefore.toString()).to.equal(enterValue.sub(fee).toString())
 
-        it("Cannot withdraw if balance is 0", async () => {})
+            await lottery.startLottery()
+            await lottery.finishLottery()
 
-        it("Cannot withdraw in wrong lottery state", async () => {})
+            await lottery.withdrawFromRound(0)
+
+            const balanceAfter = await lottery.balances(0, deployer.address)
+            expect(balanceAfter.toString()).to.equal("0")
+        })
+
+        it("User's ETH account balance increases", async () => {
+            await lottery.enterLottery({ value: enterValue })
+
+            const balanceBefore = await lottery.provider.getBalance(deployer.address)
+
+            await lottery.startLottery()
+            await lottery.finishLottery()
+
+            await lottery.withdrawFromRound(0)
+
+            const balanceAfter = await lottery.provider.getBalance(deployer.address)
+            expect(balanceAfter.gt(balanceBefore)).to.be.true
+        })
+
+        it("Cannot withdraw if balance is 0", async () => {
+            await lottery.startLottery()
+            await lottery.finishLottery()
+
+            expect(lottery.withdrawFromRound(0)).to.be.revertedWith("Nothing to withdraw")
+        })
+
+        it("Cannot withdraw in wrong lottery state", async () => {
+            expect(lottery.withdrawFromRound(0)).to.be.revertedWith("Lottery__StateError()")
+        })
     })
 })
