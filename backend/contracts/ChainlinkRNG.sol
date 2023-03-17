@@ -4,12 +4,19 @@ pragma solidity ^0.8.19;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
+import "./Lottery.sol";
 
 contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
     struct RequestStatus {
         bool fulfilled; // whether the request has been successfully fulfilled
         bool exists; // whether a requestId exists
         uint randomWord;
+    }
+
+    Lottery public lottery;
+
+    function setLottery(address lotteryAddress) external {
+        lottery = Lottery(lotteryAddress);
     }
 
     mapping(uint256 => RequestStatus) public s_requests; /* requestId --> requestStatus */
@@ -54,7 +61,7 @@ contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
     /**
      * @dev надо добавить модификатор доступа по типу onlyOwner
      */
-    function requestRandomWinner() external onlyOwner returns (uint256 requestId) {
+    function requestRandomWord() external returns (uint256 requestId) {
         // Will revert if subscription is not set and funded.
         requestId = i_vrfCoordinator.requestRandomWords(
             i_gasLane,
@@ -77,7 +84,8 @@ contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
         s_requests[requestId].randomWord = randomWords[0];
         emit RequestFulfilled(requestId, randomWords);
 
-        /// @dev make callback to Lottery
+        // callback to Lottery
+        lottery.chainlinkRNGCallback(randomWords[0]);
     }
 
     function getRequestStatus(
@@ -88,3 +96,9 @@ contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
         return (request.fulfilled, request.randomWord);
     }
 }
+/*
+0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D
+0x79d3d8832d904592c0bf9818b621522c988bb8b0c05cdc3b15aea1b6e8db0c15
+8426
+50000
+*/

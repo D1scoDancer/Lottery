@@ -3,6 +3,7 @@ pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+import "./ChainlinkRNG.sol";
 
 /** @title  Web3 Lottery with Aave
  *  @author Aleksey Shulikov
@@ -23,6 +24,12 @@ contract Lottery is Ownable, Pausable {
     }
 
     /* ============ STATE VARIABLES ============ */
+
+    ChainlinkRNG public rng;
+
+    function setRNG(address rngAddress) external {
+        rng = ChainlinkRNG(rngAddress);
+    }
 
     /// @notice Current Round
     uint public round;
@@ -117,7 +124,12 @@ contract Lottery is Ownable, Pausable {
         setState(LotteryState.OPEN_FOR_WITHDRAW);
 
         // send request to ChainlinkRNG, get a random number
+        uint requestId = rng.requestRandomWord();
+    }
 
+    /// once randomWord is aquired in ChainlinkRNG, this methods is called
+    /// @dev limit who can call this function
+    function chainlinkRNGCallback(uint randomWord) external {
         // determine a winner
 
         // determine a prize size
@@ -127,6 +139,7 @@ contract Lottery is Ownable, Pausable {
         // increment round
 
         // P.S. money is still in the Aave
+        round = randomWord;
     }
 
     /**
