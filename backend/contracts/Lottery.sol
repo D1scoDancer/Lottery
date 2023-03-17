@@ -12,7 +12,6 @@ import "./ChainlinkRNG.sol";
  *          -send that money to AaveDeposit Contract
  *          -choose winner by random from ChainLink VRF (chainlink VRF should be in another lib/contract)
  *          -pick a winner
- *  @dev should be Ownable, Pausable
  *  @dev should implement Keeper or should not? (State Machine)
  */
 contract Lottery is Ownable, Pausable {
@@ -55,14 +54,14 @@ contract Lottery is Ownable, Pausable {
     /* ============ ERRORS ============  */
     error Lottery__NotEnoughMoney();
     error Lottery__TransferFailed();
-    error Lottery__Unauthorized();
+    error Lottery__Unauthorized(address sender);
     error Lottery__StateError();
 
     /* ============ MODIFIERS ============  */
 
     /// @dev Для того, чтобы определенные функции могли вызывать исключительно другие контракты проекта
     modifier onlyBy(address account) {
-        if (msg.sender != account) revert Lottery__Unauthorized();
+        if (msg.sender != account) revert Lottery__Unauthorized(msg.sender);
         _;
     }
 
@@ -127,19 +126,29 @@ contract Lottery is Ownable, Pausable {
         uint requestId = rng.requestRandomWord();
     }
 
-    /// once randomWord is aquired in ChainlinkRNG, this methods is called
-    /// @dev limit who can call this function
-    function chainlinkRNGCallback(uint randomWord) external {
-        // determine a winner
+    /**
+     * @notice once randomWord is aquired in ChainlinkRNG, this methods is called
+     */
+    function rawChainlinkRNGCallBack(uint randomWord) external {
+        if (msg.sender != address(rng)) {
+            revert Lottery__Unauthorized(msg.sender);
+        }
+        chainlinkRNGCallback(randomWord);
+    }
 
-        // determine a prize size
+    function chainlinkRNGCallback(uint randomWord) internal {
+        // determine a winner
+        address winner = getWinner(randomWord);
+
+        // determine a prize size | call to Aave?
+        uint prize = getTotalPrize(round);
 
         // change his balance
+        balances[round][winner] += prize;
 
         // increment round
-
+        round += 1;
         // P.S. money is still in the Aave
-        round = randomWord;
     }
 
     /**
@@ -154,10 +163,33 @@ contract Lottery is Ownable, Pausable {
         uint amount = balances[fromRound][msg.sender];
         delete balances[fromRound][msg.sender];
 
-        payable(msg.sender).transfer(amount);
+        payable(msg.sender).transfer(amount); // AAVE!!!
     }
 
     /* ============ INTERNAL FUNCTIONS ============ */
+
+    /**
+     * @notice Decide a winner
+     * @param randomNumber Random number
+     * @dev
+     */
+    function getWinner(uint randomNumber) internal view returns (address winner) {
+        uint random = randomNumber % totalStake[round];
+        uint sum = 0;
+        for (uint i = 0; i < players[round].length; i++) {
+            sum += balances[round][players[round][i]];
+            if (sum > random) {
+                return players[round][i];
+            }
+        }
+    }
+
+    /**
+     * @dev should call Aave | but we kinda should know what will be the prize at the beginning of the lottery
+     */
+    function getTotalPrize(uint _round) internal view returns (uint) {
+        return 1 wei;
+    }
 
     /**
      * @dev не уверен, что тут нужен модификатор onlyOwner. Возможно нужен другой

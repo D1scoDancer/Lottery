@@ -15,10 +15,6 @@ contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
 
     Lottery public lottery;
 
-    function setLottery(address lotteryAddress) external {
-        lottery = Lottery(lotteryAddress);
-    }
-
     mapping(uint256 => RequestStatus) public s_requests; /* requestId --> requestStatus */
 
     // past requests Id.
@@ -60,6 +56,7 @@ contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
 
     /**
      * @dev надо добавить модификатор доступа по типу onlyOwner
+     * @dev только Lottery can call this
      */
     function requestRandomWord() external returns (uint256 requestId) {
         // Will revert if subscription is not set and funded.
@@ -85,7 +82,11 @@ contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
         emit RequestFulfilled(requestId, randomWords);
 
         // callback to Lottery
-        lottery.chainlinkRNGCallback(randomWords[0]);
+        lottery.rawChainlinkRNGCallBack(randomWords[0]);
+    }
+
+    function setLottery(address lotteryAddress) external {
+        lottery = Lottery(lotteryAddress);
     }
 
     function getRequestStatus(
