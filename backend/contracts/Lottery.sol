@@ -7,7 +7,7 @@ import "./ChainlinkRNG.sol";
 
 /** @title  Web3 Lottery with Aave
  *  @author Aleksey Shulikov
- *  @notice The Lottert contract has the following responsibilities:
+ *  @notice The Lottery contract has the following responsibilities:
  *          -take money from user and remember that
  *          -send that money to AaveDeposit Contract
  *          -choose winner by random from ChainLink VRF (chainlink VRF should be in another lib/contract)
@@ -59,6 +59,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
         _;
     }
 
+    /// @dev Для контроля доступности методов в зависимости от фазы лотереи
     modifier atState(uint inRound, LotteryState state) {
         if (inRound > round || state != states[inRound]) revert Lottery__StateError();
         _;
@@ -78,7 +79,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
 
     /* ============ EXTERNAL FUNCTIONS ============ */
 
-    // @dev проверить gas-consumption если сделать переменную round memory здесь
+    /// @dev проверить gas-consumption если сделать переменную round memory здесь
     function enterLottery()
         external
         payable
@@ -125,7 +126,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
      *  @dev метод должен вызываться Keeper-ом
      */
     function finishLottery() public onlyOwner atState(round, LotteryState.WORKING) {
-        // send request to ChainlinkRNG, get a random number
+        requestRandomWord();
     }
 
     /**
@@ -158,6 +159,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
     }
 
     /**
+     *  @notice The last in the sequence of calls created by finishLottery()
      */
     function realFinishLottery(uint randomWord) internal {
         // determine a winner

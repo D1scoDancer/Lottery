@@ -6,19 +6,35 @@ import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
 
+/** @title  ChainlinkRNG
+ *  @author Aleksey Shulikov
+ *  @notice The Chainlink RNG contract is decomposed from Lottery for a clarity of code.
+ *          It has the following responsibilities:
+ *          -request random number
+ *          -accept callback
+ */
 abstract contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
+    /* ============ TYPE DECLARATIONS ============ */
+
+    /// @notice Status of requst, for history lookups
     struct RequestStatus {
         bool fulfilled; // whether the request has been successfully fulfilled
         bool exists; // whether a requestId exists
         uint randomWord;
     }
 
+    /* ============ STATE VARIABLES ============ */
+
+    /// @notice Address of LinkToken for funding the contract
     LinkTokenInterface public i_linkToken;
 
-    mapping(uint256 => RequestStatus) public s_requests; /* requestId --> requestStatus */
+    /// @notice requestId --> requestStatus mapping
+    mapping(uint256 => RequestStatus) public s_requests;
 
-    // past requests Id.
+    /// @notice Past request Ids
     uint256[] public requestIds;
+
+    /// @notice The last request Id
     uint256 public lastRequestId;
 
     /// @notice VRF (Verifiable Random Function) address
@@ -39,8 +55,11 @@ abstract contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
     /// @notice The number of random numbers to request
     uint32 private constant NUM_WORDS = 1;
 
+    /* ============ EVENTS ============ */
     event RequestSent(uint256 requestId, uint32 numWords);
     event RequestFulfilled(uint256 requestId, uint256[] randomWords);
+
+    /* ============ INITIALIZATION ============ */
 
     constructor(
         address vrfCoordinatorV2,
@@ -59,10 +78,11 @@ abstract contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
     }
 
     /**
+     *
      * @dev надо добавить модификатор доступа по типу onlyOwner
      * @dev только Lottery can call this
      */
-    function requestRandomWord() external returns (uint256 requestId) {
+    function requestRandomWord() internal returns (uint256 requestId) {
         // Will revert if subscription is not set and funded.
         requestId = i_vrfCoordinator.requestRandomWords(
             i_gasLane,
@@ -79,6 +99,10 @@ abstract contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
         return requestId;
     }
 
+    /**
+     *  @notice Fund subscription with Link
+     *  @dev Вызывать в деплой скрипте или в конструкторе
+     */
     function fund(uint96 amount) public {
         i_linkToken.transferAndCall(
             address(i_vrfCoordinator),
@@ -87,6 +111,12 @@ abstract contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
         );
     }
 
+    /**
+     *  @notice Get status of specified request
+     *  @param _requestId Request ID
+     *  @return fulfilled Fulfilled status
+     *  @return randomWord Random word
+     */
     function getRequestStatus(
         uint256 _requestId
     ) external view returns (bool fulfilled, uint256 randomWord) {
@@ -95,9 +125,3 @@ abstract contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
         return (request.fulfilled, request.randomWord);
     }
 }
-/*
-0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D
-0x79d3d8832d904592c0bf9818b621522c988bb8b0c05cdc3b15aea1b6e8db0c15
-8426
-50000
-*/
