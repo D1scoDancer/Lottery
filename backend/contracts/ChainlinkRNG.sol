@@ -5,7 +5,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
-import "./Lottery.sol";
 
 contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
     struct RequestStatus {
@@ -14,9 +13,7 @@ contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
         uint randomWord;
     }
 
-    Lottery public lottery;
-
-    LinkTokenInterface public LINKTOKEN;
+    LinkTokenInterface public i_linkToken;
 
     mapping(uint256 => RequestStatus) public s_requests; /* requestId --> requestStatus */
 
@@ -58,7 +55,7 @@ contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
         i_gasLane = gasLane;
         i_subscriptionId = subscriptionId;
         i_callbackGasLimit = callbackGasLimit;
-        LINKTOKEN = LinkTokenInterface(link);
+        i_linkToken = LinkTokenInterface(link);
     }
 
     /**
@@ -87,17 +84,14 @@ contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
         s_requests[requestId].fulfilled = true;
         s_requests[requestId].randomWord = randomWords[0];
         emit RequestFulfilled(requestId, randomWords);
-
-        // callback to Lottery
-        lottery.rawChainlinkRNGCallBack(randomWords[0]);
     }
 
     function fund(uint96 amount) public {
-        LINKTOKEN.transferAndCall(address(i_vrfCoordinator), amount, abi.encode(i_subscriptionId));
-    }
-
-    function setLottery(address lotteryAddress) external onlyOwner {
-        lottery = Lottery(lotteryAddress);
+        i_linkToken.transferAndCall(
+            address(i_vrfCoordinator),
+            amount,
+            abi.encode(i_subscriptionId)
+        );
     }
 
     function getRequestStatus(

@@ -14,7 +14,7 @@ import "./ChainlinkRNG.sol";
  *          -pick a winner
  *  @dev should implement Keeper or should not? (State Machine)
  */
-contract Lottery is Ownable, Pausable {
+contract Lottery is Ownable, Pausable, ChainlinkRNG {
     /* ============ TYPE DECLARATIONS ============ */
     enum LotteryState {
         OPEN_FOR_DEPOSIT,
@@ -23,8 +23,6 @@ contract Lottery is Ownable, Pausable {
     }
 
     /* ============ STATE VARIABLES ============ */
-
-    ChainlinkRNG public rng;
 
     /// @notice Current Round
     uint public round;
@@ -68,9 +66,14 @@ contract Lottery is Ownable, Pausable {
 
     /* ============ INITIALIZATION ============ */
 
-    constructor(uint _fee, address rngAddress) {
+    constructor(
+        uint _fee,
+        address vrfCoordinatorV2,
+        bytes32 gasLane,
+        uint32 callbackGasLimit,
+        address link
+    ) ChainlinkRNG(vrfCoordinatorV2, gasLane, callbackGasLimit, link) {
         fee = _fee;
-        rng = ChainlinkRNG(rngAddress);
     }
 
     /* ============ EXTERNAL FUNCTIONS ============ */
@@ -120,32 +123,6 @@ contract Lottery is Ownable, Pausable {
         setState(LotteryState.OPEN_FOR_WITHDRAW);
 
         // send request to ChainlinkRNG, get a random number
-        uint requestId = rng.requestRandomWord();
-    }
-
-    /**
-     * @notice once randomWord is aquired in ChainlinkRNG, this methods is called
-     */
-    function rawChainlinkRNGCallBack(uint randomWord) external {
-        if (msg.sender != address(rng)) {
-            revert Lottery__Unauthorized(msg.sender);
-        }
-        chainlinkRNGCallback(randomWord);
-    }
-
-    function chainlinkRNGCallback(uint randomWord) internal {
-        // determine a winner
-        address winner = getWinner(randomWord);
-
-        // determine a prize size | call to Aave?
-        uint prize = getTotalPrize(round);
-
-        // change his balance
-        balances[round][winner] += prize;
-
-        // increment round
-        round += 1;
-        // P.S. money is still in the Aave
     }
 
     /**
