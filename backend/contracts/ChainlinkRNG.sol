@@ -6,7 +6,7 @@ import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
 
-contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
+abstract contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
     struct RequestStatus {
         bool fulfilled; // whether the request has been successfully fulfilled
         bool exists; // whether a requestId exists
@@ -77,13 +77,6 @@ contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
         lastRequestId = requestId;
         emit RequestSent(requestId, NUM_WORDS);
         return requestId;
-    }
-
-    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
-        require(s_requests[requestId].exists, "request not found");
-        s_requests[requestId].fulfilled = true;
-        s_requests[requestId].randomWord = randomWords[0];
-        emit RequestFulfilled(requestId, randomWords);
     }
 
     function fund(uint96 amount) public {

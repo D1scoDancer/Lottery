@@ -1,8 +1,8 @@
-const { ethers, network } = require("hardhat")
+const { ethers, network, deployments } = require("hardhat")
 const { expect } = require("chai")
-const { developmentChains } = require("../../helper-hardhat-config")
+const { developmentChains, networkConfig } = require("../../helper-hardhat-config")
 
-const fee = ethers.utils.parseEther("0.0001")
+const fee = networkConfig[network.config.chainId]["fee"]
 const enterValue = ethers.utils.parseEther("0.1")
 
 !developmentChains.includes(network.name)
@@ -13,8 +13,8 @@ const enterValue = ethers.utils.parseEther("0.1")
               signers = await ethers.getSigners()
               deployer = signers[0]
               user = signers[1]
-              const Factory = await ethers.getContractFactory("Lottery")
-              lottery = await Factory.deploy(fee)
+              await deployments.fixture(["all"])
+              lottery = await ethers.getContract("Lottery", deployer)
               userConnection = lottery.connect(user)
           })
 

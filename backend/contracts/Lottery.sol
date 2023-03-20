@@ -97,6 +97,9 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
         emit LotteryEntered(msg.sender);
     }
 
+    /**
+     *  @notice Pauses or resumes the normal flow of the contract
+     */
     function togglePause() external onlyOwner {
         if (paused()) {
             _unpause();
@@ -108,6 +111,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
     /**
      *  @notice Changes Lottery State from OPEN_FOR_DEPOSIT to WORKING
      *  @dev не факт что нужен onlyOwner, скорее всего нужен другой модификатор
+     *  @dev метод должен вызываться Keeper-ом
      */
     function startLottery() public onlyOwner atState(round, LotteryState.OPEN_FOR_DEPOSIT) {
         setState(LotteryState.WORKING);
@@ -118,10 +122,9 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
     /**
      *  @notice Changes Lottery State from WORKING to OPEN_FOR_WITHDRAW
      *  @dev не факт что нужен onlyOwner, скорее всего нужен другой модификатор
+     *  @dev метод должен вызываться Keeper-ом
      */
     function finishLottery() public onlyOwner atState(round, LotteryState.WORKING) {
-        setState(LotteryState.OPEN_FOR_WITHDRAW);
-
         // send request to ChainlinkRNG, get a random number
     }
 
@@ -141,6 +144,37 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
     }
 
     /* ============ INTERNAL FUNCTIONS ============ */
+
+    /**
+     *  @notice Callback from ChainlinkRNG;
+     */
+    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
+        require(s_requests[requestId].exists, "request not found");
+        s_requests[requestId].fulfilled = true;
+        s_requests[requestId].randomWord = randomWords[0];
+        emit RequestFulfilled(requestId, randomWords);
+
+        realFinishLottery(randomWords[0]);
+    }
+
+    /**
+     */
+    function realFinishLottery(uint randomWord) internal {
+        // determine a winner
+        address winner = getWinner(randomWord);
+
+        // determine a prize size | call to Aave?
+        uint prize = getTotalPrize(round);
+
+        // change his balance
+        balances[round][winner] += prize;
+
+        // increment round
+        round += 1;
+        // P.S. money is still in the Aave
+
+        setState(LotteryState.OPEN_FOR_WITHDRAW);
+    }
 
     /**
      * @notice Decide a winner
