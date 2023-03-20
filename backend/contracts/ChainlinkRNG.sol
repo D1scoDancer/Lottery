@@ -4,6 +4,7 @@ pragma solidity ^0.8.19;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
 import "./Lottery.sol";
 
 contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
@@ -14,6 +15,8 @@ contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
     }
 
     Lottery public lottery;
+
+    LinkTokenInterface public LINKTOKEN;
 
     mapping(uint256 => RequestStatus) public s_requests; /* requestId --> requestStatus */
 
@@ -45,13 +48,17 @@ contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
     constructor(
         address vrfCoordinatorV2,
         bytes32 gasLane,
-        uint64 subscriptionId,
-        uint32 callbackGasLimit
+        // uint64 subscriptionId,
+        uint32 callbackGasLimit,
+        address link
     ) VRFConsumerBaseV2(vrfCoordinatorV2) {
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
+        uint64 subscriptionId = i_vrfCoordinator.createSubscription();
+        i_vrfCoordinator.addConsumer(subscriptionId, address(this));
         i_gasLane = gasLane;
         i_subscriptionId = subscriptionId;
         i_callbackGasLimit = callbackGasLimit;
+        LINKTOKEN = LinkTokenInterface(link);
     }
 
     /**
@@ -85,7 +92,11 @@ contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
         lottery.rawChainlinkRNGCallBack(randomWords[0]);
     }
 
-    function setLottery(address lotteryAddress) external {
+    function fund(uint96 amount) public {
+        LINKTOKEN.transferAndCall(address(i_vrfCoordinator), amount, abi.encode(i_subscriptionId));
+    }
+
+    function setLottery(address lotteryAddress) external onlyOwner {
         lottery = Lottery(lotteryAddress);
     }
 

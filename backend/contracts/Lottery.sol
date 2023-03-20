@@ -26,10 +26,6 @@ contract Lottery is Ownable, Pausable {
 
     ChainlinkRNG public rng;
 
-    function setRNG(address rngAddress) external {
-        rng = ChainlinkRNG(rngAddress);
-    }
-
     /// @notice Current Round
     uint public round;
 
@@ -72,8 +68,9 @@ contract Lottery is Ownable, Pausable {
 
     /* ============ INITIALIZATION ============ */
 
-    constructor(uint _fee) {
+    constructor(uint _fee, address rngAddress) {
         fee = _fee;
+        rng = ChainlinkRNG(rngAddress);
     }
 
     /* ============ EXTERNAL FUNCTIONS ============ */
