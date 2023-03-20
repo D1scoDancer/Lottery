@@ -11,10 +11,11 @@ const networkConfig = {
     31337: {
         // 5
         name: "goerli",
+        fee: "0",
         vrfCoordinatorV2: "0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D",
         gasLane: "0x79d3d8832d904592c0bf9818b621522c988bb8b0c05cdc3b15aea1b6e8db0c15",
-        subscriptionId: "8426",
         callbackGasLimit: "100000",
+        link: "0x326C977E6efc84E512bB9C30f76E30c160eD06FB",
         poolAddressProvider: "0xC911B590248d127aD18546B186cC6B324e99F02c",
         depositAssetAddress: "0x65aFADD39029741B3b8f0756952C74678c9cEC93", // USDC address
     },
