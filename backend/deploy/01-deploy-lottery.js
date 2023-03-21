@@ -3,7 +3,7 @@ const { developmentChains, networkConfig } = require("../helper-hardhat-config")
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments
-    const { deployer } = await getNamedAccounts() // swap for 0x87..?
+    const { deployer } = await getNamedAccounts()
     const chainId = network.config.chainId
 
     const vrfCoordinatorV2 = networkConfig[chainId]["vrfCoordinatorV2"]

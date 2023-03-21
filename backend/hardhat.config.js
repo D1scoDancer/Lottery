@@ -9,6 +9,7 @@ require("dotenv").config()
 
 const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL || "https://eth-goerli"
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "0xkey"
+const PRIVATE_KEY_2 = process.env.PRIVATE_KEY_2 || "0xkey"
 const ETHERSCAN_API = process.env.ETHERSCAN_API || "key"
 const COINTMARKETCAP_API = process.env.COINTMARKETCAP_API || "key"
 const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL || "key"
@@ -33,11 +34,13 @@ module.exports = {
             chainId: 31337,
             blockConfirmations: 1,
             forking: {
-                // url: MAINNET_RPC_URL,
-                // url: "https://api.avax.network/ext/bc/C/rpc",
                 url: GOERLI_RPC_URL,
                 blockNumber: 8688483, // block where I have 40 link
             },
+            accounts: [
+                { privateKey: `0x${PRIVATE_KEY}`, balance: "1000000000000000000000" },
+                { privateKey: `0x${PRIVATE_KEY_2}`, balance: "1000000000000000000000" },
+            ],
             allowUnlimitedContractSize: true,
         },
         goerli: {
@@ -87,7 +90,7 @@ module.exports = {
         noColors: true,
         currency: "USD",
         coinmarketcap: COINTMARKETCAP_API,
-        // token: "MATIC",
+        token: "MATIC",
     },
     docgen: {
         path: "./docs",
