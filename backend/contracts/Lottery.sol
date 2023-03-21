@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
+import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "./ChainlinkRNG.sol";
@@ -44,6 +45,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
 
     /* ============ EVENTS ============ */
     event LotteryEntered(address player);
+    event OpenedForWithdraw();
 
     /* ============ ERRORS ============  */
     error Lottery__NotEnoughMoney();
@@ -71,9 +73,10 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
         uint _fee,
         address vrfCoordinatorV2,
         bytes32 gasLane,
+        uint64 subscriptionId,
         uint32 callbackGasLimit,
         address link
-    ) ChainlinkRNG(vrfCoordinatorV2, gasLane, callbackGasLimit, link) {
+    ) ChainlinkRNG(vrfCoordinatorV2, gasLane, subscriptionId, callbackGasLimit, link) {
         fee = _fee;
     }
 
@@ -125,8 +128,14 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
      *  @dev не факт что нужен onlyOwner, скорее всего нужен другой модификатор
      *  @dev метод должен вызываться Keeper-ом
      */
-    function finishLottery() public onlyOwner atState(round, LotteryState.WORKING) {
-        requestRandomWord();
+    function finishLottery()
+        public
+        onlyOwner
+        atState(round, LotteryState.WORKING)
+        returns (uint requestId)
+    {
+        console.log("1: finishLottery() called");
+        requestId = requestRandomWord();
     }
 
     /**
@@ -150,6 +159,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
      *  @notice Callback from ChainlinkRNG;
      */
     function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
+        console.log("3: fulfillRandomWords() called");
         require(s_requests[requestId].exists, "request not found");
         s_requests[requestId].fulfilled = true;
         s_requests[requestId].randomWord = randomWords[0];
@@ -162,20 +172,22 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
      *  @notice The last in the sequence of calls created by finishLottery()
      */
     function realFinishLottery(uint randomWord) internal {
-        // determine a winner
-        address winner = getWinner(randomWord);
+        console.log("4: realFinishLottery() called");
+        // // determine a winner
+        // address winner = getWinner(randomWord);
 
-        // determine a prize size | call to Aave?
-        uint prize = getTotalPrize(round);
+        // // determine a prize size | call to Aave?
+        // uint prize = getTotalPrize(round);
 
-        // change his balance
-        balances[round][winner] += prize;
+        // // change his balance
+        // balances[round][winner] += prize;
 
-        // increment round
-        round += 1;
-        // P.S. money is still in the Aave
+        // // increment round
+        // round += 1;
+        // // P.S. money is still in the Aave
 
         setState(LotteryState.OPEN_FOR_WITHDRAW);
+        emit OpenedForWithdraw();
     }
 
     /**

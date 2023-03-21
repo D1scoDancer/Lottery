@@ -8,7 +8,7 @@ const enterValue = ethers.utils.parseEther("0.1")
 !developmentChains.includes(network.name)
     ? describe.skip()
     : describe("Lottery Unit Testing", () => {
-          var lottery, deployer, user, userConnection
+          var lottery, deployer, user, userConnection, vrfCoordinatorV2Mock
           beforeEach(async () => {
               signers = await ethers.getSigners()
               deployer = signers[0]
@@ -16,6 +16,8 @@ const enterValue = ethers.utils.parseEther("0.1")
               await deployments.fixture(["all"])
               lottery = await ethers.getContract("Lottery", deployer)
               userConnection = lottery.connect(user)
+
+              vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock")
           })
 
           describe("Initialization", () => {
@@ -142,12 +144,33 @@ const enterValue = ethers.utils.parseEther("0.1")
                   expect(balanceBefore.toString()).to.equal(enterValue.sub(fee).toString())
 
                   await lottery.startLottery()
-                  await lottery.finishLottery()
 
-                  await lottery.withdrawFromRound(0)
+                  await new Promise(async (resolve, reject) => {
+                      lottery.once("OpenedForWithdraw", async () => {
+                          console.log("OpenedForWithdraw event fired!")
 
-                  const balanceAfter = await lottery.balances(0, deployer.address)
-                  expect(balanceAfter.toString()).to.equal("0")
+                          try {
+                              await lottery.withdrawFromRound(0)
+                              const balanceAfter = await lottery.balances(0, deployer.address)
+                              expect(balanceAfter.toString()).to.equal("0")
+                              resolve()
+                          } catch (e) {
+                              reject(e)
+                          }
+                      })
+
+                      lottery.on("*", (event) => {
+                          console.log("New event:", event.event)
+                      })
+
+                      // kicking off the event by mocking the chainlink --keepers-- and vrf coordinator
+                      const tx = await lottery.finishLottery()
+                      const txReceipt = await tx.wait(1)
+                      await vrfCoordinatorV2Mock.fulfillRandomWords(
+                          txReceipt.events[1].args.requestId,
+                          lottery.address
+                      )
+                  })
               })
 
               it("User's ETH account balance increases", async () => {

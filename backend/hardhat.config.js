@@ -35,7 +35,7 @@ module.exports = {
             blockConfirmations: 1,
             forking: {
                 url: GOERLI_RPC_URL,
-                blockNumber: 8688483, // block where I have 40 link
+                blockNumber: 8691601, // block where I have LINK
             },
             accounts: [
                 { privateKey: `0x${PRIVATE_KEY}`, balance: "1000000000000000000000" },
@@ -96,5 +96,8 @@ module.exports = {
         path: "./docs",
         clear: false,
         runOnCompile: false,
+    },
+    mocha: {
+        timeout: 120000, // 2 min
     },
 }

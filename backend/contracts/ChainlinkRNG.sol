@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
+import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
@@ -64,13 +65,11 @@ abstract contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
     constructor(
         address vrfCoordinatorV2,
         bytes32 gasLane,
-        // uint64 subscriptionId,
+        uint64 subscriptionId,
         uint32 callbackGasLimit,
         address link
     ) VRFConsumerBaseV2(vrfCoordinatorV2) {
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
-        uint64 subscriptionId = i_vrfCoordinator.createSubscription();
-        i_vrfCoordinator.addConsumer(subscriptionId, address(this));
         i_gasLane = gasLane;
         i_subscriptionId = subscriptionId;
         i_callbackGasLimit = callbackGasLimit;
@@ -83,6 +82,7 @@ abstract contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
      * @dev только Lottery can call this
      */
     function requestRandomWord() internal returns (uint256 requestId) {
+        console.log("2: requestRandomWord() called");
         // Will revert if subscription is not set and funded.
         requestId = i_vrfCoordinator.requestRandomWords(
             i_gasLane,
@@ -97,18 +97,6 @@ abstract contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
         lastRequestId = requestId;
         emit RequestSent(requestId, NUM_WORDS);
         return requestId;
-    }
-
-    /**
-     *  @notice Fund subscription with Link
-     *  @dev Вызывать в деплой скрипте или в конструкторе
-     */
-    function fund(uint96 amount) public {
-        i_linkToken.transferAndCall(
-            address(i_vrfCoordinator),
-            amount,
-            abi.encode(i_subscriptionId)
-        );
     }
 
     /**
