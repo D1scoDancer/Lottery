@@ -83,13 +83,14 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
     /* ============ EXTERNAL FUNCTIONS ============ */
 
     /// @dev проверить gas-consumption если сделать переменную round memory здесь
-    /// @dev проверять на msg.value == 0 => revert
+    /// @dev написать тесты на проверку перевода денег к `owner`
     function enterLottery()
         external
         payable
         whenNotPaused
         atState(round, LotteryState.OPEN_FOR_DEPOSIT)
     {
+        require(msg.value > 0);
         if (balances[round][msg.sender] > 0) {
             balances[round][msg.sender] += msg.value;
             totalStake[round] += msg.value;
@@ -98,6 +99,9 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
             players[round].push(msg.sender);
             balances[round][msg.sender] = msg.value - fee;
             totalStake[round] += msg.value - fee;
+            if (fee > 0) {
+                payable(owner()).transfer(fee); // not tested yet
+            }
         }
         emit LotteryEntered(msg.sender);
     }
@@ -135,7 +139,6 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
         atState(round, LotteryState.WORKING)
         returns (uint requestId)
     {
-        console.log("1: finishLottery() called");
         requestId = requestRandomWord();
     }
 
