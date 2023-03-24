@@ -83,6 +83,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
     /* ============ EXTERNAL FUNCTIONS ============ */
 
     /// @dev проверить gas-consumption если сделать переменную round memory здесь
+    /// @dev проверять на msg.value == 0 => revert
     function enterLottery()
         external
         payable
@@ -159,12 +160,12 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
      *  @notice Callback from ChainlinkRNG;
      */
     function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
-        console.log("3: fulfillRandomWords() called");
         require(s_requests[requestId].exists, "request not found");
         s_requests[requestId].fulfilled = true;
         s_requests[requestId].randomWord = randomWords[0];
         emit RequestFulfilled(requestId, randomWords);
 
+        emit OpenedForWithdraw();
         realFinishLottery(randomWords[0]);
     }
 
@@ -172,19 +173,18 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
      *  @notice The last in the sequence of calls created by finishLottery()
      */
     function realFinishLottery(uint randomWord) internal {
-        console.log("4: realFinishLottery() called");
-        // // determine a winner
-        // address winner = getWinner(randomWord);
+        // determine a winner
+        address winner = getWinner(randomWord);
 
-        // // determine a prize size | call to Aave?
-        // uint prize = getTotalPrize(round);
+        // determine a prize size | call to Aave?
+        uint prize = getTotalPrize(round);
 
-        // // change his balance
-        // balances[round][winner] += prize;
+        // change his balance
+        balances[round][winner] += prize;
 
-        // // increment round
-        // round += 1;
-        // // P.S. money is still in the Aave
+        // increment round
+        round += 1;
+        // P.S. money is still in the Aave
 
         setState(LotteryState.OPEN_FOR_WITHDRAW);
         emit OpenedForWithdraw();

@@ -82,7 +82,6 @@ abstract contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
      * @dev только Lottery can call this
      */
     function requestRandomWord() internal returns (uint256 requestId) {
-        console.log("2: requestRandomWord() called");
         // Will revert if subscription is not set and funded.
         requestId = i_vrfCoordinator.requestRandomWords(
             i_gasLane,
