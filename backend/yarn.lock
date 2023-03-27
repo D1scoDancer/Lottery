@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@aave/core-v3@^1.17.1":
-  version "1.17.1"
-  resolved "https://registry.yarnpkg.com/@aave/core-v3/-/core-v3-1.17.1.tgz#acf7d011a8aff146b3110667c06184193ddbced7"
-  integrity sha512-OAHtclfz4LvHDF5Sh2RUfBtOHkEXe0r9xocrAv+3XSiH3hkSh/tzwxdiKGQimqFHR1fyULiVvuOjp6Q5yK4r8A==
+"@aave/core-v3@^1.17.2":
+  version "1.17.2"
+  resolved "https://registry.yarnpkg.com/@aave/core-v3/-/core-v3-1.17.2.tgz#dfb543da87d4d6429e0c277b46b84057349f590f"
+  integrity sha512-ztCyKTALoeOQy6MlWVRCvHgilh6vT+d6lwjXhIsmlEYlA0v3L6dQBIyTFIzHBUfcpEjs0T3tSmcVxGY+GAUZ1g==
 
 "@babel/parser@^7.18.4":
   version "7.20.13"

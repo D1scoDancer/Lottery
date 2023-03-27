@@ -1,224 +1,208 @@
-const { assert, expect } = require("chai")
-const { deployments, ethers, getNamedAccounts, network } = require("hardhat")
+const { ethers, network, deployments } = require("hardhat")
+const { expect } = require("chai")
 const { developmentChains, networkConfig } = require("../../helper-hardhat-config")
+
+const fee = networkConfig[network.config.chainId]["fee"]
+const enterValue = ethers.utils.parseEther("0.1")
 
 !developmentChains.includes(network.name)
     ? describe.skip()
-    : describe("Lottery Unit Tests", () => {
-          let deployer
-          let accounts
-          let lottery
-          let aaveDeposit
-          let vrfCoordinatorV2Mock
-          const FEE = ethers.utils.parseEther("0.001")
-          const DOUBLE_FEE = 2 * FEE
-
+    : describe("Lottery Unit Testing", () => {
+          var lottery, deployer, user, userConnection, vrfCoordinatorV2Mock
           beforeEach(async () => {
-              deployer = (await getNamedAccounts()).deployer
-              accounts = await ethers.getSigners()
+              signers = await ethers.getSigners()
+              deployer = signers[0]
+              user = signers[1]
               await deployments.fixture(["all"])
               lottery = await ethers.getContract("Lottery", deployer)
-              aaveDeposit = await ethers.getContract("AaveDeposit", deployer)
-              vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock", deployer)
+              userConnection = lottery.connect(user)
+
+              vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock")
           })
 
-          describe("Constructor", () => {
-              it("owner is set", async () => {
-                  const owner = await lottery.owner()
-                  assert.equal(owner, deployer)
-              })
-
-              it("i_vrfCoordinator is set", async () => {}) // TODO:
-
-              it("i_gasLane is set", async () => {
-                  const gasLane = networkConfig[31337].gasLane
-                  const i_gasLane = await lottery.getGasLane()
-                  assert.equal(i_gasLane, gasLane)
-              })
-
-              it("i_subscriptionId is set", async () => {
-                  const i_subscriptionId = await lottery.getSubscriptionId()
-                  assert.equal(i_subscriptionId.toString(), "1")
-              })
-
-              it("i_callbackGasLimit is set", async () => {
-                  const callbackGasLimit = networkConfig[31337].callbackGasLimit
-                  const i_callbackGasLimit = await lottery.getCallbackGasLimit()
-                  assert.equal(i_callbackGasLimit, callbackGasLimit)
+          describe("Initialization", () => {
+              it("Fee is set", async () => {
+                  const _fee = await lottery.fee()
+                  expect(_fee.toString()).to.equal(fee.toString())
               })
           })
 
           describe("Enter Lottery", () => {
-              it("can enter with msg.value > FEE", async () => {
-                  await expect(lottery.enterLottery({ value: DOUBLE_FEE })).not.to.be.revertedWith(
-                      "Lottery__NotEnoughMoney()"
+              it("mapping balances changes", async () => {
+                  const balance = await lottery.balances(0, deployer.address)
+                  expect(balance.toString()).to.equal("0")
+
+                  await lottery.enterLottery({ value: enterValue })
+
+                  const balanceAfter = await lottery.balances(0, deployer.address)
+                  expect(balanceAfter.toString()).to.equal(enterValue.sub(fee).toString())
+              })
+
+              it("mapping players changes", async () => {
+                  await lottery.enterLottery({ value: enterValue })
+                  const address = await lottery.players(0, 0)
+                  expect(address).to.equal(deployer.address)
+              })
+
+              it("mapping totalStake changes", async () => {
+                  const totalStakeBefore = await lottery.totalStake(0)
+                  expect(totalStakeBefore.toString()).to.equal("0")
+
+                  await lottery.enterLottery({ value: enterValue })
+
+                  const totalStakeAfter = await lottery.totalStake(0)
+                  expect(totalStakeAfter.toString()).to.equal(
+                      totalStakeBefore.add(enterValue).sub(fee).toString()
                   )
               })
 
-              it("reverted with custom error when msg.value = FEE", async () => {
-                  await expect(lottery.enterLottery({ value: FEE })).to.be.revertedWith(
-                      "Lottery__NotEnoughMoney()"
-                  )
-              })
-
-              it("reverted with custom error when msg.value < FEE", async () => {
-                  await expect(lottery.enterLottery({ value: 0 })).to.be.revertedWith(
-                      "Lottery__NotEnoughMoney()"
-                  )
-              })
-
-              it("new address gets pushed to s_players list", async () => {
-                  const numPlayersBefore = await lottery.getNumPlayers()
-                  await lottery.enterLottery({ value: DOUBLE_FEE })
-                  const numPlayersAfter = await lottery.getNumPlayers()
-                  assert.equal(numPlayersAfter.toString(), numPlayersBefore.add(1).toString())
-              })
-
-              it("address doesn't get pushed to s_players list on second entry", async () => {
-                  const numPlayersBefore = await lottery.getNumPlayers()
-                  await lottery.enterLottery({ value: DOUBLE_FEE })
-                  await lottery.enterLottery({ value: DOUBLE_FEE })
-                  const numPlayersAfter = await lottery.getNumPlayers()
-                  assert.equal(numPlayersAfter.toString(), numPlayersBefore.add(1).toString())
-              })
-
-              it("s_playerToStake[address] increases by msg.value - FEE", async () => {
-                  await lottery.enterLottery({ value: DOUBLE_FEE })
-                  const stake = await lottery.getStake()
-                  assert.equal(stake.toString(), FEE.toString())
-              })
-
-              it("s_totalStake increases by msg.value - FEE", async () => {
-                  await lottery.enterLottery({ value: DOUBLE_FEE })
-                  const totalStake = await lottery.getTotalStake()
-                  assert.equal(totalStake.toString(), FEE.toString())
-              })
-
-              it("event gets emited with correct address", async () => {
-                  await expect(lottery.enterLottery({ value: DOUBLE_FEE }))
-                      .to.emit(lottery, "LotteryEntered")
-                      .withArgs(deployer)
-              })
-
-              it("lottery balance increases by msg.value", async () => {
-                  const lotteryBalanceBefore = await lottery.provider.getBalance(lottery.address)
-                  await lottery.enterLottery({ value: DOUBLE_FEE })
-                  const lotteryBalanceAfter = await lottery.provider.getBalance(lottery.address)
-                  assert.equal(
-                      lotteryBalanceAfter.toString(),
-                      lotteryBalanceBefore.add(DOUBLE_FEE).toString()
-                  )
-              })
-          })
-
-          describe("Finish Lottery", () => {
-              beforeEach(async () => {
-                  for (let i = 0; i < 10; i++) {
-                      const user = accounts[1 + i]
-                      const userConnection = await lottery.connect(user)
-
-                      await userConnection.enterLottery({ value: DOUBLE_FEE })
-                  }
-              })
-
-              it("can call finishLottery() while being an owner", async () => {
-                  await expect(lottery.finishLottery([])).not.to.be.revertedWith(
-                      "Ownable: caller is not the owner"
-                  )
-              })
-
-              it("cannot call finishLottery() without being an owner", async () => {
-                  const user = accounts[1]
-                  const userConnection = await lottery.connect(user)
-
-                  await expect(userConnection.finishLottery([])).to.be.revertedWith(
-                      "Ownable: caller is not the owner"
-                  )
-              })
-
-              it("random is different depending on seed", async () => {
-                  // still questionable if this test belongs here
-                  const tx1Response = await lottery.finishLottery([]) // Account #9
-                  const tx1Receipt = await tx1Response.wait(1)
-                  const winner1 = tx1Receipt.events[0].args.winner
-
-                  for (let i = 0; i < 10; i++) {
-                      const user = accounts[1 + i]
-                      const userConnection = await lottery.connect(user)
-
-                      await userConnection.enterLottery({ value: DOUBLE_FEE })
-                  }
-
-                  const tx2Response = await lottery.finishLottery([1]) // Account #10
-                  const tx2Receipt = await tx2Response.wait(1)
-                  const winner2 = tx2Receipt.events[0].args.winner
-                  assert.notEqual(winner2, winner1)
-              })
-
-              it("LotteryFinished event gets emitted", async () => {
-                  await expect(lottery.finishLottery([])).to.emit(lottery, "LotteryFinished")
-              })
-
-              it("money is sent to winner", async () => {
-                  const winnerBalanceBefore = await lottery.provider.getBalance(accounts[9].address)
-                  await lottery.finishLottery([]) // Account #9
-                  const winnerBalanceAfter = await lottery.provider.getBalance(accounts[9].address)
-                  assert(winnerBalanceAfter.gt(winnerBalanceBefore))
-              })
-
-              it("s_players list gets resetted", async () => {
-                  await lottery.finishLottery([])
-
-                  const numPlayersAfter = await lottery.getNumPlayers()
-                  assert.equal(numPlayersAfter.toString(), "0")
-              })
-
-              it("s_playerToStake mapping gets resetted", async () => {
-                  await lottery.finishLottery([])
-
-                  for (let i = 0; i < 10; i++) {
-                      const user = accounts[1 + i]
-                      const userConnection = await lottery.connect(user)
-
-                      const stake = await userConnection.getStake()
-                      assert.equal(stake.toString(), "0")
-                  }
-              })
-
-              it("s_totalStake variable gets resetted", async () => {
-                  await lottery.finishLottery([])
-
-                  const s_totalStake = await lottery.getTotalStake()
-                  assert.equal(s_totalStake.toString(), "0")
-              })
-          })
-
-          describe("Get Winner", () => {})
-
-          describe("Send Money To AaveDeposit", () => {
-              beforeEach(async () => {
-                  for (let i = 0; i < 10; i++) {
-                      const user = accounts[1 + i]
-                      const userConnection = await lottery.connect(user)
-
-                      await userConnection.enterLottery({ value: DOUBLE_FEE })
-                  }
-              })
-
-              it("balance of Lottery decreases", async () => {
+              it("contract balance changes", async () => {
                   const balanceBefore = await lottery.provider.getBalance(lottery.address)
-                  await lottery.sendToAaveDeposit()
-                  const balanceAfter = await lottery.provider.getBalance(lottery.address)
+                  expect(balanceBefore.toString()).to.equal("0")
 
-                  assert.equal(balanceAfter.toString(), balanceBefore.sub(FEE.mul(10)).toString())
+                  await lottery.enterLottery({ value: enterValue })
+
+                  const balanceAfter = await lottery.provider.getBalance(lottery.address)
+                  expect(balanceAfter.toString()).to.equal(balanceBefore.add(enterValue).toString())
               })
 
-              it("balance of AaveDeposit increases", async () => {
-                  const balanceBefore = await lottery.provider.getBalance(aaveDeposit.address)
-                  await lottery.sendToAaveDeposit()
-                  const balanceAfter = await lottery.provider.getBalance(aaveDeposit.address)
+              it("fee is not paid if player exists", async () => {
+                  await lottery.enterLottery({ value: enterValue })
+                  const totalStakeBefore = await lottery.totalStake(0)
+                  expect(totalStakeBefore.toString()).to.equal(enterValue.sub(fee).toString())
 
-                  assert.equal(balanceAfter.toString(), balanceBefore.add(FEE.mul(10)).toString())
+                  await lottery.enterLottery({ value: enterValue })
+
+                  const totalStakeAfter = await lottery.totalStake(0)
+                  expect(totalStakeAfter.toString()).to.equal(
+                      totalStakeBefore.add(enterValue).toString()
+                  )
               })
           })
+
+          describe("Ownable", () => {
+              it("Owner is set", async () => {
+                  const owner = await lottery.owner()
+                  expect(owner).to.be.equal(deployer.address)
+              })
+
+              it("Only owner can togglePause()", async () => {
+                  expect(userConnection.togglePause()).to.be.revertedWith(
+                      "Ownable: caller is not the owner"
+                  )
+                  expect(lottery.togglePause()).not.to.be.revertedWith(
+                      "Ownable: caller is not the owner"
+                  )
+              })
+          })
+
+          describe("Pausable", () => {
+              it("Pause is set", async () => {
+                  const paused = await lottery.paused()
+                  expect(paused).to.be.false
+              })
+
+              it("EnterLottery is not accessible when contract is paused", async () => {
+                  expect(lottery.enterLottery({ value: enterValue })).not.to.be.revertedWith(
+                      "Pausable: paused"
+                  )
+                  await lottery.togglePause()
+                  expect(lottery.enterLottery({ value: enterValue })).to.be.revertedWith(
+                      "Pausable: paused"
+                  )
+              })
+          })
+
+          describe("Changing States", () => {
+              it("startLottery() changes state to WORKING", async () => {
+                  const stateBefore = await lottery.states(0)
+                  expect(stateBefore.toString()).to.equal("0")
+
+                  await lottery.startLottery()
+
+                  const stateAfter = await lottery.states(0)
+                  expect(stateAfter.toString()).to.equal("1")
+              })
+
+              it("finishLottery() changes state to OPEN_FOR_WITHDRAW", async () => {
+                  const stateBefore = await lottery.states(0)
+                  expect(stateBefore.toString()).to.equal("0")
+
+                  await lottery.startLottery()
+
+                  // kicking off the event by mocking the chainlink --keepers-- and vrf coordinator
+                  const tx = await lottery.finishLottery()
+                  const txReceipt = await tx.wait(1)
+                  await vrfCoordinatorV2Mock.fulfillRandomWords(
+                      txReceipt.events[1].args.requestId,
+                      lottery.address
+                  )
+
+                  const stateAfter = await lottery.states(0)
+                  expect(stateAfter.toString()).to.equal("2")
+              })
+          })
+
+          //   describe("Withdraw", () => {
+          //       it("User's contract round balance decreases", async () => {
+          //           await lottery.enterLottery({ value: enterValue })
+
+          //           const balanceBefore = await lottery.balances(0, deployer.address)
+          //           expect(balanceBefore.toString()).to.equal(enterValue.sub(fee).toString())
+
+          //           await lottery.startLottery()
+
+          //           await new Promise(async (resolve, reject) => {
+          //               lottery.once("OpenedForWithdraw", async () => {
+          //                   console.log("OpenedForWithdraw event fired!")
+
+          //                   try {
+          //                       await lottery.withdrawFromRound(0)
+          //                       const balanceAfter = await lottery.balances(0, deployer.address)
+          //                       expect(balanceAfter.toString()).to.equal("0")
+          //                       resolve()
+          //                   } catch (e) {
+          //                       reject(e)
+          //                   }
+          //               })
+
+          //               lottery.on("*", (event) => {
+          //                   console.log("New event:", event.event)
+          //               })
+
+          //               // kicking off the event by mocking the chainlink --keepers-- and vrf coordinator
+          //               const tx = await lottery.finishLottery()
+          //               const txReceipt = await tx.wait(1)
+          //               await vrfCoordinatorV2Mock.fulfillRandomWords(
+          //                   txReceipt.events[1].args.requestId,
+          //                   lottery.address
+          //               )
+          //           })
+          //       })
+
+          //       it("User's ETH account balance increases", async () => {
+          //           await lottery.enterLottery({ value: enterValue })
+
+          //           const balanceBefore = await lottery.provider.getBalance(deployer.address)
+
+          //           await lottery.startLottery()
+          //           await lottery.finishLottery()
+
+          //           await lottery.withdrawFromRound(0)
+
+          //           const balanceAfter = await lottery.provider.getBalance(deployer.address)
+          //           expect(balanceAfter.gt(balanceBefore)).to.be.true
+          //       })
+
+          //       it("Cannot withdraw if balance is 0", async () => {
+          //           await lottery.startLottery()
+          //           await lottery.finishLottery()
+
+          //           expect(lottery.withdrawFromRound(0)).to.be.revertedWith("Nothing to withdraw")
+          //       })
+
+          //       it("Cannot withdraw in wrong lottery state", async () => {
+          //           expect(lottery.withdrawFromRound(0)).to.be.revertedWith("Lottery__StateError()")
+          //       })
+          //   })
       })
