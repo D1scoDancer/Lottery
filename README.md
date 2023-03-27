@@ -10,12 +10,15 @@ The service allows users to make short-term deposits, for which users can receiv
 ### **The project is still in development, not ready to be deployed**
 
 ## Plans
-- To launch Dapp on Fantom
+- To launch Dapp on Testnet
+- To create a script to launch Dapp on any network of choice
 
 ## To be done
 - [x] Move user interface from [another project](https://github.com/D1scoDancer/lottery-ui)
-- [ ] Create PrizeDistributor contract
-- [ ] Remove the RNG logic from the Lottery contract
+- [x] Create AaveETHDeposit contract
+- [x] Remove the RNG logic from the Lottery contract
+- [ ] Implement Chainlink Keeper
+- [ ] Connect Frontend with Backend
 - [ ] Unit tests for everything
 - [ ] Dynamic / Static analysys of code 
 
