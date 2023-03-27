@@ -6,11 +6,11 @@ import {IPoolAddressesProvider} from "@aave/core-v3/contracts/interfaces/IPoolAd
 import {IERC20} from "@aave/core-v3/contracts/dependencies/openzeppelin/contracts/IERC20.sol";
 
 contract AaveETHDeposit {
-    IPoolAddressesProvider public immutable ADDRESSES_PROVIDER;
-    IPool public immutable POOL;
+    IPoolAddressesProvider internal immutable ADDRESSES_PROVIDER;
+    IPool internal immutable POOL;
 
-    address private immutable assetAddress; // weth
-    IERC20 private asset;
+    address internal immutable assetAddress; // WETH
+    IERC20 internal immutable asset;
 
     constructor(address _addressesProvider, address _assetAddress) {
         ADDRESSES_PROVIDER = IPoolAddressesProvider(_addressesProvider);
