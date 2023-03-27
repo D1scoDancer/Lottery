@@ -5,6 +5,7 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "./ChainlinkRNG.sol";
+import "./AaveETHDeposit.sol";
 
 /** @title  Web3 Lottery with Aave
  *  @author Aleksey Shulikov
@@ -15,7 +16,7 @@ import "./ChainlinkRNG.sol";
  *          -pick a winner
  *  @dev should implement Keeper or should not? (State Machine)
  */
-contract Lottery is Ownable, Pausable, ChainlinkRNG {
+contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit {
     /* ============ TYPE DECLARATIONS ============ */
     enum LotteryState {
         OPEN_FOR_DEPOSIT,
@@ -75,8 +76,13 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG {
         bytes32 gasLane,
         uint64 subscriptionId,
         uint32 callbackGasLimit,
-        address link
-    ) ChainlinkRNG(vrfCoordinatorV2, gasLane, subscriptionId, callbackGasLimit, link) {
+        address link,
+        address addressesProvider,
+        address assetAddress
+    )
+        ChainlinkRNG(vrfCoordinatorV2, gasLane, subscriptionId, callbackGasLimit, link)
+        AaveETHDeposit(addressesProvider, assetAddress)
+    {
         fee = _fee;
     }
 
