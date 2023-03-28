@@ -19,15 +19,17 @@ contract AaveETHDeposit {
         asset = IERC20(assetAddress);
     }
 
-    function supplyLiquidity(uint _amount) external {
+    /// @dev только одна функция должна остаться
+    function fastSupply(uint _amount) public {
+        approveWETH(_amount);
+        supplyLiquidity(_amount);
+    }
+
+    function supplyLiquidity(uint _amount) public {
         POOL.supply(assetAddress, _amount, address(this), 0);
     }
 
-    function withdrawLiquidity(uint _amount) external returns (uint) {
-        return POOL.withdraw(assetAddress, _amount, address(this));
-    }
-
-    function withdrawAllLiquidity() external returns (uint) {
+    function withdrawLiquidity() public returns (uint) {
         return POOL.withdraw(assetAddress, type(uint).max, address(this));
     }
 
@@ -59,7 +61,7 @@ contract AaveETHDeposit {
     }
 
     /* ========== EXTRA ========== */
-    function approveWETH(uint256 _amount) external returns (bool) {
+    function approveWETH(uint256 _amount) public returns (bool) {
         return asset.approve(address(POOL), _amount);
     }
 
