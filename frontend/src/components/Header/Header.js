@@ -8,14 +8,14 @@ const Header = () => {
     return (
         <header>
             <div className="leftpart">
-                <div className="logo">
+                {/* <div className="logo">
                     <img src="/logo.png" className="logoimg" />
-                </div>
+                </div> */}
                 <Navigation />
             </div>
             <div className="rightpart">
                 <Connection />
-                <Settings />
+                {/* <Settings /> */}
             </div>
         </header>
     )
