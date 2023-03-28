@@ -26,9 +26,6 @@ abstract contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
 
     /* ============ STATE VARIABLES ============ */
 
-    /// @notice Address of LinkToken for funding the contract
-    LinkTokenInterface public i_linkToken;
-
     /// @notice requestId --> requestStatus mapping
     mapping(uint256 => RequestStatus) public s_requests;
 
@@ -66,14 +63,12 @@ abstract contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
         address vrfCoordinatorV2,
         bytes32 gasLane,
         uint64 subscriptionId,
-        uint32 callbackGasLimit,
-        address link
+        uint32 callbackGasLimit
     ) VRFConsumerBaseV2(vrfCoordinatorV2) {
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
         i_gasLane = gasLane;
         i_subscriptionId = subscriptionId;
         i_callbackGasLimit = callbackGasLimit;
-        i_linkToken = LinkTokenInterface(link);
     }
 
     /**

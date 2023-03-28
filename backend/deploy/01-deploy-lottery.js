@@ -27,7 +27,6 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const fee = networkConfig[chainId]["fee"]
     const gasLane = networkConfig[chainId]["gasLane"]
     const callbackGasLimit = networkConfig[chainId]["callbackGasLimit"]
-    const link = networkConfig[chainId]["link"]
     const addressesProvider = networkConfig[chainId]["addressesProvider"]
     const assetAddress = networkConfig[chainId]["assetAddress"]
 
@@ -37,7 +36,6 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         gasLane,
         subscriptionId,
         callbackGasLimit,
-        link,
         addressesProvider,
         assetAddress,
     ]

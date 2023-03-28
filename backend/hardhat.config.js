@@ -13,6 +13,7 @@ const PRIVATE_KEY_2 = process.env.PRIVATE_KEY_2 || "0xkey"
 const ETHERSCAN_API = process.env.ETHERSCAN_API || "key"
 const COINTMARKETCAP_API = process.env.COINTMARKETCAP_API || "key"
 const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL || "key"
+const MUMBAI_RPC_URL = process.env.MUMBAI_RPC_URL || "key"
 
 module.exports = {
     solidity: {
@@ -34,8 +35,7 @@ module.exports = {
             chainId: 31337,
             blockConfirmations: 1,
             forking: {
-                url: GOERLI_RPC_URL,
-                blockNumber: 8691601, // block where I have LINK
+                url: MUMBAI_RPC_URL,
             },
             accounts: [
                 { privateKey: `0x${PRIVATE_KEY}`, balance: "1000000000000000000000" },

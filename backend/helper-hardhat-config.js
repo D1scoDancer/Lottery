@@ -9,16 +9,34 @@ const networkConfig = {
     //     depositAssetAddress: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
     // },
     31337: {
-        // 5
+        name: "mumbai",
+        fee: "0",
+        vrfCoordinatorV2: "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed",
+        subscriptionId: "3847",
+        gasLane: "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f",
+        callbackGasLimit: "100000",
+        addressesProvider: "0xeb7A892BB04A8f836bDEeBbf60897A7Af1Bf5d7F",
+        assetAddress: "0xD087ff96281dcf722AEa82aCA57E8545EA9e6C96", // WETH address
+    },
+    5: {
         name: "goerli",
         fee: "0",
         vrfCoordinatorV2: "0x2Ca8E0C643bDe4C2E08ab1fA0da3401AdAD7734D",
         subscriptionId: "8426",
         gasLane: "0x79d3d8832d904592c0bf9818b621522c988bb8b0c05cdc3b15aea1b6e8db0c15",
         callbackGasLimit: "100000",
-        link: "0x326C977E6efc84E512bB9C30f76E30c160eD06FB",
         addressesProvider: "0xC911B590248d127aD18546B186cC6B324e99F02c",
         assetAddress: "0xCCB14936C2E000ED8393A571D15A2672537838Ad", // WETH address
+    },
+    80001: {
+        name: "mumbai",
+        fee: "0",
+        vrfCoordinatorV2: "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed",
+        subscriptionId: "3847",
+        gasLane: "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f",
+        callbackGasLimit: "100000",
+        addressesProvider: "0xeb7A892BB04A8f836bDEeBbf60897A7Af1Bf5d7F",
+        assetAddress: "0xD087ff96281dcf722AEa82aCA57E8545EA9e6C96", // WETH address
     },
     4002: {
         name: "fantomtest",

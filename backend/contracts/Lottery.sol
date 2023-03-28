@@ -76,11 +76,10 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit {
         bytes32 gasLane,
         uint64 subscriptionId,
         uint32 callbackGasLimit,
-        address link,
         address addressesProvider,
         address assetAddress
     )
-        ChainlinkRNG(vrfCoordinatorV2, gasLane, subscriptionId, callbackGasLimit, link)
+        ChainlinkRNG(vrfCoordinatorV2, gasLane, subscriptionId, callbackGasLimit)
         AaveETHDeposit(addressesProvider, assetAddress)
     {
         fee = _fee;
