@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.10;
 
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -130,8 +130,11 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit {
      */
     function startLottery() public onlyOwner atState(round, LotteryState.OPEN_FOR_DEPOSIT) {
         setState(LotteryState.WORKING);
-
-        // send money to AaveDeposit
+        uint amount = totalStake[round];
+        // change ETH to WETH
+        asset.deposit{value: amount}();
+        // send money to AaveDeposit | call fastSupply()
+        fastSupply(amount);
     }
 
     /**

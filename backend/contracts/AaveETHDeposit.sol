@@ -1,22 +1,23 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity ^0.8.10;
 
 import {IPool} from "@aave/core-v3/contracts/interfaces/IPool.sol";
 import {IPoolAddressesProvider} from "@aave/core-v3/contracts/interfaces/IPoolAddressesProvider.sol";
-import {IERC20} from "@aave/core-v3/contracts/dependencies/openzeppelin/contracts/IERC20.sol";
+// import {IERC20} from "@aave/core-v3/contracts/dependencies/openzeppelin/contracts/IERC20.sol";
+import {WETH9} from "@aave/core-v3/contracts/dependencies/weth/WETH9.sol";
 
 contract AaveETHDeposit {
     IPoolAddressesProvider internal immutable ADDRESSES_PROVIDER;
     IPool internal immutable POOL;
 
     address internal immutable assetAddress; // WETH
-    IERC20 internal immutable asset;
+    WETH9 internal immutable asset;
 
     constructor(address _addressesProvider, address _assetAddress) {
         ADDRESSES_PROVIDER = IPoolAddressesProvider(_addressesProvider);
         POOL = IPool(ADDRESSES_PROVIDER.getPool());
         assetAddress = _assetAddress;
-        asset = IERC20(assetAddress);
+        asset = WETH9(payable(assetAddress));
     }
 
     /// @dev только одна функция должна остаться
