@@ -9,7 +9,7 @@ const Connection = () => {
     return (
         <div className="connection">
             <ChainIcon id={chain?.id} unsupported={chain?.unsupported} />
-            <label className="name">Goerli</label> {/* change */}
+            <label className="name">{chain?.name}</label>
             <ConnectKitButton showAvatar={false} />
         </div>
     )

@@ -12,7 +12,7 @@ const DepositButton = () => {
         abi: lotteryAbi,
         functionName: "enterLottery",
         overrides: {
-            value: ethers.utils.parseEther("0.01"),
+            value: ethers.utils.parseEther("0.05"),
         },
     })
 

@@ -5,10 +5,10 @@ import App from "./App"
 import reportWebVitals from "./reportWebVitals"
 import { WagmiConfig, createClient } from "wagmi"
 import { ConnectKitProvider, getDefaultClient } from "connectkit"
-import { goerli } from "wagmi/chains"
+import { polygonMumbai } from "wagmi/chains"
 
 const alchemyId = process.env.ALCHEMY_ID
-const chains = [goerli]
+const chains = [polygonMumbai]
 
 const client = createClient(
     getDefaultClient({

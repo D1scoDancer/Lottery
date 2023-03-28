@@ -49,6 +49,12 @@ module.exports = {
             chainId: 5,
             blockConfirmations: 6,
         },
+        mumbai: {
+            url: `${MUMBAI_RPC_URL}`,
+            accounts: [`0x${PRIVATE_KEY}`],
+            chainId: 80001,
+            blockConfirmations: 2,
+        },
         fantomtest: {
             url: "https://fantom-testnet.public.blastapi.io	",
             chainId: 4002,

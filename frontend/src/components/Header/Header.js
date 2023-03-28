@@ -1,6 +1,5 @@
 import React from "react"
 import Navigation from "../Navigation/Navigation"
-import Settings from "../Settings/Settings"
 import Connection from "../Connection/Connection"
 import "./Header.css"
 
