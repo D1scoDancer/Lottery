@@ -37,23 +37,30 @@ const DepositWindow = () => {
         ],
     })
 
+    const amount = (call2) => {
+        if (call2.data) {
+            return ethers.utils.formatEther(call2?.data?.toString())
+        } else {
+            return "~"
+        }
+    }
+
     return (
         <Container className="depositwindow">
             <Table striped hover>
                 <thead>
                     <tr>
-                        <th>Asset:</th>
+                        <th>Round:</th>
                         <th>Amount:</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <Deposit
-                        number={1}
-                        asset={"WETH"}
-                        // amount={ethers.utils.formatEther(call2.data.toString())}
-                        amount={0}
-                    />
-                    <Deposit number={2} asset={"USDC"} amount={0} />
+                    {isConnected && call2 ? (
+                        <Deposit round={0} amount={amount(call2)} />
+                    ) : (
+                        <>Not connected</>
+                    )}
                 </tbody>
             </Table>
         </Container>

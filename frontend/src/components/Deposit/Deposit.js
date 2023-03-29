@@ -1,13 +1,13 @@
 import React from "react"
-import { Container } from "react-bootstrap"
+import { Button, Container } from "react-bootstrap"
 
-const Deposit = ({ asset, amount, tx }) => {
+const Deposit = ({ round, amount }) => {
     return (
         <tr>
-            <td>{asset}</td>
+            <td>{round}</td>
             <td>{amount}</td>
             <td>
-                <a href="#">{tx}</a>
+                <Button>Withdraw</Button>
             </td>
         </tr>
     )
