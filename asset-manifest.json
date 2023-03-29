@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/Lottery/static/css/main.179a2168.css",
-    "main.js": "/Lottery/static/js/main.2e5729fa.js",
+    "main.css": "/Lottery/static/css/main.1ac46163.css",
+    "main.js": "/Lottery/static/js/main.f587dc6b.js",
     "static/js/942.d6db03ca.chunk.js": "/Lottery/static/js/942.d6db03ca.chunk.js",
     "static/js/563.00b4db7e.chunk.js": "/Lottery/static/js/563.00b4db7e.chunk.js",
     "static/js/774.0dc0b50a.chunk.js": "/Lottery/static/js/774.0dc0b50a.chunk.js",
@@ -14,8 +14,8 @@
     "static/js/500.0b0c3b9c.chunk.js": "/Lottery/static/js/500.0b0c3b9c.chunk.js",
     "static/js/561.5e2e921f.chunk.js": "/Lottery/static/js/561.5e2e921f.chunk.js",
     "index.html": "/Lottery/index.html",
-    "main.179a2168.css.map": "/Lottery/static/css/main.179a2168.css.map",
-    "main.2e5729fa.js.map": "/Lottery/static/js/main.2e5729fa.js.map",
+    "main.1ac46163.css.map": "/Lottery/static/css/main.1ac46163.css.map",
+    "main.f587dc6b.js.map": "/Lottery/static/js/main.f587dc6b.js.map",
     "774.0dc0b50a.chunk.js.map": "/Lottery/static/js/774.0dc0b50a.chunk.js.map",
     "787.cda612ba.chunk.js.map": "/Lottery/static/js/787.cda612ba.chunk.js.map",
     "64.6bba2006.chunk.js.map": "/Lottery/static/js/64.6bba2006.chunk.js.map",
@@ -26,7 +26,7 @@
     "561.5e2e921f.chunk.js.map": "/Lottery/static/js/561.5e2e921f.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.179a2168.css",
-    "static/js/main.2e5729fa.js"
+    "static/css/main.1ac46163.css",
+    "static/js/main.f587dc6b.js"
   ]
 }
