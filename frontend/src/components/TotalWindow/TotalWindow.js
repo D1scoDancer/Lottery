@@ -50,10 +50,11 @@ const TotalWindow = () => {
             const depositAPY = (1 + depositAPR / SECONDS_PER_YEAR) ** SECONDS_PER_YEAR - 1
             console.log(`DepositAPY: ${depositAPY * 100}%`)
             const prize = Math.round((totalStake * depositAPY) / 60) // 365 / 6 = 60
-            return parseFloat(ethers.utils.formatEther(prize)).toFixed(8)
-        } else {
-            return "~"
+            console.log(prize)
+            console.log(prize ? "true" : "false")
+            if (prize) return parseFloat(ethers.utils.formatEther(prize)).toFixed(8)
         }
+        return "~"
     }
 
     return (
