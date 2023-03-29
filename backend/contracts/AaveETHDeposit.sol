@@ -8,7 +8,7 @@ import {WETH9} from "@aave/core-v3/contracts/dependencies/weth/WETH9.sol";
 
 contract AaveETHDeposit {
     IPoolAddressesProvider internal immutable ADDRESSES_PROVIDER;
-    IPool internal immutable POOL;
+    IPool public immutable POOL;
 
     address internal immutable assetAddress; // WETH
     WETH9 internal immutable asset;

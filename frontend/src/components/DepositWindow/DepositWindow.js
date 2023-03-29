@@ -8,11 +8,7 @@ import lotteryAbi from "../../constants/abi.json"
 import { ethers } from "ethers"
 
 const DepositWindow = () => {
-    const { address, isConnected } = useAccount({
-        onConnect({ address, connector, isReconnected }) {
-            console.log("Connected", { address, connector, isReconnected })
-        },
-    })
+    const { address, isConnected } = useAccount()
 
     const call1 = useContractReads({
         contracts: [
@@ -31,7 +27,7 @@ const DepositWindow = () => {
                 address: contractAddresses.LotteryAddress,
                 abi: lotteryAbi,
                 functionName: "balances",
-                args: [call1.data.toString(), address],
+                args: [call1?.data?.toString(), address],
                 enabled: false,
             },
         ],

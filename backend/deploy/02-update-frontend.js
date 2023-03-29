@@ -1,7 +1,13 @@
-const { frontEndContractsFile, frontEndAbiFile } = require("../helper-hardhat-config")
+const {
+    frontEndContractsFile,
+    frontEndAbiFile,
+    networkConfig,
+} = require("../helper-hardhat-config")
 const fs = require("fs")
-const { network } = require("hardhat")
+const { network, ethers } = require("hardhat")
 require("dotenv").config()
+
+const chainId = network.config.chainId
 
 module.exports = async () => {
     if (process.env.UPDATE_FRONT_END) {
@@ -19,8 +25,11 @@ async function updateAbi() {
 
 async function updateLotteryAddress() {
     const lottery = await ethers.getContract("Lottery")
+    const poolAddress = await lottery.POOL()
     const obj = {
         LotteryAddress: lottery.address,
+        PoolAddress: poolAddress,
+        AssetAddress: networkConfig[chainId]["assetAddress"],
     }
     fs.writeFileSync(frontEndContractsFile, JSON.stringify(obj))
 }
