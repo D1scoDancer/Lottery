@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "./ChainlinkRNG.sol";
 import "./AaveETHDeposit.sol";
+import "./Automated.sol";
 
 /** @title  Web3 Lottery with Aave
  *  @author Aleksey Shulikov
@@ -16,7 +17,7 @@ import "./AaveETHDeposit.sol";
  *          -pick a winner
  *  @dev should implement Keeper or should not? (State Machine)
  */
-contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit {
+contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
     /* ============ TYPE DECLARATIONS ============ */
     enum LotteryState {
         OPEN_FOR_DEPOSIT,
@@ -77,10 +78,12 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit {
         uint64 subscriptionId,
         uint32 callbackGasLimit,
         address addressesProvider,
-        address assetAddress
+        address assetAddress,
+        address registryAddress
     )
         ChainlinkRNG(vrfCoordinatorV2, gasLane, subscriptionId, callbackGasLimit)
         AaveETHDeposit(addressesProvider, assetAddress)
+        Automated(registryAddress)
     {
         fee = _fee;
     }
@@ -235,6 +238,12 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit {
         );
         states[round] = newState;
     }
+
+    function checkUpkeep(
+        bytes calldata
+    ) external view override returns (bool upkeepNeeded, bytes memory performData) {}
+
+    function performUpkeep(bytes calldata performData) external override onlyKeeperRegistry {}
 
     /* ============ GETTERS ============ */
 }

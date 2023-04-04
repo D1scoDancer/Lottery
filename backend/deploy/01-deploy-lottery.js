@@ -29,6 +29,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const callbackGasLimit = networkConfig[chainId]["callbackGasLimit"]
     const addressesProvider = networkConfig[chainId]["addressesProvider"]
     const assetAddress = networkConfig[chainId]["assetAddress"]
+    const registryAddress = networkConfig[chainId]["registryAddress"]
 
     const args = [
         fee,
@@ -38,6 +39,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         callbackGasLimit,
         addressesProvider,
         assetAddress,
+        registryAddress,
     ]
     const lottery = await deploy("Lottery", {
         from: deployer,
