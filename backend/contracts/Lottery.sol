@@ -130,7 +130,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
      *  @dev не факт что нужен onlyOwner, скорее всего нужен другой модификатор
      *  @dev метод должен вызываться Keeper-ом
      */
-    function startLottery() public onlyOwner atState(round, LotteryState.OPEN_FOR_DEPOSIT) {
+    function startLottery() public atState(round, LotteryState.OPEN_FOR_DEPOSIT) {
         setState(LotteryState.WORKING);
         uint amount = totalStake[round];
         // change ETH to WETH
@@ -144,12 +144,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
      *  @dev не факт что нужен onlyOwner, скорее всего нужен другой модификатор
      *  @dev метод должен вызываться Keeper-ом
      */
-    function finishLottery()
-        public
-        onlyOwner
-        atState(round, LotteryState.WORKING)
-        returns (uint requestId)
-    {
+    function finishLottery() public atState(round, LotteryState.WORKING) returns (uint requestId) {
         requestId = requestRandomWord();
     }
 
