@@ -10,7 +10,7 @@ require("dotenv").config()
 const chainId = network.config.chainId
 
 module.exports = async () => {
-    if (process.env.UPDATE_FRONT_END) {
+    if (process.env.UPDATE_FRONT_END === "true") {
         console.log("Writing to front end...")
         await updateLotteryAddress()
         await updateAbi()
