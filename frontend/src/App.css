@@ -39,5 +39,6 @@
 
 body {
     background-image: url("../public/bg-2.jpg");
+    background-size: cover;
     color: var(--main-text) !important;
 }
