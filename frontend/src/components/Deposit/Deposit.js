@@ -7,7 +7,7 @@ const Deposit = ({ round, amount }) => {
             <td>{round}</td>
             <td>{amount} ETH</td>
             <td>
-                <Button>Withdraw</Button>
+                <Button variant="dark">Withdraw</Button>
             </td>
         </tr>
     )

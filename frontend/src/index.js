@@ -18,13 +18,13 @@ const client = createClient(
     })
 )
 
-const options = { initialChainId: 0 }
+const options = { initialChainId: 0, embedGoogleFonts: true }
 
 const root = ReactDOM.createRoot(document.getElementById("root"))
 root.render(
     <React.StrictMode>
         <WagmiConfig client={client}>
-            <ConnectKitProvider options={options}>
+            <ConnectKitProvider options={options} theme="midnight" mode="dark">
                 <App />
             </ConnectKitProvider>
         </WagmiConfig>

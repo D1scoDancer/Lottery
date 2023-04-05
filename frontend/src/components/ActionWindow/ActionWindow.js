@@ -7,14 +7,6 @@ const ActionWindow = () => {
     return (
         <Container className="actionwindow">
             <DepositButton />
-            <div className="subbtns">
-                <Button variant="info" size="sm">
-                    Get tokens
-                </Button>
-                <Button variant="info" size="sm">
-                    Help
-                </Button>
-            </div>
         </Container>
     )
 }

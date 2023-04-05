@@ -43,7 +43,7 @@ const DepositWindow = () => {
 
     return (
         <Container className="depositwindow">
-            <Table striped hover>
+            <Table striped hover variant="dark">
                 <thead>
                     <tr>
                         <th>Round:</th>
