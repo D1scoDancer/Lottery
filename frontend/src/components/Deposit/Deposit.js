@@ -1,15 +1,12 @@
 import React from "react"
 import { Button, Container } from "react-bootstrap"
 
-const Deposit = ({ round, amount, status, prize, canWithdraw }) => {
+const Deposit = ({ round, amount, status, canWithdraw }) => {
     return (
         <tr>
             <td>{round}</td>
             <td>{amount} MATIC</td>
             <td>{status}</td>
-            <td>{prize} MATIC</td>
-            <td></td>
-            <td>{amount + prize} MATIC</td>
             <td>
                 <Button variant="dark" disabled={!canWithdraw}>
                     Withdraw

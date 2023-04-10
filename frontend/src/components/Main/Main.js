@@ -1,16 +1,18 @@
-import React from "react"
+import React, { useState } from "react"
 import ActionWindow from "../ActionWindow/ActionWindow"
 import DepositWindow from "../DepositWindow/DepositWindow"
 import Infoblock from "../Infoblock/Infoblock"
 import "./Main.css"
 
 const Main = () => {
+    const [totalStake, setTotalStake] = useState(0)
+
     return (
         <main>
-            <Infoblock />
+            <Infoblock totalStake={totalStake} setTotalStake={setTotalStake} />
             <div className="depositblock">
                 <h5>Your deposits</h5>
-                <DepositWindow />
+                <DepositWindow totalStake={totalStake} />
             </div>
             <div className="actionblock">
                 <ActionWindow />

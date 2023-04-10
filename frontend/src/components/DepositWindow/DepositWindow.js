@@ -1,36 +1,35 @@
-import React, { useEffect } from "react"
-import { Container, Table } from "react-bootstrap"
+import React from "react"
+import { Table } from "react-bootstrap"
 import Deposit from "../Deposit/Deposit"
 import "./DepositWindow.css"
-import { useAccount, useContractReads } from "wagmi"
+import { useAccount, useContractRead } from "wagmi"
 import contractAddresses from "../../constants/contractAddresses.json"
 import lotteryAbi from "../../constants/abi.json"
 import { ethers } from "ethers"
 
-const DepositWindow = () => {
+const DepositWindow = ({ totalStake }) => {
     const { address, isConnected } = useAccount()
 
-    const call1 = useContractReads({
-        contracts: [
-            {
-                address: contractAddresses.LotteryAddress,
-                abi: lotteryAbi,
-                functionName: "round",
-                enabled: false,
-            },
-        ],
+    const call1 = useContractRead({
+        address: contractAddresses.LotteryAddress,
+        abi: lotteryAbi,
+        functionName: "round",
+        enabled: false,
     })
 
-    const call2 = useContractReads({
-        contracts: [
-            {
-                address: contractAddresses.LotteryAddress,
-                abi: lotteryAbi,
-                functionName: "balances",
-                args: [call1?.data?.toString(), address],
-                enabled: false,
-            },
-        ],
+    const call2 = useContractRead({
+        address: contractAddresses.LotteryAddress,
+        abi: lotteryAbi,
+        functionName: "balances",
+        args: [call1?.data?.toString(), address],
+        enabled: false,
+    })
+
+    const call4 = useContractRead({
+        address: contractAddresses.LotteryAddress,
+        abi: lotteryAbi,
+        functionName: "balances",
+        args: [call1?.data?.toString(), address],
     })
 
     const amount = (call2) => {
@@ -42,7 +41,22 @@ const DepositWindow = () => {
     }
 
     const status = () => {
-        return "PASS"
+        // didn't win
+        // WINNER
+        // x% chance of wining
+        if (isConnected) {
+            console.log(call1)
+            // x% chance of wining
+            if (totalStake == 0) {
+                return "100% chance of winning"
+            } else {
+                return `${Math.round(
+                    (call4?.data?.toString() / totalStake) * 100
+                )}% chance of winning`
+            }
+        } else {
+            return ""
+        }
     }
 
     const canWithdraw = () => {
@@ -56,10 +70,7 @@ const DepositWindow = () => {
                     <th>Round:</th>
                     <th>Amount:</th>
                     <th>Status:</th>
-                    <th>My prize:</th>
-                    <th>_________</th>
-                    <th>Can withdraw</th>
-                    <th>btn</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>

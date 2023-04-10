@@ -9,7 +9,7 @@ import IPoolAbi from "../../constants/IPoolAbi.json"
 const RAY = 10 ** 27 // 10 to the power 27
 const SECONDS_PER_YEAR = 31536000
 
-const Infoblock = () => {
+const Infoblock = ({ totalStake, setTotalStake }) => {
     const { address, isConnected } = useAccount()
 
     const call1 = useContractRead({
@@ -47,7 +47,7 @@ const Infoblock = () => {
         return "~"
     }
 
-    const totalStake = call2?.data?.toString() || 0
+    setTotalStake(call2?.data?.toString() || 0)
 
     return (
         <div className="infoblock">
