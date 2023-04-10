@@ -41,29 +41,41 @@ const DepositWindow = () => {
         }
     }
 
+    const status = () => {
+        return "PASS"
+    }
+
+    const canWithdraw = () => {
+        return false
+    }
+
     return (
-        <Container className="depositwindow">
-            <Table striped hover variant="dark">
-                <thead>
-                    <tr>
-                        <th>Round:</th>
-                        <th>Amount:</th>
-                        <th>Status:</th>
-                        <th>My prize:</th>
-                        <th>_________</th>
-                        <th>Can withdraw</th>
-                        <th>btn</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {isConnected && call2 ? (
-                        <Deposit round={0} amount={amount(call2)} />
-                    ) : (
-                        <div className="warning">Not connected</div>
-                    )}
-                </tbody>
-            </Table>
-        </Container>
+        <Table striped hover variant="dark">
+            <thead>
+                <tr>
+                    <th>Round:</th>
+                    <th>Amount:</th>
+                    <th>Status:</th>
+                    <th>My prize:</th>
+                    <th>_________</th>
+                    <th>Can withdraw</th>
+                    <th>btn</th>
+                </tr>
+            </thead>
+            <tbody>
+                {isConnected && call2 ? (
+                    <Deposit
+                        round={0}
+                        amount={amount(call2)}
+                        status={status()}
+                        prize={0}
+                        canWithdraw={canWithdraw()}
+                    />
+                ) : (
+                    <div className="warning">Not connected</div>
+                )}
+            </tbody>
+        </Table>
     )
 }
 

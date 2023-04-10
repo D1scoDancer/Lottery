@@ -1,17 +1,19 @@
 import React from "react"
 import { Button, Container } from "react-bootstrap"
 
-const Deposit = ({ round, amount }) => {
+const Deposit = ({ round, amount, status, prize, canWithdraw }) => {
     return (
         <tr>
             <td>{round}</td>
-            <td>{amount} ETH</td>
+            <td>{amount} MATIC</td>
+            <td>{status}</td>
+            <td>{prize} MATIC</td>
             <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{amount + prize} MATIC</td>
             <td>
-                <Button variant="dark">Withdraw</Button>
+                <Button variant="dark" disabled={!canWithdraw}>
+                    Withdraw
+                </Button>
             </td>
         </tr>
     )
