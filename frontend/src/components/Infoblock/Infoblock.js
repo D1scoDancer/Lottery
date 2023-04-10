@@ -4,9 +4,12 @@ import "./Infoblock.css"
 const Infoblock = () => {
     return (
         <div className="infoblock">
-            <h2>Welcome</h2>
-            <h4 className="currentRound">Current round: </h4>
-            <h4 className="currentState">Current State: </h4>
+            <h4 style={{ marginTop: 20 + "px" }}>Current round: </h4>
+            <h4 style={{ marginTop: 20 + "px" }}> PrizePool right now is: {1400} MATIC </h4>
+            <h5> The prize will be: {10} MATIC </h5>
+            <h6 style={{ marginTop: 20 + "px" }}>
+                The winner will be decided in {"5 days 14 hours 15 minutes and 45 seconds"}
+            </h6>
         </div>
     )
 }

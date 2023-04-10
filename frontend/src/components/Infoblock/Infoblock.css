@@ -8,11 +8,3 @@
     transition: box-shadow 0.2s ease-out;
     color: var(--main-text);
 }
-
-.currentRound {
-    margin-top: 25px;
-}
-
-.currentState {
-    margin-top: 20px;
-}
