@@ -6,6 +6,10 @@ const Deposit = ({ round, amount }) => {
         <tr>
             <td>{round}</td>
             <td>{amount} ETH</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
             <td>
                 <Button variant="dark">Withdraw</Button>
             </td>

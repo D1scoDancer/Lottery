@@ -48,7 +48,11 @@ const DepositWindow = () => {
                     <tr>
                         <th>Round:</th>
                         <th>Amount:</th>
-                        <th></th>
+                        <th>Status:</th>
+                        <th>My prize:</th>
+                        <th>_________</th>
+                        <th>Can withdraw</th>
+                        <th>btn</th>
                     </tr>
                 </thead>
                 <tbody>

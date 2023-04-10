@@ -9,15 +9,9 @@ const Main = () => {
     return (
         <main>
             <Infoblock />
-            <div className="twoblocks">
-                <div className="leftblock">
-                    <label>Your deposits</label>
-                    <DepositWindow />
-                </div>
-                <div className="rightblock">
-                    <label>Total deposit</label>
-                    <TotalWindow />
-                </div>
+            <div className="depositblock">
+                <h5>Your deposits</h5>
+                <DepositWindow />
             </div>
             <div className="actionblock">
                 <ActionWindow />
