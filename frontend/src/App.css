@@ -42,3 +42,8 @@ body {
     background-size: cover;
     color: var(--main-text) !important;
 }
+
+.subbody {
+    max-width: 1500px;
+    min-width: 1000px;
+}

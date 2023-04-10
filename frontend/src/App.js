@@ -9,8 +9,10 @@ function App() {
         <html>
             <head></head>
             <body>
-                <Header />
-                <Main />
+                <div className="subbody">
+                    <Header />
+                    <Main />
+                </div>
             </body>
         </html>
     )
