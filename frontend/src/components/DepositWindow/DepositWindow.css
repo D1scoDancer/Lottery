@@ -12,3 +12,7 @@
 .amount {
     margin-left: 50px;
 }
+
+.warning {
+    color: var(--warning-text);
+}

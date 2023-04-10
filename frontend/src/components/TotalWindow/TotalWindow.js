@@ -76,7 +76,7 @@ const TotalWindow = () => {
                             : `${Math.round((call4?.data?.toString() / totalStake) * 100)} %`}
                     </div>
                 ) : (
-                    <>Not connected</>
+                    <div className="warning">Not connected</div>
                 )}
             </div>
         </Container>

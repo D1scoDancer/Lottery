@@ -55,7 +55,7 @@ const DepositWindow = () => {
                     {isConnected && call2 ? (
                         <Deposit round={0} amount={amount(call2)} />
                     ) : (
-                        <>Not connected</>
+                        <div className="warning">Not connected</div>
                     )}
                 </tbody>
             </Table>
