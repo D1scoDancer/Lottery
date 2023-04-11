@@ -7,7 +7,7 @@ import contractAddresses from "../../constants/contractAddresses.json"
 import lotteryAbi from "../../constants/abi.json"
 import { ethers } from "ethers"
 
-const DepositWindow = ({ totalStake }) => {
+const DepositWindow = () => {
     const { address, isConnected } = useAccount()
 
     const call1 = useContractRead({
@@ -40,22 +40,11 @@ const DepositWindow = ({ totalStake }) => {
         }
     }
 
-    const status = () => {
-        // didn't win
-        // WINNER
-        // x% chance of wining
-        if (isConnected) {
-            console.log(call1)
-            // x% chance of wining
-            if (totalStake == 0) {
-                return "100% chance of winning"
-            } else {
-                return `${Math.round(
-                    (call4?.data?.toString() / totalStake) * 100
-                )}% chance of winning`
-            }
+    const round = () => {
+        if (call1.data) {
+            return call1?.data?.toString()
         } else {
-            return ""
+            return -1
         }
     }
 
@@ -75,13 +64,18 @@ const DepositWindow = ({ totalStake }) => {
             </thead>
             <tbody>
                 {isConnected && call2 ? (
-                    <Deposit
-                        round={0}
-                        amount={amount(call2)}
-                        status={status()}
-                        prize={0}
-                        canWithdraw={canWithdraw()}
-                    />
+                    <>
+                        {(() => {
+                            const n = round()
+                            const elements = []
+
+                            for (let i = 0; i <= n; i++) {
+                                elements.push(<Deposit round={i} address={address} />)
+                            }
+
+                            return elements
+                        })()}
+                    </>
                 ) : (
                     <div className="warning">Not connected</div>
                 )}

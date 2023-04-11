@@ -1,12 +1,63 @@
 import React from "react"
 import { Button, Container } from "react-bootstrap"
+import { useContractRead } from "wagmi"
+import contractAddresses from "../../constants/contractAddresses.json"
+import lotteryAbi from "../../constants/abi.json"
+import { ethers } from "ethers"
 
-const Deposit = ({ round, amount, status, canWithdraw }) => {
+const Deposit = ({ round, address }) => {
+    const canWithdraw = false // temporary
+
+    const callForBalance = useContractRead({
+        address: contractAddresses.LotteryAddress,
+        abi: lotteryAbi,
+        functionName: "balances",
+        args: [round, address],
+    })
+
+    const amount = (callForBalance) => {
+        if (callForBalance.data) {
+            return ethers.utils.formatEther(callForBalance?.data?.toString())
+        } else {
+            return "~"
+        }
+    }
+
+    const callForTotalStake = useContractRead({
+        address: contractAddresses.LotteryAddress,
+        abi: lotteryAbi,
+        functionName: "totalStake",
+        args: [round],
+    })
+
+    const totalStake = (callForTotalStake) => {
+        if (callForTotalStake.data) {
+            return ethers.utils.formatEther(callForTotalStake?.data?.toString())
+        } else {
+            return 0
+        }
+    }
+
+    const status = () => {
+        // didn't win
+        // WINNER
+        // x% chance of wining
+
+        // x% chance of wining
+        if (totalStake(callForTotalStake) == 0) {
+            return "100% chance of winning"
+        } else {
+            return `${Math.round(
+                (amount(callForBalance) / totalStake(callForTotalStake)) * 100
+            )}% chance of winning`
+        }
+    }
+
     return (
         <tr>
             <td>{round}</td>
-            <td>{amount} MATIC</td>
-            <td>{status}</td>
+            <td>{amount(callForBalance)} MATIC</td>
+            <td>{status()}</td>
             <td>
                 <Button variant="dark" disabled={!canWithdraw}>
                     Withdraw

@@ -12,7 +12,7 @@ const Main = () => {
             <Infoblock totalStake={totalStake} setTotalStake={setTotalStake} />
             <div className="depositblock">
                 <h5>Your deposits</h5>
-                <DepositWindow totalStake={totalStake} />
+                <DepositWindow />
             </div>
             <div className="actionblock">
                 <ActionWindow />
