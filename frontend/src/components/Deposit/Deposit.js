@@ -13,6 +13,7 @@ const Deposit = ({ round, address }) => {
         abi: lotteryAbi,
         functionName: "balances",
         args: [round, address],
+        watch: true,
     })
 
     const amount = (callForBalance) => {

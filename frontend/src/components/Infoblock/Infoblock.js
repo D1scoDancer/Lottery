@@ -23,6 +23,7 @@ const Infoblock = ({ totalStake, setTotalStake }) => {
         abi: lotteryAbi,
         functionName: "totalStake",
         args: [call1?.data?.toString()],
+        watch: true,
     })
 
     const call3 = useContractRead({

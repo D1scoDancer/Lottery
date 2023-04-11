@@ -17,28 +17,12 @@ const DepositWindow = () => {
         enabled: false,
     })
 
-    const call2 = useContractRead({
-        address: contractAddresses.LotteryAddress,
-        abi: lotteryAbi,
-        functionName: "balances",
-        args: [call1?.data?.toString(), address],
-        enabled: false,
-    })
-
     const call4 = useContractRead({
         address: contractAddresses.LotteryAddress,
         abi: lotteryAbi,
         functionName: "balances",
         args: [call1?.data?.toString(), address],
     })
-
-    const amount = (call2) => {
-        if (call2.data) {
-            return ethers.utils.formatEther(call2?.data?.toString())
-        } else {
-            return "~"
-        }
-    }
 
     const round = () => {
         if (call1.data) {
@@ -63,7 +47,7 @@ const DepositWindow = () => {
                 </tr>
             </thead>
             <tbody>
-                {isConnected && call2 ? (
+                {isConnected ? (
                     <>
                         {(() => {
                             const n = round()
