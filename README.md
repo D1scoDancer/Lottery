@@ -1,6 +1,9 @@
 # Blockchain Based Winning Loan Service 
 ## Graduation project | Faculty of Computer Science, Higher School of Economics
 
+## Website
+https://D1scoDancer.github.io/Lottery
+
 ## Introduction
 ### Description of the subject area
 The developed service is designed to implement the concept of "Premium Bonds" (winning loan). Its essence lies in the probabilistic earnings of the "interest" of all participants.
