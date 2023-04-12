@@ -54,7 +54,9 @@ const DepositWindow = () => {
                             const elements = []
 
                             for (let i = 0; i <= n; i++) {
-                                elements.push(<Deposit round={i} address={address} />)
+                                elements.push(
+                                    <Deposit round={i} currentRound={round()} address={address} />
+                                )
                             }
 
                             return elements

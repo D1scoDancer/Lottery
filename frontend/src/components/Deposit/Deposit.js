@@ -5,9 +5,7 @@ import contractAddresses from "../../constants/contractAddresses.json"
 import lotteryAbi from "../../constants/abi.json"
 import { ethers } from "ethers"
 
-const Deposit = ({ round, address }) => {
-    const canWithdraw = false // temporary
-
+const Deposit = ({ round, currentRound, address }) => {
     const callForBalance = useContractRead({
         address: contractAddresses.LotteryAddress,
         abi: lotteryAbi,
@@ -39,18 +37,44 @@ const Deposit = ({ round, address }) => {
         }
     }
 
-    const status = () => {
-        // didn't win
-        // WINNER
-        // x% chance of wining
+    const callForState = useContractRead({
+        address: contractAddresses.LotteryAddress,
+        abi: lotteryAbi,
+        functionName: "states",
+        args: [round],
+    })
 
-        // x% chance of wining
-        if (totalStake(callForTotalStake) == 0) {
-            return "100% chance of winning"
+    const canWithdraw = () => {
+        if (callForState) {
+            switch (callForState?.data?.toString()) {
+                case "0":
+                case "1":
+                    return false
+                case "2":
+                    return true
+                default:
+                    return false
+            }
+        }
+    }
+
+    const isCurrentRound = () => {
+        return round == currentRound
+    }
+
+    const status = () => {
+        if (isCurrentRound) {
+            // x% chance of wining
+            if (totalStake(callForTotalStake) == 0) {
+                return "100% chance of winning"
+            } else {
+                return `${Math.round(
+                    (amount(callForBalance) / totalStake(callForTotalStake)) * 100
+                )}% chance of winning`
+            }
         } else {
-            return `${Math.round(
-                (amount(callForBalance) / totalStake(callForTotalStake)) * 100
-            )}% chance of winning`
+            // didn't win
+            // WINNER
         }
     }
 
@@ -60,7 +84,7 @@ const Deposit = ({ round, address }) => {
             <td>{amount(callForBalance)} MATIC</td>
             <td>{status()}</td>
             <td>
-                <Button variant="dark" disabled={!canWithdraw}>
+                <Button variant="dark" disabled={!canWithdraw()}>
                     Withdraw
                 </Button>
             </td>
