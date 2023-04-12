@@ -37,12 +37,9 @@ const Infoblock = ({ totalStake, setTotalStake }) => {
         if (call3) {
             const currentLiquidityRate = call3?.data?.currentLiquidityRate
             const depositAPR = currentLiquidityRate / RAY
-
             const depositAPY = (1 + depositAPR / SECONDS_PER_YEAR) ** SECONDS_PER_YEAR - 1
-            console.log(`DepositAPY: ${depositAPY * 100}%`)
             const prize = Math.round((totalStake * depositAPY) / 60) // 365 / 6 = 60
-            console.log(prize)
-            console.log(prize ? "true" : "false")
+
             if (prize) return parseFloat(ethers.utils.formatEther(prize)).toFixed(8)
         }
         return "~"
