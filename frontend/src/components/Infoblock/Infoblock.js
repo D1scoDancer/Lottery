@@ -45,11 +45,37 @@ const Infoblock = ({ totalStake, setTotalStake }) => {
         return "~"
     }
 
+    const callForState = useContractRead({
+        address: contractAddresses.LotteryAddress,
+        abi: lotteryAbi,
+        functionName: "states",
+        args: [call1?.data?.toString()],
+        watch: true,
+    })
+
+    const currentState = () => {
+        if (callForState) {
+            switch (callForState?.data?.toString()) {
+                case "0":
+                    return "OPEN_FOR_DEPOSIT"
+                case "1":
+                    return "WORKING"
+                case "2":
+                    return "OPEN_FOR_WITHDRAW"
+                default:
+                    return "UNDEFINED"
+            }
+        }
+        return "???"
+    }
+
     setTotalStake(call2?.data?.toString() || 0)
 
     return (
         <div className="infoblock">
-            <h4 style={{ marginTop: 20 + "px" }}>Current round: {call1?.data?.toString()}</h4>
+            <h4 style={{ marginTop: 20 + "px" }}>
+                Current round: {call1?.data?.toString()} | {currentState()}
+            </h4>
             <h4 style={{ marginTop: 20 + "px" }}>
                 {" "}
                 PrizePool right now is: {ethers.utils.formatEther(totalStake)} MATIC{" "}
