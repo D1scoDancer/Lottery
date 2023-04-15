@@ -1,4 +1,4 @@
-# Blockchain Based Winning Loan Service 
+# Premium Bonds Lottery Service on Blockchain
 ## Graduation project | Faculty of Computer Science, Higher School of Economics
 
 ## Website
