@@ -15,25 +15,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
  *          -accept callback
  */
 abstract contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
-    /* ============ TYPE DECLARATIONS ============ */
-
-    /// @notice Status of requst, for history lookups
-    struct RequestStatus {
-        bool fulfilled; // whether the request has been successfully fulfilled
-        bool exists; // whether a requestId exists
-        uint randomWord;
-    }
-
     /* ============ STATE VARIABLES ============ */
-
-    /// @notice requestId --> requestStatus mapping
-    mapping(uint256 => RequestStatus) public s_requests;
-
-    /// @notice Past request Ids
-    uint256[] public requestIds;
-
-    /// @notice The last request Id
-    uint256 public lastRequestId;
 
     /// @notice VRF (Verifiable Random Function) address
     VRFCoordinatorV2Interface private immutable i_vrfCoordinator;
@@ -86,24 +68,7 @@ abstract contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
             NUM_WORDS
         );
 
-        s_requests[requestId] = RequestStatus({randomWord: 0, exists: true, fulfilled: false});
-        requestIds.push(requestId);
-        lastRequestId = requestId;
         emit RequestSent(requestId, NUM_WORDS);
         return requestId;
-    }
-
-    /**
-     *  @notice Get status of specified request
-     *  @param _requestId Request ID
-     *  @return fulfilled Fulfilled status
-     *  @return randomWord Random word
-     */
-    function getRequestStatus(
-        uint256 _requestId
-    ) external view returns (bool fulfilled, uint256 randomWord) {
-        require(s_requests[_requestId].exists, "request not found");
-        RequestStatus memory request = s_requests[_requestId];
-        return (request.fulfilled, request.randomWord);
     }
 }

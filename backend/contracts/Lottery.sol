@@ -169,12 +169,6 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
      *  @notice Callback from ChainlinkRNG;
      */
     function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
-        require(s_requests[requestId].exists, "request not found");
-        s_requests[requestId].fulfilled = true;
-        s_requests[requestId].randomWord = randomWords[0];
-        emit RequestFulfilled(requestId, randomWords);
-
-        emit OpenedForWithdraw();
         realFinishLottery(randomWords[0]);
     }
 
@@ -191,12 +185,12 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
         // change his balance
         balances[round][winner] += prize;
 
-        // increment round
-        round += 1;
         // P.S. money is still in the Aave
-
         setState(LotteryState.OPEN_FOR_WITHDRAW);
         emit OpenedForWithdraw();
+
+        // increment round
+        round += 1;
     }
 
     /**
@@ -226,7 +220,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
      * @dev не уверен, что тут нужен модификатор onlyOwner. Возможно нужен другой
      * @dev возоможно следует заменить на nextState() { inc() }. Так контракт вызовет больше доверия, т.к у owner меньше власти
      */
-    function setState(LotteryState newState) internal onlyOwner {
+    function setState(LotteryState newState) internal {
         require(
             newState >= LotteryState.OPEN_FOR_DEPOSIT && newState <= LotteryState.OPEN_FOR_WITHDRAW,
             "Invalid state"

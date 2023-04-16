@@ -3,7 +3,7 @@ import "./Infoblock.css"
 import { useAccount, useContractRead } from "wagmi"
 import contractAddresses from "../../constants/contractAddresses.json"
 import lotteryAbi from "../../constants/abi.json"
-import { ethers } from "ethers"
+import { ethers, BigNumber } from "ethers"
 import IPoolAbi from "../../constants/IPoolAbi.json"
 
 const RAY = 10 ** 27 // 10 to the power 27
@@ -35,12 +35,13 @@ const Infoblock = ({ totalStake, setTotalStake }) => {
 
     const prize = () => {
         if (call3) {
-            const currentLiquidityRate = call3?.data?.currentLiquidityRate
-            const depositAPR = currentLiquidityRate / RAY
-            const depositAPY = (1 + depositAPR / SECONDS_PER_YEAR) ** SECONDS_PER_YEAR - 1
-            const prize = Math.round((totalStake * depositAPY) / 60) // 365 / 6 = 60
-
-            if (prize) return parseFloat(ethers.utils.formatEther(prize)).toFixed(8)
+            // const currentLiquidityRate = call3?.data?.currentLiquidityRate
+            // const depositAPR = currentLiquidityRate / RAY
+            // const depositAPY = (1 + depositAPR / SECONDS_PER_YEAR) ** SECONDS_PER_YEAR - 1
+            // const prize = Math.round((totalStake * depositAPY) / 60) // 365 / 6 = 60
+            // console.log(prize)
+            // console.log(BigNumber.from(prize))
+            // if (prize) return parseFloat(ethers.utils.formatEther(prize)).toFixed(8)
         }
         return "~"
     }

@@ -14,9 +14,9 @@ const networkConfig = {
         vrfCoordinatorV2: "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed",
         subscriptionId: "3847",
         gasLane: "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f",
-        callbackGasLimit: "100000",
+        callbackGasLimit: "200000",
         addressesProvider: "0xeb7A892BB04A8f836bDEeBbf60897A7Af1Bf5d7F",
-        assetAddress: "0xD087ff96281dcf722AEa82aCA57E8545EA9e6C96", // WETH address
+        assetAddress: "0xf237dE5664D3c2D2545684E76fef02A3A58A364c", // WMATIC address
         registryAddress: "0xe16df59b887e3caa439e0b29b42ba2e7976fd8b2",
     },
     5: {
@@ -35,9 +35,9 @@ const networkConfig = {
         vrfCoordinatorV2: "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed",
         subscriptionId: "3847",
         gasLane: "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f",
-        callbackGasLimit: "100000",
+        callbackGasLimit: "200000",
         addressesProvider: "0xeb7A892BB04A8f836bDEeBbf60897A7Af1Bf5d7F",
-        assetAddress: "0xD087ff96281dcf722AEa82aCA57E8545EA9e6C96", // WETH address
+        assetAddress: "0xf237dE5664D3c2D2545684E76fef02A3A58A364c", // WMATIC address
         registryAddress: "0xe16df59b887e3caa439e0b29b42ba2e7976fd8b2",
     },
     4002: {
