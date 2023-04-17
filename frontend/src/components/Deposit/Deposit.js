@@ -79,18 +79,27 @@ const Deposit = ({ round, currentRound, address }) => {
         }
     }
 
-    return (
-        <tr>
-            <td>{round}</td>
-            <td>{amount(callForBalance)} MATIC</td>
-            <td>{status()}</td>
-            <td>
-                <Button variant="dark" disabled={!canWithdraw()}>
-                    Withdraw
-                </Button>
-            </td>
-        </tr>
-    )
+    const returnStatement = () => {
+        console.log(currentRound, round)
+        if (currentRound == round || amount(callForBalance) > 0) {
+            return (
+                <tr>
+                    <td>{round}</td>
+                    <td>{amount(callForBalance)} MATIC</td>
+                    <td>{status()}</td>
+                    <td>
+                        <Button variant="dark" disabled={!canWithdraw()}>
+                            Withdraw
+                        </Button>
+                    </td>
+                </tr>
+            )
+        } else {
+            return <></>
+        }
+    }
+
+    return returnStatement()
 }
 
 export default Deposit
