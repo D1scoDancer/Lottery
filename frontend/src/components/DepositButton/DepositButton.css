@@ -1,3 +1,7 @@
 .depositbutton {
     width: fit-content;
 }
+
+.my-modal .modal-content {
+    background-color: #1a2030;
+}
