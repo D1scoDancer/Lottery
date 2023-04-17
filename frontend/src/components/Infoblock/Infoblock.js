@@ -41,7 +41,6 @@ const Infoblock = ({ totalStake, setTotalStake }) => {
             const prize = Math.round((totalStake * depositAPY) / 60) // 365 / 6 = 60
 
             const bigNumberPrize = BigNumber.from(prize.toString())
-            console.log(bigNumberPrize)
 
             if (prize) return parseFloat(ethers.utils.formatEther(bigNumberPrize)).toFixed(6)
             return "'Update ethers'"
