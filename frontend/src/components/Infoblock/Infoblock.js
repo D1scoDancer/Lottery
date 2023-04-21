@@ -39,11 +39,14 @@ const Infoblock = ({ totalStake, setTotalStake }) => {
             const depositAPR = currentLiquidityRate / RAY
             const depositAPY = (1 + depositAPR / SECONDS_PER_YEAR) ** SECONDS_PER_YEAR - 1
             const prize = Math.round((totalStake * depositAPY) / 60) // 365 / 6 = 60
+            console.log(prize)
 
-            const bigNumberPrize = BigNumber.from(prize.toString())
+            if (prize) {
+                const bigNumberPrize = BigNumber.from(prize.toString())
+                return parseFloat(ethers.utils.formatEther(bigNumberPrize)).toFixed(6)
+            }
 
-            if (prize) return parseFloat(ethers.utils.formatEther(bigNumberPrize)).toFixed(6)
-            return "'Update ethers'"
+            return "?"
         }
         return "~"
     }
