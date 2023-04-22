@@ -17,7 +17,7 @@ const networkConfig = {
         callbackGasLimit: "200000",
         addressesProvider: "0xeb7A892BB04A8f836bDEeBbf60897A7Af1Bf5d7F",
         assetAddress: "0xf237dE5664D3c2D2545684E76fef02A3A58A364c", // WMATIC address
-        registryAddress: "0xe16df59b887e3caa439e0b29b42ba2e7976fd8b2",
+        registryAddress: "0xE16Df59B887e3Caa439E0b29B42bA2e7976FD8b2",
     },
     5: {
         name: "goerli",

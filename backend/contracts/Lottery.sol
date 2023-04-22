@@ -53,7 +53,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
     error Lottery__NotEnoughMoney();
     error Lottery__TransferFailed();
     error Lottery__Unauthorized(address sender);
-    error Lottery__StateError();
+    error Lottery__StateError(LotteryState _state, LotteryState current);
 
     /* ============ MODIFIERS ============  */
 
@@ -65,13 +65,13 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
 
     /// @dev Для контроля доступности методов в зависимости от фазы лотереи
     modifier atState(uint inRound, LotteryState state) {
-        if (inRound > round || state != states[inRound]) revert Lottery__StateError();
+        if (inRound > round || state != states[inRound]) revert Lottery__StateError(state, states[inRound]);
         _;
     }
 
     /* ============ INITIALIZATION ============ */
 
-    constructor(
+     constructor(
         uint _fee,
         address vrfCoordinatorV2,
         bytes32 gasLane,
@@ -160,7 +160,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
         uint amount = balances[fromRound][msg.sender];
         delete balances[fromRound][msg.sender];
 
-        payable(msg.sender).transfer(amount); // AAVE!!!
+        payable(msg.sender).transfer(amount); // AAVE???
     }
 
     /* ============ INTERNAL FUNCTIONS ============ */
@@ -184,6 +184,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
 
         // change his balance
         balances[round][winner] += prize;
+        // require(totalStake[round] + prize <= address(this).balance, "Balance sum check");
 
         // P.S. money is still in the Aave
         setState(LotteryState.OPEN_FOR_WITHDRAW);
@@ -209,11 +210,15 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
         }
     }
 
+    event TotalPrize(uint indexed withdrawn);
     /**
      * @dev should call Aave | but we kinda should know what will be the prize at the beginning of the lottery
      */
-    function getTotalPrize(uint _round) internal view returns (uint) {
-        return 1 wei;
+    function getTotalPrize(uint _round) public returns (uint) {
+        uint withdrawn = withdrawLiquidity();
+        asset.withdraw(withdrawn);
+        emit TotalPrize(withdrawn);
+        return withdrawn - totalStake[_round];
     }
 
     /**

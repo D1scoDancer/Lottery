@@ -46,7 +46,7 @@ const Infoblock = ({ totalStake, setTotalStake }) => {
                 return parseFloat(ethers.utils.formatEther(bigNumberPrize)).toFixed(6)
             }
 
-            return "?"
+            return "0"
         }
         return "~"
     }

@@ -1,6 +1,6 @@
 import React from "react"
 import { Button, Container } from "react-bootstrap"
-import { useContractRead } from "wagmi"
+import { useContractRead, usePrepareContractWrite, useContractWrite } from "wagmi"
 import contractAddresses from "../../constants/contractAddresses.json"
 import lotteryAbi from "../../constants/abi.json"
 import { ethers } from "ethers"
@@ -79,6 +79,18 @@ const Deposit = ({ round, currentRound, address }) => {
         }
     }
 
+    const { config } = usePrepareContractWrite({
+        address: contractAddresses.LotteryAddress,
+        abi: lotteryAbi,
+        functionName: "withdrawFromRound",
+        args: [round],
+    })
+    const { write } = useContractWrite(config)
+
+    const withdrawHandler = () => {
+        write()
+    }
+
     const returnStatement = () => {
         if (currentRound == round || amount(callForBalance) > 0) {
             return (
@@ -87,7 +99,7 @@ const Deposit = ({ round, currentRound, address }) => {
                     <td>{amount(callForBalance)} MATIC</td>
                     <td>{status()}</td>
                     <td>
-                        <Button variant="dark" disabled={!canWithdraw()}>
+                        <Button variant="dark" disabled={!canWithdraw()} onClick={withdrawHandler}>
                             Withdraw
                         </Button>
                     </td>
