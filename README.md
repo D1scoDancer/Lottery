@@ -20,8 +20,8 @@ The service allows users to make short-term deposits, for which users can receiv
 - [x] Move user interface from [another project](https://github.com/D1scoDancer/lottery-ui)
 - [x] Create AaveETHDeposit contract
 - [x] Remove the RNG logic from the Lottery contract
-- [ ] Implement Chainlink Keeper
-- [ ] Connect Frontend with Backend
+- [x] Implement Chainlink Keeper
+- [x] Connect Frontend with Backend
 - [ ] Unit tests for everything
 - [ ] Dynamic / Static analysys of code 
 
