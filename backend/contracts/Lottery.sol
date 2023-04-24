@@ -65,13 +65,14 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
 
     /// @dev Для контроля доступности методов в зависимости от фазы лотереи
     modifier atState(uint inRound, LotteryState state) {
-        if (inRound > round || state != states[inRound]) revert Lottery__StateError(state, states[inRound]);
+        if (inRound > round || state != states[inRound])
+            revert Lottery__StateError(state, states[inRound]);
         _;
     }
 
     /* ============ INITIALIZATION ============ */
 
-     constructor(
+    constructor(
         uint _fee,
         address vrfCoordinatorV2,
         bytes32 gasLane,
@@ -211,6 +212,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
     }
 
     event TotalPrize(uint indexed withdrawn);
+
     /**
      * @dev should call Aave | but we kinda should know what will be the prize at the beginning of the lottery
      */
