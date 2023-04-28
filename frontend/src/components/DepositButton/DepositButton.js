@@ -23,11 +23,6 @@ const DepositButton = () => {
     const sendMoney = async () => {
         if (inputRef?.current?.value) {
             const newValue = ethers.utils.parseEther(inputRef.current.value)
-            // write({
-            //     recklesslySetUnpreparedOverrides: {
-            //         value: newValue,
-            //     },
-            // })
             await writeContract({
                 mode: "recklesslyUnprepared",
                 address: contractAddresses.LotteryAddress,

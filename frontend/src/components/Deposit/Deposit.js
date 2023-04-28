@@ -27,6 +27,7 @@ const Deposit = ({ round, currentRound, address }) => {
         abi: lotteryAbi,
         functionName: "totalStake",
         args: [round],
+        watch: true,
     })
 
     const totalStake = (callForTotalStake) => {
@@ -65,7 +66,7 @@ const Deposit = ({ round, currentRound, address }) => {
     const status = () => {
         if (isCurrentRound()) {
             // x% chance of wining
-            if (totalStake(callForTotalStake) == 0) {
+            if (totalStake(callForTotalStake) == 0 && amount(callForBalance) == 0) {
                 return "100% chance of winning"
             } else {
                 return `${Math.round(
