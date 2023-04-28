@@ -1,7 +1,8 @@
 import React, { useState, useRef } from "react"
 import { Button, Modal, Form, InputGroup } from "react-bootstrap"
 import "./DepositButton.css"
-import { useAccount, useContractWrite, usePrepareContractWrite } from "wagmi"
+import { useAccount } from "wagmi"
+import { writeContract } from "@wagmi/core"
 import contractAddresses from "../../constants/contractAddresses.json"
 import lotteryAbi from "../../constants/abi.json"
 import { ethers } from "ethers"
@@ -15,27 +16,24 @@ const DepositButton = () => {
 
     const inputRef = useRef(null)
 
-    const { config } = usePrepareContractWrite({
-        address: contractAddresses.LotteryAddress,
-        abi: lotteryAbi,
-        functionName: "enterLottery",
-        overrides: {
-            value: ethers.utils.parseEther("0.05"),
-        },
-    })
-
-    const { write } = useContractWrite(config)
-
     const handleSubmit = (event) => {
         event.preventDefault()
     }
 
-    const sendMoney = () => {
+    const sendMoney = async () => {
         if (inputRef?.current?.value) {
             const newValue = ethers.utils.parseEther(inputRef.current.value)
-            console.log(newValue)
-            write({
-                recklesslySetUnpreparedOverrides: {
+            // write({
+            //     recklesslySetUnpreparedOverrides: {
+            //         value: newValue,
+            //     },
+            // })
+            await writeContract({
+                mode: "recklesslyUnprepared",
+                address: contractAddresses.LotteryAddress,
+                abi: lotteryAbi,
+                functionName: "enterLottery",
+                overrides: {
                     value: newValue,
                 },
             })
