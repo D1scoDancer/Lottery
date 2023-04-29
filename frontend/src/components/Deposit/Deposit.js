@@ -76,7 +76,7 @@ const Deposit = ({ round, currentRound, address }) => {
         } else {
             // didn't win
             // WINNER
-            return "Not current round"
+            return "Round ended"
         }
     }
 
