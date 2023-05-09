@@ -48,6 +48,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
     /* ============ EVENTS ============ */
     event LotteryEntered(address player);
     event OpenedForWithdraw();
+    event TotalPrize(uint indexed withdrawn);
 
     /* ============ ERRORS ============  */
     error Lottery__NotEnoughMoney();
@@ -87,6 +88,10 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
         Automated(registryAddress)
     {
         fee = _fee;
+    }
+
+    receive() external payable {
+        // require(msg.sender == WMATIC contract);
     }
 
     /* ============ EXTERNAL FUNCTIONS ============ */
@@ -131,7 +136,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
      *  @dev не факт что нужен onlyOwner, скорее всего нужен другой модификатор
      *  @dev метод должен вызываться Keeper-ом
      */
-    function startLottery() public atState(round, LotteryState.OPEN_FOR_DEPOSIT) {
+    function startLottery() internal atState(round, LotteryState.OPEN_FOR_DEPOSIT) {
         setState(LotteryState.WORKING);
         uint amount = totalStake[round];
         // change ETH to WETH
@@ -145,7 +150,11 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
      *  @dev не факт что нужен onlyOwner, скорее всего нужен другой модификатор
      *  @dev метод должен вызываться Keeper-ом
      */
-    function finishLottery() public atState(round, LotteryState.WORKING) returns (uint requestId) {
+    function finishLottery()
+        internal
+        atState(round, LotteryState.WORKING)
+        returns (uint requestId)
+    {
         requestId = requestRandomWord();
     }
 
@@ -211,12 +220,10 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
         }
     }
 
-    event TotalPrize(uint indexed withdrawn);
-
     /**
      * @dev should call Aave | but we kinda should know what will be the prize at the beginning of the lottery
      */
-    function getTotalPrize(uint _round) public returns (uint) {
+    function getTotalPrize(uint _round) internal returns (uint) {
         uint withdrawn = withdrawLiquidity();
         asset.withdraw(withdrawn);
         emit TotalPrize(withdrawn);
@@ -224,7 +231,6 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
     }
 
     /**
-     * @dev не уверен, что тут нужен модификатор onlyOwner. Возможно нужен другой
      * @dev возоможно следует заменить на nextState() { inc() }. Так контракт вызовет больше доверия, т.к у owner меньше власти
      */
     function setState(LotteryState newState) internal {
@@ -250,6 +256,4 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
             finishLottery();
         }
     }
-
-    /* ============ GETTERS ============ */
 }
