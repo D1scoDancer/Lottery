@@ -78,6 +78,23 @@ const enterValue = ethers.utils.parseEther("0.1")
                       totalStakeBefore.add(enterValue).toString()
                   )
               })
+
+              it("owner gets fee", async () => {
+                  await lottery.setFee(enterValue)
+
+                  const balanceBefore = await deployer.getBalance()
+
+                  await userConnection.enterLottery({ value: enterValue.mul(2) })
+
+                  const balanceAfter = await deployer.getBalance()
+                  expect(balanceAfter.toString()).to.equal(balanceBefore.add(enterValue).toString())
+              })
+
+              it("event is emmited", async () => {
+                  await expect(lottery.enterLottery({ value: enterValue }))
+                      .to.emit(lottery, "LotteryEntered")
+                      .withArgs(deployer.address, enterValue.toString())
+              })
           })
 
           describe("Ownable", () => {
@@ -91,6 +108,15 @@ const enterValue = ethers.utils.parseEther("0.1")
                       "Ownable: caller is not the owner"
                   )
                   expect(lottery.togglePause()).not.to.be.revertedWith(
+                      "Ownable: caller is not the owner"
+                  )
+              })
+
+              it("Only owner can setFee()", async () => {
+                  expect(userConnection.setFee(enterValue)).to.be.revertedWith(
+                      "Ownable: caller is not the owner"
+                  )
+                  expect(lottery.setFee(enterValue)).not.to.be.revertedWith(
                       "Ownable: caller is not the owner"
                   )
               })
@@ -114,11 +140,12 @@ const enterValue = ethers.utils.parseEther("0.1")
           })
 
           describe("Changing States", () => {
-              it("startLottery() changes state to WORKING", async () => {
+              it("perforUpkeep() changes state to WORKING", async () => {
                   const stateBefore = await lottery.states(0)
                   expect(stateBefore.toString()).to.equal("0")
 
-                  await lottery.startLottery()
+                  await lottery.enterLottery({ value: enterValue })
+                  await lottery.performUpkeep(0x00)
 
                   const stateAfter = await lottery.states(0)
                   expect(stateAfter.toString()).to.equal("1")
@@ -128,10 +155,11 @@ const enterValue = ethers.utils.parseEther("0.1")
                   const stateBefore = await lottery.states(0)
                   expect(stateBefore.toString()).to.equal("0")
 
-                  await lottery.startLottery()
+                  await lottery.enterLottery({ value: enterValue })
+                  await lottery.performUpkeep(0x00)
 
                   // kicking off the event by mocking the chainlink --keepers-- and vrf coordinator
-                  const tx = await lottery.finishLottery()
+                  const tx = await lottery.performUpkeep(0x00)
                   const txReceipt = await tx.wait(1)
                   await vrfCoordinatorV2Mock.fulfillRandomWords(
                       txReceipt.events[1].args.requestId,

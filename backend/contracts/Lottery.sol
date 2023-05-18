@@ -46,7 +46,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
     uint public fee;
 
     /* ============ EVENTS ============ */
-    event LotteryEntered(address player);
+    event LotteryEntered(address indexed player, uint indexed stake);
     event OpenedForWithdraw();
     event TotalPrize(uint indexed withdrawn);
 
@@ -57,12 +57,6 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
     error Lottery__StateError(LotteryState _state, LotteryState current);
 
     /* ============ MODIFIERS ============  */
-
-    /// @dev Для того, чтобы определенные функции могли вызывать исключительно другие контракты проекта
-    modifier onlyBy(address account) {
-        if (msg.sender != account) revert Lottery__Unauthorized(msg.sender);
-        _;
-    }
 
     /// @dev Для контроля доступности методов в зависимости от фазы лотереи
     modifier atState(uint inRound, LotteryState state) {
@@ -114,10 +108,10 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
             balances[round][msg.sender] = msg.value - fee;
             totalStake[round] += msg.value - fee;
             if (fee > 0) {
-                payable(owner()).transfer(fee); // not tested yet
+                payable(owner()).transfer(fee);
             }
         }
-        emit LotteryEntered(msg.sender);
+        emit LotteryEntered(msg.sender, msg.value - fee);
     }
 
     /**
@@ -244,7 +238,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
     // @dev should be sth normal
     function checkUpkeep(
         bytes calldata
-    ) external view override returns (bool upkeepNeeded, bytes memory performData) {
+    ) external pure override returns (bool upkeepNeeded, bytes memory performData) {
         upkeepNeeded = true;
     }
 
@@ -255,5 +249,9 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
         } else if (curState == LotteryState.WORKING) {
             finishLottery();
         }
+    }
+
+    function setFee(uint newFee) external onlyOwner {
+        fee = newFee;
     }
 }

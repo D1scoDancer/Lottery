@@ -1,5 +1,6 @@
 const { ethers, network } = require("hardhat")
 const { developmentChains, networkConfig } = require("../helper-hardhat-config")
+const { verify } = require("../scripts/verify")
 
 const FUND_AMOUNT = ethers.utils.parseEther("1") // 1 Ether, or 1e18 (10^18) Wei
 
@@ -45,13 +46,18 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         from: deployer,
         args: args,
         log: true,
-        waitConfirmations: network.config.blockConfirmations || 1,
+        waitConfirmations: network.config.blockConfirmations || 5,
     })
 
     // Ensure the Raffle contract is a valid consumer of the VRFCoordinatorV2Mock contract.
     if (developmentChains.includes(network.name)) {
         const vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock")
         await vrfCoordinatorV2Mock.addConsumer(subscriptionId, lottery.address)
+    }
+
+    if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API) {
+        console.log("Verifying...")
+        await verify(lottery.address, args)
     }
 }
 

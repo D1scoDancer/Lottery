@@ -36,6 +36,7 @@ module.exports = {
             blockConfirmations: 1,
             forking: {
                 url: MUMBAI_RPC_URL,
+                blockNumber: 35656625,
             },
             accounts: [
                 { privateKey: `0x${PRIVATE_KEY}`, balance: "1000000000000000000000" },
