@@ -8,7 +8,7 @@ const enterValue = ethers.utils.parseEther("0.1")
 !developmentChains.includes(network.name)
     ? describe.skip()
     : describe("Automated Unit tests", () => {
-          var lottery, deployer, user, userConnection, vrfCoordinatorV2Mock
+          var lottery, deployer, user, userConnection, vrfCoordinatorV2Mock, automationMock
           beforeEach(async () => {
               signers = await ethers.getSigners()
               deployer = signers[0]

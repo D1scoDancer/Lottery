@@ -8,7 +8,7 @@ const enterValue = ethers.utils.parseEther("0.1")
 !developmentChains.includes(network.name)
     ? describe.skip()
     : describe("Lottery Unit Testing", () => {
-          var lottery, deployer, user, userConnection, vrfCoordinatorV2Mock
+          var lottery, deployer, user, userConnection, vrfCoordinatorV2Mock, automationMock
           beforeEach(async () => {
               signers = await ethers.getSigners()
               deployer = signers[0]
@@ -18,6 +18,7 @@ const enterValue = ethers.utils.parseEther("0.1")
               userConnection = lottery.connect(user)
 
               vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock")
+              automationMock = await ethers.getContract("AutomationMock")
           })
 
           describe("Initialization", () => {
@@ -145,7 +146,7 @@ const enterValue = ethers.utils.parseEther("0.1")
                   expect(stateBefore.toString()).to.equal("0")
 
                   await lottery.enterLottery({ value: enterValue })
-                  await lottery.performUpkeep(0x00)
+                  await automationMock.perform()
 
                   const stateAfter = await lottery.states(0)
                   expect(stateAfter.toString()).to.equal("1")
@@ -156,15 +157,11 @@ const enterValue = ethers.utils.parseEther("0.1")
                   expect(stateBefore.toString()).to.equal("0")
 
                   await lottery.enterLottery({ value: enterValue })
-                  await lottery.performUpkeep(0x00)
+                  await automationMock.perform()
 
                   // kicking off the event by mocking the chainlink --keepers-- and vrf coordinator
-                  const tx = await lottery.performUpkeep(0x00)
-                  const txReceipt = await tx.wait(1)
-                  await vrfCoordinatorV2Mock.fulfillRandomWords(
-                      txReceipt.events[1].args.requestId,
-                      lottery.address
-                  )
+                  await automationMock.perform()
+                  await vrfCoordinatorV2Mock.fulfillRandomWords(1, lottery.address)
 
                   const stateAfter = await lottery.states(0)
                   expect(stateAfter.toString()).to.equal("2")
@@ -178,7 +175,7 @@ const enterValue = ethers.utils.parseEther("0.1")
                   const balanceBefore = await lottery.balances(0, deployer.address)
                   expect(balanceBefore.toString()).to.equal(enterValue.sub(fee).toString())
 
-                  await lottery.performUpkeep(0x00)
+                  await automationMock.perform()
 
                   await new Promise(async (resolve, reject) => {
                       lottery.once("OpenedForWithdraw", async () => {
@@ -196,12 +193,8 @@ const enterValue = ethers.utils.parseEther("0.1")
                       })
 
                       // kicking off the event by mocking the chainlink --keepers-- and vrf coordinator
-                      const tx = await lottery.performUpkeep(0x00)
-                      const txReceipt = await tx.wait(1)
-                      await vrfCoordinatorV2Mock.fulfillRandomWords(
-                          txReceipt.events[1].args.requestId,
-                          lottery.address
-                      )
+                      await automationMock.perform()
+                      await vrfCoordinatorV2Mock.fulfillRandomWords(1, lottery.address)
                   })
               })
 
@@ -210,14 +203,10 @@ const enterValue = ethers.utils.parseEther("0.1")
 
                   const balanceBefore = await lottery.provider.getBalance(deployer.address)
 
-                  await lottery.performUpkeep(0x00)
+                  await automationMock.perform()
                   // finishLottery()
-                  const tx = await lottery.performUpkeep(0x00)
-                  const txReceipt = await tx.wait(1)
-                  await vrfCoordinatorV2Mock.fulfillRandomWords(
-                      txReceipt.events[1].args.requestId,
-                      lottery.address
-                  )
+                  await automationMock.perform()
+                  await vrfCoordinatorV2Mock.fulfillRandomWords(1, lottery.address)
 
                   await lottery.withdrawFromRound(0)
 
@@ -228,14 +217,10 @@ const enterValue = ethers.utils.parseEther("0.1")
               it("Cannot withdraw if balance is 0", async () => {
                   await userConnection.enterLottery({ value: enterValue })
 
-                  await lottery.performUpkeep(0x00)
+                  await automationMock.perform()
                   // finishLottery()
-                  const tx = await lottery.performUpkeep(0x00)
-                  const txReceipt = await tx.wait(1)
-                  await vrfCoordinatorV2Mock.fulfillRandomWords(
-                      txReceipt.events[1].args.requestId,
-                      lottery.address
-                  )
+                  await automationMock.perform()
+                  await vrfCoordinatorV2Mock.fulfillRandomWords(1, lottery.address)
 
                   expect(lottery.withdrawFromRound(0)).to.be.revertedWith("Nothing to withdraw")
               })
@@ -246,7 +231,7 @@ const enterValue = ethers.utils.parseEther("0.1")
                   )
 
                   await lottery.enterLottery({ value: enterValue })
-                  await lottery.performUpkeep(0x00)
+                  await automationMock.perform()
 
                   expect(lottery.withdrawFromRound(0)).to.be.revertedWith(
                       "Lottery__StateError(2, 1)"

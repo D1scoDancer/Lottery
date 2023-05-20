@@ -244,10 +244,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
         upkeepNeeded = true;
     }
 
-    function performUpkeep(
-        bytes calldata /* performData */
-    ) external override /* onlyKeeperRegistry */
-    {
+    function performUpkeep(bytes calldata /* performData */) external override onlyKeeperRegistry {
         LotteryState curState = states[round];
         if (curState == LotteryState.OPEN_FOR_DEPOSIT) {
             startLottery();
