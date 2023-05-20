@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "./ChainlinkRNG.sol";
@@ -172,7 +171,10 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
     /**
      *  @notice Callback from ChainlinkRNG;
      */
-    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
+    function fulfillRandomWords(
+        uint256 /* requestId */,
+        uint256[] memory randomWords
+    ) internal override {
         realFinishLottery(randomWords[0]);
     }
 
@@ -237,12 +239,15 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
 
     // @dev should be sth normal
     function checkUpkeep(
-        bytes calldata
-    ) external pure override returns (bool upkeepNeeded, bytes memory performData) {
+        bytes calldata /* checkData */
+    ) external pure override returns (bool upkeepNeeded, bytes memory /* performData */) {
         upkeepNeeded = true;
     }
 
-    function performUpkeep(bytes calldata performData) external override {
+    function performUpkeep(
+        bytes calldata /* performData */
+    ) external override /* onlyKeeperRegistry */
+    {
         LotteryState curState = states[round];
         if (curState == LotteryState.OPEN_FOR_DEPOSIT) {
             startLottery();
@@ -255,3 +260,25 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
         fee = newFee;
     }
 }
+
+/*
+constructor(
+        uint _fee,
+        address vrfCoordinatorV2,
+        bytes32 gasLane,
+        uint64 subscriptionId,
+        uint32 callbackGasLimit,
+        address addressesProvider,
+        address assetAddress,
+        address registryAddress
+    )
+        ChainlinkRNG(vrfCoordinatorV2, gasLane, subscriptionId, callbackGasLimit)
+        AaveETHDeposit(addressesProvider, assetAddress)
+        Automated(registryAddress)
+    {
+        fee = _fee;
+        lastUpkeepTimestamp = block.timestamp;
+        depositInterval = 1 days;
+        workingInterval = 6 days;
+    }
+*/

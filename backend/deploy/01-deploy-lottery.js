@@ -59,6 +59,14 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         console.log("Verifying...")
         await verify(lottery.address, args)
     }
+
+    // finish with mocks
+    if (chainId == 31337) {
+        console.log("Updating AutomationMock...")
+        const automationMock = await ethers.getContract("AutomationMock")
+        await automationMock.setLottery(lottery.address)
+        console.log("AutomationMock updated!")
+    }
 }
 
 module.exports.tags = ["all", "lottery"]

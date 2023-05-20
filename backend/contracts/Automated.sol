@@ -7,10 +7,12 @@ abstract contract Automated is AutomationCompatibleInterface {
     error Automated__OnlyKeeperRegistry();
 
     event KeeperRegistryAddressUpdated(address oldAddress, address newAddress);
+    event PrintAddress(address indexed addr);
 
     address private s_keeperRegistryAddress;
 
     modifier onlyKeeperRegistry() {
+        emit PrintAddress(msg.sender);
         if (msg.sender != s_keeperRegistryAddress) {
             revert Automated__OnlyKeeperRegistry();
         }
