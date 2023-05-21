@@ -10,7 +10,7 @@ require("dotenv").config()
 const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL || "https://eth-goerli"
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "0xkey"
 const PRIVATE_KEY_2 = process.env.PRIVATE_KEY_2 || "0xkey"
-const ETHERSCAN_API = process.env.ETHERSCAN_API || "key"
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "key"
 const COINTMARKETCAP_API = process.env.COINTMARKETCAP_API || "key"
 const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL || "key"
 const MUMBAI_RPC_URL = process.env.MUMBAI_RPC_URL || "key"
@@ -81,7 +81,7 @@ module.exports = {
         chainId: 31337,
     },
     etherscan: {
-        apiKey: ETHERSCAN_API,
+        apiKey: ETHERSCAN_API_KEY,
     },
     namedAccounts: {
         deployer: {
