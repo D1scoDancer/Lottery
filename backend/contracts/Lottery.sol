@@ -73,12 +73,10 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
         uint64 subscriptionId,
         uint32 callbackGasLimit,
         address addressesProvider,
-        address assetAddress,
-        address registryAddress
+        address assetAddress
     )
         ChainlinkRNG(vrfCoordinatorV2, gasLane, subscriptionId, callbackGasLimit)
         AaveETHDeposit(addressesProvider, assetAddress)
-        Automated(registryAddress)
     {
         fee = _fee;
     }
@@ -241,10 +239,10 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
     function checkUpkeep(
         bytes calldata /* checkData */
     ) external pure override returns (bool upkeepNeeded, bytes memory /* performData */) {
-        upkeepNeeded = true;
+        return (true, "");
     }
 
-    function performUpkeep(bytes calldata /* performData */) external override {
+    function performUpkeep(bytes calldata /* performData */) external override onlyKeeperRegistry {
         LotteryState curState = states[round];
         if (curState == LotteryState.OPEN_FOR_DEPOSIT) {
             startLottery();

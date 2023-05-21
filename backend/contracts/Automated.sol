@@ -4,23 +4,19 @@ pragma solidity ^0.8.10;
 import "@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol";
 
 abstract contract Automated is AutomationCompatibleInterface {
-    error Automated__OnlyKeeperRegistry();
+    error Automated__OnlyKeeperRegistry(address registry, address caller);
 
     event KeeperRegistryAddressUpdated(address oldAddress, address newAddress);
-    event PrintAddress(address indexed addr);
 
     address private s_keeperRegistryAddress;
 
     modifier onlyKeeperRegistry() {
-        emit PrintAddress(msg.sender);
-        if (msg.sender != s_keeperRegistryAddress) {
-            revert Automated__OnlyKeeperRegistry();
+        if (s_keeperRegistryAddress == address(0)) {
+            s_keeperRegistryAddress = msg.sender;
+        } else if (msg.sender != s_keeperRegistryAddress) {
+            revert Automated__OnlyKeeperRegistry(s_keeperRegistryAddress, msg.sender);
         }
         _;
-    }
-
-    constructor(address keeperRegistryAddress) {
-        setKeeperRegistryAddress(keeperRegistryAddress);
     }
 
     function checkUpkeep(

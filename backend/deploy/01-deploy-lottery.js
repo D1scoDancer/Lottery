@@ -9,7 +9,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deployer } = await getNamedAccounts()
     const chainId = network.config.chainId
 
-    let vrfCoordinatorV2, subscriptionId, registryAddress
+    let vrfCoordinatorV2, subscriptionId
     if (chainId == 31337) {
         // create VRFV2 Subscription
         vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock")
@@ -22,11 +22,9 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         await vrfCoordinatorV2Mock.fundSubscription(subscriptionId, FUND_AMOUNT)
 
         const automationMock = await ethers.getContract("AutomationMock")
-        registryAddress = automationMock.address
     } else {
         vrfCoordinatorV2 = networkConfig[chainId]["vrfCoordinatorV2"]
         subscriptionId = networkConfig[chainId]["subscriptionId"]
-        registryAddress = networkConfig[chainId]["registryAddress"]
     }
 
     const fee = networkConfig[chainId]["fee"]
@@ -43,7 +41,6 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         callbackGasLimit,
         addressesProvider,
         assetAddress,
-        registryAddress,
     ]
     const lottery = await deploy("Lottery", {
         from: deployer,
