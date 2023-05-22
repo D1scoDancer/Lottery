@@ -19,7 +19,6 @@ contract AaveETHDeposit {
         asset = WETH9(payable(assetAddress));
     }
 
-    /// @dev только одна функция должна остаться
     function fastSupply(uint _amount) internal {
         approveWETH(_amount);
         supplyLiquidity(_amount);
@@ -33,6 +32,7 @@ contract AaveETHDeposit {
         return POOL.withdraw(assetAddress, type(uint).max, address(this));
     }
 
+    /// @dev переименовать в WMATIC?
     function approveWETH(uint256 _amount) internal returns (bool) {
         return asset.approve(address(POOL), _amount);
     }

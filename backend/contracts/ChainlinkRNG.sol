@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.10;
 
-import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
@@ -53,11 +52,6 @@ abstract contract ChainlinkRNG is Ownable, VRFConsumerBaseV2 {
         i_callbackGasLimit = callbackGasLimit;
     }
 
-    /**
-     *
-     * @dev надо добавить модификатор доступа по типу onlyOwner
-     * @dev только Lottery can call this
-     */
     function requestRandomWord() internal returns (uint256 requestId) {
         // Will revert if subscription is not set and funded.
         requestId = i_vrfCoordinator.requestRandomWords(

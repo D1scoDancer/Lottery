@@ -7,6 +7,12 @@ import "./ChainlinkRNG.sol";
 import "./AaveETHDeposit.sol";
 import "./Automated.sol";
 
+enum LotteryState {
+    OPEN_FOR_DEPOSIT,
+    WORKING,
+    OPEN_FOR_WITHDRAW
+}
+
 /** @title  Web3 Lottery with Aave
  *  @author Aleksey Shulikov
  *  @notice The Lottery contract has the following responsibilities:
@@ -18,11 +24,6 @@ import "./Automated.sol";
  */
 contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
     /* ============ TYPE DECLARATIONS ============ */
-    enum LotteryState {
-        OPEN_FOR_DEPOSIT,
-        WORKING,
-        OPEN_FOR_WITHDRAW
-    }
 
     /* ============ STATE VARIABLES ============ */
 
@@ -88,7 +89,6 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
     /* ============ EXTERNAL FUNCTIONS ============ */
 
     /// @dev проверить gas-consumption если сделать переменную round memory здесь
-    /// @dev написать тесты на проверку перевода денег к `owner`
     function enterLottery()
         external
         payable
@@ -130,7 +130,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
     function startLottery() internal atState(round, LotteryState.OPEN_FOR_DEPOSIT) {
         setState(LotteryState.WORKING);
         uint amount = totalStake[round];
-        // change ETH to WETH
+        // change MATIC to WMATIC
         asset.deposit{value: amount}();
         // send money to AaveDeposit | call fastSupply()
         fastSupply(amount);
@@ -151,7 +151,6 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
 
     /**
      *  @notice Withdraw user's money from a specific round
-     *  @dev деньги на самом деле должны браться из AaveDeposit.sol
      */
     function withdrawFromRound(
         uint fromRound
@@ -188,9 +187,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
 
         // change his balance
         balances[round][winner] += prize;
-        // require(totalStake[round] + prize <= address(this).balance, "Balance sum check");
 
-        // P.S. money is still in the Aave
         setState(LotteryState.OPEN_FOR_WITHDRAW);
         emit OpenedForWithdraw();
 
@@ -224,9 +221,6 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
         return withdrawn - totalStake[_round];
     }
 
-    /**
-     * @dev возоможно следует заменить на nextState() { inc() }. Так контракт вызовет больше доверия, т.к у owner меньше власти
-     */
     function setState(LotteryState newState) internal {
         require(
             newState >= LotteryState.OPEN_FOR_DEPOSIT && newState <= LotteryState.OPEN_FOR_WITHDRAW,

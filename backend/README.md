@@ -19,3 +19,8 @@
 
 -   По запросу из “Контракта 1” возвращает случайное число по модулю.
 -   Используется https://vrf.chain.link/
+
+docker run -it trailofbits/eth-security-toolbox
+docker cp . 5e70e003d6f4:/lottery
+
+docker cp ./contracts id:/contracts/
