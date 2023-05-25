@@ -43,6 +43,7 @@
         "connectkit": "^1.2.2",
         "ethers": "5.7.2",
         "gh-pages": "^5.0.0",
+        "moment": "^2.29.4",
         "prettier": "^2.8.3",
         "react-bootstrap": "^2.7.0",
         "wagmi": "^0.12.10"

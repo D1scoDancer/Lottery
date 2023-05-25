@@ -5,6 +5,7 @@ import contractAddresses from "../../constants/contractAddresses.json"
 import lotteryAbi from "../../constants/abi.json"
 import { BigNumber, ethers } from "ethers"
 import IPoolAbi from "../../constants/IPoolAbi.json"
+import CountdownTimer from "../CountdownTimer/CountdownTimer"
 
 const RAY = 10 ** 27 // 10 to the power 27
 const SECONDS_PER_YEAR = 31536000
@@ -87,7 +88,7 @@ const Infoblock = ({ totalStake, setTotalStake }) => {
             </h4>
             <h5> The prize will be: {prize()} MATIC </h5>
             <h6 style={{ marginTop: 20 + "px" }}>
-                The winner will be decided in {"5 days 14 hours 15 minutes and 45 seconds"}
+                <CountdownTimer />
             </h6>
         </div>
     )
