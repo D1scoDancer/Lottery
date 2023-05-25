@@ -7,8 +7,8 @@ const CountdownTimer = () => {
     useEffect(() => {
         const intervalId = setInterval(() => {
             const now = moment.utc()
-            const nextTuesday = moment.utc().isoWeekday(4).startOf("day")
-            const nextWednesday = moment.utc().isoWeekday(5).startOf("day")
+            const nextTuesday = moment.utc().isoWeekday(2).startOf("day")
+            const nextWednesday = moment.utc().isoWeekday(3).startOf("day")
 
             if (now.isAfter(nextTuesday)) {
                 nextTuesday.add(1, "week")

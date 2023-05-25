@@ -5,7 +5,6 @@ import "./DepositWindow.css"
 import { useAccount, useContractRead } from "wagmi"
 import contractAddresses from "../../constants/contractAddresses.json"
 import lotteryAbi from "../../constants/abi.json"
-import { ethers } from "ethers"
 
 const DepositWindow = () => {
     const { address, isConnected } = useAccount()
