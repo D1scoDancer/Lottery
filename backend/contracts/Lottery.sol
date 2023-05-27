@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
+pragma solidity 0.8.10;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
@@ -49,6 +49,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
     event LotteryEntered(address indexed player, uint indexed stake);
     event OpenedForWithdraw();
     event TotalPrize(uint indexed withdrawn);
+    event FeeChanged(uint indexed feeBefore, uint indexed feeAfter);
 
     /* ============ ERRORS ============  */
     error Lottery__NotEnoughMoney();
@@ -179,20 +180,22 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
      *  @notice The last in the sequence of calls created by finishLottery()
      */
     function realFinishLottery(uint randomWord) internal {
+        setState(LotteryState.OPEN_FOR_WITHDRAW);
+
+        uint currentRound = round;
+        // increment round
+        round += 1;
+
         // determine a winner
         address winner = getWinner(randomWord);
 
         // determine a prize size | call to Aave?
-        uint prize = getTotalPrize(round);
+        uint prize = getTotalPrize(currentRound);
 
         // change his balance
-        balances[round][winner] += prize;
+        balances[currentRound][winner] += prize;
 
-        setState(LotteryState.OPEN_FOR_WITHDRAW);
         emit OpenedForWithdraw();
-
-        // increment round
-        round += 1;
     }
 
     /**
@@ -246,6 +249,8 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
     }
 
     function setFee(uint newFee) external onlyOwner {
+        uint oldFee = fee;
         fee = newFee;
+        emit FeeChanged(oldFee, newFee);
     }
 }

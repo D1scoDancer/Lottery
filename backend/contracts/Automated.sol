@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
+pragma solidity 0.8.10;
 
 import "@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol";
 
@@ -12,6 +12,7 @@ abstract contract Automated is AutomationCompatibleInterface {
 
     modifier onlyKeeperRegistry() {
         if (s_keeperRegistryAddress == address(0)) {
+            emit KeeperRegistryAddressUpdated(s_keeperRegistryAddress, msg.sender);
             s_keeperRegistryAddress = msg.sender;
         } else if (msg.sender != s_keeperRegistryAddress) {
             revert Automated__OnlyKeeperRegistry(s_keeperRegistryAddress, msg.sender);
@@ -25,7 +26,7 @@ abstract contract Automated is AutomationCompatibleInterface {
 
     function performUpkeep(bytes calldata performData) external virtual;
 
-    function setKeeperRegistryAddress(address keeperRegistryAddress) public virtual {
+    function setKeeperRegistryAddress(address keeperRegistryAddress) external virtual {
         require(keeperRegistryAddress != address(0));
         emit KeeperRegistryAddressUpdated(s_keeperRegistryAddress, keeperRegistryAddress);
         s_keeperRegistryAddress = keeperRegistryAddress;

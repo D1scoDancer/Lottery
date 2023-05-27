@@ -5,6 +5,13 @@ https://github.com/D1scoDancer/Lottery/commit/5e022d11508124dd7a3f93cae09bfd4ecc
 + Not important
 ```
 
+```
+Statuses:
+{empty}
+fixed - fixed in code
+solved - checked with slither
+```
+
 ```diff
 + External dependency
 ```
@@ -23,6 +30,7 @@ Warning: SPDX license identifier not provided in source file. Before publishing,
 
 ```diff
 - Important
+Status: fixed
 ```
 
 AaveETHDeposit.constructor(address,address).\_assetAddress (../contracts/AaveETHDeposit.sol#15) lacks a zero-check on : - assetAddress = \_assetAddress (../contracts/AaveETHDeposit.sol#18)
@@ -30,6 +38,7 @@ Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing
 
 ```diff
 - Important
+Status: fixed
 ```
 
 Different versions of Solidity are used: - Version used: ['0.8.10', '^0.8.0', '^0.8.10'] - ^0.8.10 (../contracts/AaveETHDeposit.sol#2) - 0.8.10 (@aave/core-v3/contracts/dependencies/weth/WETH9.sol#16) - ^0.8.0 (@aave/core-v3/contracts/interfaces/IPool.sol#2) - ^0.8.0 (@aave/core-v3/contracts/interfaces/IPoolAddressesProvider.sol#2) - ^0.8.0 (@aave/core-v3/contracts/protocol/libraries/types/DataTypes.sol#2)
@@ -74,7 +83,7 @@ Function IPool.MAX_NUMBER_RESERVES() (@aave/core-v3/contracts/interfaces/IPool.s
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions
 
 ```diff
-- Important
++ External dependency
 ```
 
 Reentrancy in WETH9.withdraw(uint256) (@aave/core-v3/contracts/dependencies/weth/WETH9.sol#40-45):
@@ -109,7 +118,7 @@ transfer(address,uint256) should be declared external: - WETH9.transfer(address,
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external
 
 ```diff
-- Important
++ It actually swaps MATIC for WMATIC. It is safe call
 ```
 
 Lottery.startLottery() (../contracts/Lottery.sol#130-137) sends eth to arbitrary user
@@ -118,6 +127,7 @@ Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functio
 
 ```diff
 - Important
+Status: fixed
 ```
 
 Reentrancy in Lottery.realFinishLottery(uint256) (../contracts/Lottery.sol#181-196):
@@ -134,7 +144,7 @@ Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-v
 
 ```diff
 - Important
-State:
+Status: fixed
 ```
 
 Lottery.setFee(uint256) (../contracts/Lottery.sol#248-250) should emit an event for: - fee = newFee (../contracts/Lottery.sol#249)
@@ -142,6 +152,7 @@ Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing
 
 ```diff
 - Important
+Status: fixed
 ```
 
 AaveETHDeposit.constructor(address,address).\_assetAddress (../contracts/AaveETHDeposit.sol#15) lacks a zero-check on : - assetAddress = \_assetAddress (../contracts/AaveETHDeposit.sol#18)
@@ -149,6 +160,7 @@ Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing
 
 ```diff
 - Important
+Status: fixed
 ```
 
 Reentrancy in Lottery.realFinishLottery(uint256) (../contracts/Lottery.sol#181-196):
@@ -158,6 +170,7 @@ Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentra
 
 ```diff
 - Important
+Status:
 ```
 
 Reentrancy in Lottery.getTotalPrize(uint256) (../contracts/Lottery.sol#217-222):
@@ -230,7 +243,7 @@ Function IPool.MAX_NUMBER_RESERVES() (@aave/core-v3/contracts/interfaces/IPool.s
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions
 
 ```diff
-- Important
++ External dependency
 ```
 
 Reentrancy in Lottery.enterLottery() (../contracts/Lottery.sol#92-112):
@@ -302,13 +315,14 @@ Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unimple
 
 ```diff
 - Important
+Status: fixed
 ```
 
 setKeeperRegistryAddress(address) should be declared external: - Automated.setKeeperRegistryAddress(address) (../contracts/Automated.sol#29-33)
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#public-function-that-could-be-declared-external
 
 ```diff
-- Important
++ This event uses request_id that is only accessible after the call
 ```
 
 Reentrancy in ChainlinkRNG.requestRandomWord() (../contracts/ChainlinkRNG.sol#55-67):

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.10;
+pragma solidity 0.8.10;
 
 import {IPool} from "@aave/core-v3/contracts/interfaces/IPool.sol";
 import {IPoolAddressesProvider} from "@aave/core-v3/contracts/interfaces/IPoolAddressesProvider.sol";
@@ -13,6 +13,9 @@ abstract contract AaveETHDeposit {
     WETH9 internal immutable asset;
 
     constructor(address _addressesProvider, address _assetAddress) {
+        require(_addressesProvider != address(0), "0 address provided");
+        require(_assetAddress != address(0), "0 address provided");
+
         ADDRESSES_PROVIDER = IPoolAddressesProvider(_addressesProvider);
         POOL = IPool(ADDRESSES_PROVIDER.getPool());
         assetAddress = _assetAddress;
