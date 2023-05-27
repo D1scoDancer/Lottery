@@ -5,7 +5,7 @@ import {IPool} from "@aave/core-v3/contracts/interfaces/IPool.sol";
 import {IPoolAddressesProvider} from "@aave/core-v3/contracts/interfaces/IPoolAddressesProvider.sol";
 import {WETH9} from "@aave/core-v3/contracts/dependencies/weth/WETH9.sol";
 
-contract AaveETHDeposit {
+abstract contract AaveETHDeposit {
     IPoolAddressesProvider internal immutable ADDRESSES_PROVIDER;
     IPool public immutable POOL;
 
