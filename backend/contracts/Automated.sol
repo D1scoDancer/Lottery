@@ -23,7 +23,6 @@ abstract contract Automated is AutomationCompatibleInterface {
         bytes calldata
     ) external view virtual returns (bool upkeepNeeded, bytes memory performData);
 
-    /// @dev should have onlyKeeperRegistry
     function performUpkeep(bytes calldata performData) external virtual;
 
     function setKeeperRegistryAddress(address keeperRegistryAddress) public virtual {
