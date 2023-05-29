@@ -30,7 +30,7 @@ Warning: SPDX license identifier not provided in source file. Before publishing,
 
 ```diff
 - Important
-Status: fixed
+Status: solved
 ```
 
 AaveETHDeposit.constructor(address,address).\_assetAddress (../contracts/AaveETHDeposit.sol#15) lacks a zero-check on : - assetAddress = \_assetAddress (../contracts/AaveETHDeposit.sol#18)
@@ -38,7 +38,7 @@ Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing
 
 ```diff
 - Important
-Status: fixed
+Status: solved
 ```
 
 Different versions of Solidity are used: - Version used: ['0.8.10', '^0.8.0', '^0.8.10'] - ^0.8.10 (../contracts/AaveETHDeposit.sol#2) - 0.8.10 (@aave/core-v3/contracts/dependencies/weth/WETH9.sol#16) - ^0.8.0 (@aave/core-v3/contracts/interfaces/IPool.sol#2) - ^0.8.0 (@aave/core-v3/contracts/interfaces/IPoolAddressesProvider.sol#2) - ^0.8.0 (@aave/core-v3/contracts/protocol/libraries/types/DataTypes.sol#2)
@@ -126,8 +126,7 @@ Dangerous calls: - asset.deposit{value: amount}() (../contracts/Lottery.sol#134)
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#functions-that-send-ether-to-arbitrary-destinations
 
 ```diff
-- Important
-Status: fixed
++ It is a necessary external call
 ```
 
 Reentrancy in Lottery.realFinishLottery(uint256) (../contracts/Lottery.sol#181-196):
@@ -144,7 +143,7 @@ Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#local-v
 
 ```diff
 - Important
-Status: fixed
+Status: solved
 ```
 
 Lottery.setFee(uint256) (../contracts/Lottery.sol#248-250) should emit an event for: - fee = newFee (../contracts/Lottery.sol#249)
@@ -152,7 +151,7 @@ Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing
 
 ```diff
 - Important
-Status: fixed
+Status: solved
 ```
 
 AaveETHDeposit.constructor(address,address).\_assetAddress (../contracts/AaveETHDeposit.sol#15) lacks a zero-check on : - assetAddress = \_assetAddress (../contracts/AaveETHDeposit.sol#18)
@@ -160,7 +159,7 @@ Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing
 
 ```diff
 - Important
-Status: fixed
+Status: solved
 ```
 
 Reentrancy in Lottery.realFinishLottery(uint256) (../contracts/Lottery.sol#181-196):
@@ -169,8 +168,7 @@ State variables written after the call(s): - setState(LotteryState.OPEN_FOR_WITH
 Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-2
 
 ```diff
-- Important
-Status:
++ It is a necessary external call
 ```
 
 Reentrancy in Lottery.getTotalPrize(uint256) (../contracts/Lottery.sol#217-222):
@@ -272,6 +270,7 @@ Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-v
 
 ```diff
 - Important
+Status: solved
 ```
 
 setKeeperRegistryAddress(address) should be declared external: - Automated.setKeeperRegistryAddress(address) (../contracts/Automated.sol#29-33)
@@ -315,7 +314,7 @@ Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unimple
 
 ```diff
 - Important
-Status: fixed
+Status: solved
 ```
 
 setKeeperRegistryAddress(address) should be declared external: - Automated.setKeeperRegistryAddress(address) (../contracts/Automated.sol#29-33)

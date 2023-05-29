@@ -22,5 +22,3 @@
 
 docker run -it trailofbits/eth-security-toolbox
 docker cp . 5e70e003d6f4:/lottery
-
-docker cp ./contracts id:/contracts/
