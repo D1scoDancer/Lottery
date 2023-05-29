@@ -187,7 +187,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
         round += 1;
 
         // determine a winner
-        address winner = getWinner(randomWord);
+        address winner = getWinner(randomWord, currentRound);
 
         // determine a prize size | call to Aave?
         uint prize = getTotalPrize(currentRound);
@@ -201,15 +201,16 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
     /**
      * @notice Decide a winner
      * @param randomNumber Random number
+     * @param _round Current round
      * @dev
      */
-    function getWinner(uint randomNumber) internal view returns (address winner) {
-        uint random = randomNumber % totalStake[round];
+     function getWinner(uint randomNumber, uint _round) internal view returns (address winner) {
+        uint random = randomNumber % totalStake[_round];
         uint sum = 0;
-        for (uint i = 0; i < players[round].length; i++) {
-            sum += balances[round][players[round][i]];
+        for (uint i = 0; i < players[_round].length; i++) {
+            sum += balances[_round][players[_round][i]];
             if (sum > random) {
-                return players[round][i];
+                return players[_round][i];
             }
         }
     }
