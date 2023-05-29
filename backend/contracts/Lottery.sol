@@ -4,7 +4,7 @@ pragma solidity 0.8.10;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "./ChainlinkRNG.sol";
-import "./AaveETHDeposit.sol";
+import "./AaveDeposit.sol";
 import "./Automated.sol";
 
 enum LotteryState {
@@ -22,7 +22,7 @@ enum LotteryState {
  *          -pick a winner
  *  @dev should implement Keeper or should not? (State Machine)
  */
-contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
+contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveDeposit, Automated {
     /* ============ TYPE DECLARATIONS ============ */
 
     /* ============ STATE VARIABLES ============ */
@@ -78,7 +78,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
         address assetAddress
     )
         ChainlinkRNG(vrfCoordinatorV2, gasLane, subscriptionId, callbackGasLimit)
-        AaveETHDeposit(addressesProvider, assetAddress)
+        AaveDeposit(addressesProvider, assetAddress)
     {
         fee = _fee;
     }
@@ -204,7 +204,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveETHDeposit, Automated {
      * @param _round Current round
      * @dev
      */
-     function getWinner(uint randomNumber, uint _round) internal view returns (address winner) {
+    function getWinner(uint randomNumber, uint _round) internal view returns (address winner) {
         uint random = randomNumber % totalStake[_round];
         uint sum = 0;
         for (uint i = 0; i < players[_round].length; i++) {

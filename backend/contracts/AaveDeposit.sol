@@ -5,7 +5,7 @@ import {IPool} from "@aave/core-v3/contracts/interfaces/IPool.sol";
 import {IPoolAddressesProvider} from "@aave/core-v3/contracts/interfaces/IPoolAddressesProvider.sol";
 import {WETH9} from "@aave/core-v3/contracts/dependencies/weth/WETH9.sol";
 
-abstract contract AaveETHDeposit {
+abstract contract AaveDeposit {
     IPoolAddressesProvider internal immutable ADDRESSES_PROVIDER;
     IPool public immutable POOL;
 
@@ -23,7 +23,7 @@ abstract contract AaveETHDeposit {
     }
 
     function fastSupply(uint _amount) internal {
-        approveWETH(_amount);
+        approve(_amount);
         supplyLiquidity(_amount);
     }
 
@@ -35,8 +35,7 @@ abstract contract AaveETHDeposit {
         return POOL.withdraw(assetAddress, type(uint).max, address(this));
     }
 
-    /// @dev переименовать в WMATIC?
-    function approveWETH(uint256 _amount) internal returns (bool) {
+    function approve(uint256 _amount) internal returns (bool) {
         return asset.approve(address(POOL), _amount);
     }
 
