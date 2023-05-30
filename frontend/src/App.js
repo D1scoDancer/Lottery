@@ -3,6 +3,7 @@ import Header from "./components/Header/Header"
 import Main from "./components/Main/Main"
 import "bootstrap/dist/css/bootstrap.min.css"
 import "./variables.css"
+import Footer from "./components/Footer/Footer"
 
 function App() {
     return (
@@ -12,6 +13,7 @@ function App() {
                 <div className="subbody">
                     <Header />
                     <Main />
+                    <Footer />
                 </div>
             </body>
         </html>
