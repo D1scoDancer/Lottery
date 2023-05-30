@@ -6,6 +6,7 @@ import lotteryAbi from "../../constants/abi.json"
 import { BigNumber, ethers } from "ethers"
 import IPoolAbi from "../../constants/IPoolAbi.json"
 import CountdownTimer from "../CountdownTimer/CountdownTimer"
+import { Tooltip, OverlayTrigger } from "react-bootstrap"
 
 const RAY = 10 ** 27 // 10 to the power 27
 const SECONDS_PER_YEAR = 31536000
@@ -77,19 +78,53 @@ const Infoblock = ({ totalStake, setTotalStake }) => {
 
     setTotalStake(call2?.data?.toString() || 0)
 
+    const renderTooltipForTimer = (props) => (
+        <Tooltip id="button-tooltip" {...props}>
+            State changes occur at 00:00 UTC every Tuesday and Wednesday
+        </Tooltip>
+    )
+
+    const renderTooltipForPrize = (props) => (
+        <Tooltip id="button-tooltip" {...props}>
+            This value is approximate based on the current APY rate
+        </Tooltip>
+    )
+
+    const renderTooltipForRoundStatus = (props) => (
+        <Tooltip id="button-tooltip" {...props}>
+            {currentState()}
+        </Tooltip>
+    )
+
     return (
         <div className="infoblock">
-            <h4 style={{ marginTop: 20 + "px" }}>
-                Current round: {call1?.data?.toString()} | {currentState()}
-            </h4>
+            <OverlayTrigger
+                placement="top"
+                delay={{ show: 150, hide: 150 }}
+                overlay={renderTooltipForRoundStatus}
+            >
+                <h4 style={{ marginTop: 20 + "px" }}>Current round: {call1?.data?.toString()}</h4>
+            </OverlayTrigger>
             <h4 style={{ marginTop: 20 + "px" }}>
                 {" "}
                 PrizePool right now is: {ethers.utils.formatEther(totalStake)} MATIC{" "}
             </h4>
-            <h5> The prize will be: {prize()} MATIC </h5>
-            <h6 style={{ marginTop: 20 + "px" }}>
-                <CountdownTimer />
-            </h6>
+            <OverlayTrigger
+                placement="right"
+                delay={{ show: 150, hide: 150 }}
+                overlay={renderTooltipForPrize}
+            >
+                <h5> The prize will be: {prize()} MATIC </h5>
+            </OverlayTrigger>
+            <OverlayTrigger
+                placement="right"
+                delay={{ show: 150, hide: 150 }}
+                overlay={renderTooltipForTimer}
+            >
+                <h6 style={{ marginTop: 20 + "px" }}>
+                    <CountdownTimer />
+                </h6>
+            </OverlayTrigger>
         </div>
     )
 }
