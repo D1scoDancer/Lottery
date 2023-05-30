@@ -1,5 +1,5 @@
 import React from "react"
-import { Button, Container } from "react-bootstrap"
+import { Button, Container, Tooltip, OverlayTrigger } from "react-bootstrap"
 import { useContractRead, usePrepareContractWrite, useContractWrite } from "wagmi"
 import contractAddresses from "../../constants/contractAddresses.json"
 import lotteryAbi from "../../constants/abi.json"
@@ -92,6 +92,12 @@ const Deposit = ({ round, currentRound, address }) => {
         write()
     }
 
+    const renderTooltip = (props) => (
+        <Tooltip id="button-tooltip" {...props}>
+            Works only if status is "Round ended"
+        </Tooltip>
+    )
+
     const returnStatement = () => {
         if (currentRound == round || amount(callForBalance) > 0) {
             return (
@@ -100,9 +106,19 @@ const Deposit = ({ round, currentRound, address }) => {
                     <td>{amount(callForBalance)} MATIC</td>
                     <td>{status()}</td>
                     <td>
-                        <Button variant="dark" disabled={!canWithdraw()} onClick={withdrawHandler}>
-                            Withdraw
-                        </Button>
+                        <OverlayTrigger
+                            placement="bottom"
+                            delay={{ show: 150, hide: 150 }}
+                            overlay={renderTooltip}
+                        >
+                            <Button
+                                variant="dark"
+                                disabled={!canWithdraw()}
+                                onClick={withdrawHandler}
+                            >
+                                Withdraw
+                            </Button>
+                        </OverlayTrigger>
                     </td>
                 </tr>
             )
