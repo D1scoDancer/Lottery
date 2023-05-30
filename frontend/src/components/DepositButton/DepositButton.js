@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react"
-import { Button, Modal, Form, InputGroup, Tooltip, OverlayTrigger } from "react-bootstrap"
+import { Button, Modal, Form, Tooltip, OverlayTrigger } from "react-bootstrap"
 import "./DepositButton.css"
 import { useAccount } from "wagmi"
 import { writeContract } from "@wagmi/core"

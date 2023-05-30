@@ -65,7 +65,6 @@ const Deposit = ({ round, currentRound, address }) => {
 
     const status = () => {
         if (isCurrentRound()) {
-            // x% chance of wining
             if (totalStake(callForTotalStake) == 0 && amount(callForBalance) == 0) {
                 return "100% chance of winning"
             } else {
@@ -74,8 +73,6 @@ const Deposit = ({ round, currentRound, address }) => {
                 )}% chance of winning`
             }
         } else {
-            // didn't win
-            // WINNER
             return "Round ended"
         }
     }

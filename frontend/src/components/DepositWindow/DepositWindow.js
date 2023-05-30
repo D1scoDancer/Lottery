@@ -31,10 +31,6 @@ const DepositWindow = () => {
         }
     }
 
-    const canWithdraw = () => {
-        return false
-    }
-
     return (
         <Table striped hover variant="dark">
             <thead>
