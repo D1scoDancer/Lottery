@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react"
-import { Button, Modal, Form, InputGroup } from "react-bootstrap"
+import { Button, Modal, Form, InputGroup, Tooltip, OverlayTrigger } from "react-bootstrap"
 import "./DepositButton.css"
 import { useAccount } from "wagmi"
 import { writeContract } from "@wagmi/core"
@@ -36,16 +36,28 @@ const DepositButton = () => {
         }
     }
 
+    const renderTooltip = (props) => (
+        <Tooltip id="button-tooltip" {...props}>
+            Choose MATIC amount to send to the current round
+        </Tooltip>
+    )
+
     return (
         <>
-            <Button
-                className="depositbutton"
-                onClick={handleShow}
-                variant="dark"
-                disabled={!isConnected}
+            <OverlayTrigger
+                placement="right"
+                delay={{ show: 150, hide: 150 }}
+                overlay={renderTooltip}
             >
-                Deposit to Win BTN
-            </Button>
+                <Button
+                    className="depositbutton"
+                    onClick={handleShow}
+                    variant="dark"
+                    disabled={!isConnected}
+                >
+                    Deposit to Win
+                </Button>
+            </OverlayTrigger>
 
             <Modal
                 className="my-modal"
