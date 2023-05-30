@@ -10,7 +10,7 @@ The developed service is designed to implement the concept of "Premium Bonds" (w
 
 The service allows users to make short-term deposits, for which users can receive an increased percentage of income. In other words, a money-savings game.
 
-### **The project is still in development, not ready to be deployed**
+### **The project is finished [31.05.23]** 
 
 ## Plans
 - To launch Dapp on Testnet
@@ -22,8 +22,8 @@ The service allows users to make short-term deposits, for which users can receiv
 - [x] Remove the RNG logic from the Lottery contract
 - [x] Implement Chainlink Keeper
 - [x] Connect Frontend with Backend
-- [ ] Unit tests for everything
-- [ ] Dynamic / Static analysys of code 
+- [x] Unit tests for everything
+- [x] Dynamic / Static analysys of code 
 
 ## License
 This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.

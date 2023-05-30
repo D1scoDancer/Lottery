@@ -154,7 +154,7 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveDeposit, Automated {
         uint amount = balances[fromRound][msg.sender];
         delete balances[fromRound][msg.sender];
 
-        payable(msg.sender).transfer(amount); // AAVE???
+        payable(msg.sender).transfer(amount);
     }
 
     /* ============ INTERNAL FUNCTIONS ============ */
