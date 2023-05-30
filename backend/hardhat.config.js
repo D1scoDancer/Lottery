@@ -13,7 +13,7 @@ const PRIVATE_KEY_2 = process.env.PRIVATE_KEY_2 || "0xkey"
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "key"
 const COINTMARKETCAP_API = process.env.COINTMARKETCAP_API || "key"
 const MAINNET_RPC_URL = process.env.MAINNET_RPC_URL || "key"
-const MUMBAI_RPC_URL = process.env.MUMBAI_RPC_URL || "key"
+const MUMBAI_RPC_URL = process.env.MUMBAI_RPC_URL || "mumbai_url"
 
 module.exports = {
     solidity: {

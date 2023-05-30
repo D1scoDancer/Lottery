@@ -83,13 +83,10 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveDeposit, Automated {
         fee = _fee;
     }
 
-    receive() external payable {
-        // require(msg.sender == WMATIC contract);
-    }
+    receive() external payable {}
 
     /* ============ EXTERNAL FUNCTIONS ============ */
 
-    /// @dev проверить gas-consumption если сделать переменную round memory здесь
     function enterLottery()
         external
         payable
@@ -125,8 +122,6 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveDeposit, Automated {
 
     /**
      *  @notice Changes Lottery State from OPEN_FOR_DEPOSIT to WORKING
-     *  @dev не факт что нужен onlyOwner, скорее всего нужен другой модификатор
-     *  @dev метод должен вызываться Keeper-ом
      */
     function startLottery() internal atState(round, LotteryState.OPEN_FOR_DEPOSIT) {
         setState(LotteryState.WORKING);
@@ -139,8 +134,6 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveDeposit, Automated {
 
     /**
      *  @notice Changes Lottery State from WORKING to OPEN_FOR_WITHDRAW
-     *  @dev не факт что нужен onlyOwner, скорее всего нужен другой модификатор
-     *  @dev метод должен вызываться Keeper-ом
      */
     function finishLottery()
         internal
@@ -202,7 +195,6 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveDeposit, Automated {
      * @notice Decide a winner
      * @param randomNumber Random number
      * @param _round Current round
-     * @dev
      */
     function getWinner(uint randomNumber, uint _round) internal view returns (address winner) {
         uint random = randomNumber % totalStake[_round];
@@ -215,9 +207,6 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveDeposit, Automated {
         }
     }
 
-    /**
-     * @dev should call Aave | but we kinda should know what will be the prize at the beginning of the lottery
-     */
     function getTotalPrize(uint _round) internal returns (uint) {
         uint withdrawn = withdrawLiquidity();
         asset.withdraw(withdrawn);
@@ -233,7 +222,6 @@ contract Lottery is Ownable, Pausable, ChainlinkRNG, AaveDeposit, Automated {
         states[round] = newState;
     }
 
-    // @dev should be sth normal
     function checkUpkeep(
         bytes calldata /* checkData */
     ) external pure override returns (bool upkeepNeeded, bytes memory /* performData */) {

@@ -1,18 +1,11 @@
 const { ethers } = require("hardhat")
 
 const networkConfig = {
-    // 31337: {
-    //     name: "hardhat",
-    //     gasLane: "0x79d3d8832d904592c0bf9818b621522c988bb8b0c05cdc3b15aea1b6e8db0c15", // doesn't matter in localhost
-    //     callbackGasLimit: "200000",
-    //     poolAddressProvider: "0xC911B590248d127aD18546B186cC6B324e99F02c",
-    //     depositAssetAddress: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-    // },
     31337: {
         name: "mumbai",
         fee: "0",
         vrfCoordinatorV2: "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed",
-        subscriptionId: "4949",
+        subscriptionId: "4956",
         gasLane: "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f",
         callbackGasLimit: "500000",
         addressesProvider: "0xeb7A892BB04A8f836bDEeBbf60897A7Af1Bf5d7F",
@@ -32,7 +25,7 @@ const networkConfig = {
         name: "mumbai",
         fee: "0",
         vrfCoordinatorV2: "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed",
-        subscriptionId: "4949",
+        subscriptionId: "4956",
         gasLane: "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f",
         callbackGasLimit: "500000",
         addressesProvider: "0xeb7A892BB04A8f836bDEeBbf60897A7Af1Bf5d7F",
